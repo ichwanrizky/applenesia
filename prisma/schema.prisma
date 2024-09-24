@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model role {
+  id   Int       @id @unique @default(autoincrement())
+  name role_name
+  user user[]
+}
+
+enum role_name {
+  ADMINISTRATOR
+  ADMIN_CABANG
+  CASHIER
+  TEKNISI
+}
+
+model user {
+  id          Int           @id @unique @default(autoincrement())
+  username    String        @unique
+  password    String
+  name        String
+  telp        String?
+  created_at  DateTime      @db.DateTime(0)
+  is_deleted  Boolean       @default(false)
+  user_branch user_branch[]
+  role_id     Int
+  role        role          @relation(fields: [role_id], references: [id])
+  token       token[]
+}
+
+model branch {
+  id          Int           @id @unique @default(autoincrement())
+  uuid        String        @unique @default(dbgenerated("uuid()"))
+  name        String
+  address     String?
+  alias       String?       @unique
+  telp        String?
+  latitude    String?
+  longitude   String?
+  is_deleted  Boolean       @default(false)
+  user_branch user_branch[]
+
+  @@index([uuid], map: "branch_uuid")
+}
+
+model user_branch {
+  user_id   Int
+  user      user   @relation(fields: [user_id], references: [id])
+  branch_id Int
+  branch    branch @relation(fields: [branch_id], references: [id])
+
+  @@id([user_id, branch_id])
+}
+
+model token {
+  id            Int      @id @unique @default(autoincrement())
+  access_token  String   @db.VarChar(500)
+  refresh_token String   @db.VarChar(500)
+  created_at    DateTime @db.DateTime(0)
+  expired_at    DateTime @db.DateTime(0)
+  user_id       Int
+  user          user     @relation(fields: [user_id], references: [id])
+  is_expired    Boolean  @default(false)
+
+  @@index([access_token], map: "token_access_token")
+}

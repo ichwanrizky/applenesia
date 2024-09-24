@@ -1,6 +1,54 @@
-export default function Home() {
+"use client";
+import CustomButton from "@/components/CustomButton";
+import { useState } from "react";
+import auth from "@/utils/auth";
+
+export default function Home({ searchParams }: { searchParams: any }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState({
+    status: false,
+    message: "",
+    color: "",
+  });
+
+  const callbackUrl = searchParams?.callbackUrl
+    ? searchParams?.callbackUrl
+    : "/redirect";
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    let result;
+    try {
+      result = await auth.loginUser(username, password);
+      setError({
+        status: true,
+        message: result?.ok
+          ? "Login success"
+          : "Login failed, please try again",
+        color: result?.ok ? "success" : "danger",
+      });
+      if (result?.ok) {
+        window.location.href = callbackUrl;
+      }
+    } catch (error) {
+      setError({
+        status: true,
+        message: "Something went wrong",
+        color: "danger",
+      });
+    } finally {
+      if (!result?.ok) {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
-    <div>
+    <>
+      <title> Login - Applenesia</title>
       <div className="container">
         <div className="row">
           <div className="col-12">
@@ -12,22 +60,40 @@ export default function Home() {
                     <div className="p-5">
                       <div className="text-center mb-5">
                         <a
-                          href="index.html"
+                          href=""
                           className="text-dark font-size-22 font-family-secondary"
                         >
                           <b>ADMIN APPLENESIA</b>
                         </a>
                       </div>
+
+                      {error.status && (
+                        <div
+                          className={`alert alert-${error.color} d-flex align-items-center`}
+                          role="alert"
+                        >
+                          <i
+                            className="mdi mdi mdi-progress-alert mr-2"
+                            style={{ fontSize: "1.5rem" }}
+                          ></i>
+                          <div className="font-weight-medium">{`${error.message}`}</div>
+                        </div>
+                      )}
+
                       <h1 className="h5 mb-1">Welcome Back!</h1>
                       <p className="text-muted mb-4">
                         Enter your username and password to access admin panel.
                       </p>
-                      <form className="user">
+                      <form onSubmit={handleSubmit} className="user">
                         <div className="form-group">
                           <input
                             type="text"
                             className="form-control form-control-user"
                             placeholder="Username"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            autoComplete="username"
                           />
                         </div>
                         <div className="form-group">
@@ -35,19 +101,20 @@ export default function Home() {
                             type="password"
                             className="form-control form-control-user"
                             placeholder="Password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            autoComplete="current-password"
                           />
                         </div>
-                        <a
-                          href=""
-                          className="btn btn-success btn-block waves-effect waves-light"
-                        >
-                          Log In
-                        </a>
+                        <CustomButton buttonType="login" isLoading={isLoading}>
+                          Login
+                        </CustomButton>
                         <div className="text-center mt-4">
                           <ul className="list-inline mt-3 mb-0">
                             <li className="list-inline-item">
                               <a
-                                href="javascript: void(0);"
+                                href=""
                                 className="social-list-item border-primary text-primary"
                               >
                                 <i className="mdi mdi-facebook" />
@@ -55,7 +122,7 @@ export default function Home() {
                             </li>
                             <li className="list-inline-item">
                               <a
-                                href="javascript: void(0);"
+                                href=""
                                 className="social-list-item border-danger text-danger"
                               >
                                 <i className="mdi mdi-google" />
@@ -63,7 +130,7 @@ export default function Home() {
                             </li>
                             <li className="list-inline-item">
                               <a
-                                href="javascript: void(0);"
+                                href=""
                                 className="social-list-item border-info text-info"
                               >
                                 <i className="mdi mdi-twitter" />
@@ -71,7 +138,7 @@ export default function Home() {
                             </li>
                             <li className="list-inline-item">
                               <a
-                                href="javascript: void(0);"
+                                href=""
                                 className="social-list-item border-secondary text-secondary"
                               >
                                 <i className="mdi mdi-github-circle" />
@@ -84,7 +151,7 @@ export default function Home() {
                         <div className="col-12 text-center">
                           <p className="text-muted mb-2">
                             <a
-                              href="pages-recoverpw.html"
+                              href="#"
                               className="text-muted font-weight-medium ml-1"
                             >
                               Forgot your password?
@@ -100,6 +167,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
