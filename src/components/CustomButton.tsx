@@ -37,7 +37,7 @@ const CustomButton = (props: CustomButtonProps) => {
       return (
         <button
           className="btn btn-primary"
-          type="button"
+          type="submit"
           disabled={disabled || isLoading}
           onClick={onClick}
         >

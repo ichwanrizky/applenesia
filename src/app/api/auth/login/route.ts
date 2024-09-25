@@ -26,12 +26,21 @@ export const POST = async (request: Request) => {
     const findUser = await prisma.user.findFirst({
       include: {
         role: true,
+        user_branch: {
+          select: {
+            branch: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
       where: {
         username: username,
       },
     });
-    console.log(findUser);
 
     if (!findUser) {
       return new NextResponse(

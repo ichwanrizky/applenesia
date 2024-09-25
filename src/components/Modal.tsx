@@ -1,14 +1,23 @@
+import CustomAlert from "./CustomAlert";
 import CustomButton from "./CustomButton";
+
+type AlertProps = {
+  status: boolean;
+  color: string;
+  message: string;
+};
 
 type ModalProps = {
   modalTitle: string;
   children: React.ReactNode;
   onClose: () => void;
   isLoading?: boolean;
+  onSubmit: any;
+  alert?: AlertProps | null;
 };
 
 const Modal = (props: ModalProps) => {
-  const { modalTitle, children, onClose, isLoading } = props;
+  const { modalTitle, children, onClose, isLoading, onSubmit, alert } = props;
   return (
     <>
       <div
@@ -26,7 +35,7 @@ const Modal = (props: ModalProps) => {
       >
         <div className="modal-dialog modal-dialog-scrollable" role="document">
           <div className="modal-content">
-            <form>
+            <form onSubmit={onSubmit}>
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalScrollableTitle">
                   {modalTitle}
@@ -41,7 +50,13 @@ const Modal = (props: ModalProps) => {
                   <span aria-hidden="true">×</span>
                 </button>
               </div>
-              <div className="modal-body">{children}</div>
+              <div className="modal-body">
+                {alert?.status && (
+                  <CustomAlert message={alert.message} color={alert.color} />
+                )}
+
+                {children}
+              </div>
               <div className="modal-footer">
                 <CustomButton buttonType="close" onClick={onClose}>
                   Close

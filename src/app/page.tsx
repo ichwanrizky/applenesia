@@ -1,7 +1,8 @@
 "use client";
+import CustomAlert from "@/components/CustomAlert";
 import CustomButton from "@/components/CustomButton";
+import authServices from "@/services/authServices";
 import { useState } from "react";
-import auth from "@/utils/auth";
 
 export default function Home({ searchParams }: { searchParams: any }) {
   const [username, setUsername] = useState("");
@@ -22,7 +23,7 @@ export default function Home({ searchParams }: { searchParams: any }) {
     setIsLoading(true);
     let result;
     try {
-      result = await auth.loginUser(username, password);
+      result = await authServices.loginUser(username, password);
       setError({
         status: true,
         message: result?.ok
@@ -68,16 +69,10 @@ export default function Home({ searchParams }: { searchParams: any }) {
                       </div>
 
                       {error.status && (
-                        <div
-                          className={`alert alert-${error.color} d-flex align-items-center`}
-                          role="alert"
-                        >
-                          <i
-                            className="mdi mdi mdi-progress-alert mr-2"
-                            style={{ fontSize: "1.5rem" }}
-                          ></i>
-                          <div className="font-weight-medium">{`${error.message}`}</div>
-                        </div>
+                        <CustomAlert
+                          message={error.message}
+                          color={error.color}
+                        />
                       )}
 
                       <h1 className="h5 mb-1">Welcome Back!</h1>
