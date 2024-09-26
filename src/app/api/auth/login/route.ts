@@ -118,7 +118,6 @@ export const POST = async (request: Request) => {
       await prisma.token.create({
         data: {
           access_token: accessToken,
-          refresh_token: refreshToken,
           user_id: user.id,
           created_at: formattedDateNow(),
           expired_at: expiredDate,
@@ -127,7 +126,6 @@ export const POST = async (request: Request) => {
       });
     } else {
       accessToken = existToken?.access_token;
-      refreshToken = existToken?.refresh_token;
     }
 
     return new NextResponse(

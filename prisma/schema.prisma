@@ -65,14 +65,13 @@ model user_branch {
 }
 
 model token {
-  id            Int      @id @unique @default(autoincrement())
-  access_token  String   @db.VarChar(500)
-  refresh_token String   @db.VarChar(500)
-  created_at    DateTime @db.DateTime(0)
-  expired_at    DateTime @db.DateTime(0)
-  user_id       Int
-  user          user     @relation(fields: [user_id], references: [id])
-  is_expired    Boolean  @default(false)
+  id           Int      @id @unique @default(autoincrement())
+  access_token String   @db.VarChar(500)
+  created_at   DateTime @db.DateTime(0)
+  expired_at   DateTime @db.DateTime(0)
+  user_id      Int
+  user         user     @relation(fields: [user_id], references: [id])
+  is_expired   Boolean  @default(false)
 
   @@index([access_token], map: "token_access_token")
 }

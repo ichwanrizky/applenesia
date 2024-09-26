@@ -1,4 +1,16 @@
-const HeaderAdmin = () => {
+type Session = {
+  user: UserSession;
+};
+type UserSession = {
+  name: string;
+  id: number;
+  username: string;
+  role_id: number;
+  role_name: string;
+  accessToken: string;
+};
+
+const HeaderAdmin = ({ session }: { session: Session }) => {
   return (
     <>
       <div className="header-border" />
@@ -32,7 +44,9 @@ const HeaderAdmin = () => {
                   src="/themes/assets/images/users/avatar-2.jpg"
                   alt="Header Avatar"
                 />
-                <span className="d-none d-sm-inline-block ml-1">Donald M.</span>
+                <span className="d-none d-sm-inline-block ml-1">
+                  {session.user.name?.toUpperCase()}
+                </span>
                 <i className="mdi mdi-chevron-down d-none d-sm-inline-block" />
               </button>
               <div className="dropdown-menu dropdown-menu-right">

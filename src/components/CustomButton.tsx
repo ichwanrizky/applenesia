@@ -4,10 +4,22 @@ type CustomButtonProps = {
   isLoading?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
+  indexData?: number;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 const CustomButton = (props: CustomButtonProps) => {
-  const { buttonType, disabled, isLoading, onClick, children } = props;
+  const {
+    buttonType,
+    disabled,
+    isLoading,
+    onClick,
+    children,
+    indexData,
+    onEdit,
+    onDelete,
+  } = props;
   switch (buttonType) {
     case "add":
       return (
@@ -87,6 +99,52 @@ const CustomButton = (props: CustomButtonProps) => {
             children
           )}
         </button>
+      );
+    case "action":
+      return isLoading ? (
+        <div className="dropdown">
+          <button
+            className="btn btn-secondary dropdown-toggle waves-effect waves-light"
+            type="button"
+            disabled
+          >
+            <span
+              className="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+          </button>
+        </div>
+      ) : (
+        <div className="dropdown">
+          <button
+            className="btn btn-secondary dropdown-toggle waves-effect waves-light"
+            type="button"
+            id={`dropdownMenuButton${indexData}`}
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {children}
+          </button>
+          <div
+            className="dropdown-menu"
+            aria-labelledby={`dropdownMenuButton${indexData}`}
+          >
+            <a className="dropdown-item d-flex align-items-center" href="#">
+              <i className="mdi mdi-file-document-edit-outline mr-2" />
+              Edit
+            </a>
+            <a
+              className="dropdown-item text-danger"
+              href="#"
+              onClick={onDelete}
+            >
+              <i className="mdi mdi-trash-can-outline mr-2" />
+              Delete
+            </a>
+          </div>
+        </div>
       );
   }
 };
