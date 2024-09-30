@@ -1,3 +1,6 @@
+"use client";
+import Link from "next/link";
+
 const SidebarAdmin = () => {
   return (
     <div className="vertical-menu">
@@ -167,9 +170,15 @@ const SidebarAdmin = () => {
             </li> */}
             <li className="menu-title">CONFIGURATION</li>
             <li>
-              <a href="calendar.html" className=" waves-effect">
+              <a href="/dashboard/cabang" className="waves-effect">
                 <i className="mdi mdi mdi-office-building" />
                 <span>Data Cabang</span>
+              </a>
+            </li>
+            <li>
+              <a href="/dashboard/user" className="waves-effect">
+                <i className="mdi mdi-account-multiple-outline" />
+                <span>Data User</span>
               </a>
             </li>
           </ul>

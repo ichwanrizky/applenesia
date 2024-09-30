@@ -40,17 +40,29 @@ export const GET = async (
         }
       );
     }
-    const user_branch = session[1]?.user_branch;
+    const user_branch = session[1].user_branch;
 
-    const data = await prisma.branch.findFirst({
+    const data = await prisma.user.findFirst({
+      include: {
+        user_branch: {
+          include: {
+            branch: true,
+          },
+        },
+        role: true,
+      },
       where: {
         id: Number(params.id),
         is_deleted: false,
         ...(role === "ADMINISTRATOR"
           ? {}
           : {
-              id: {
-                in: user_branch.map((item: any) => item.branch.id),
+              user_branch: {
+                some: {
+                  branch_id: {
+                    in: user_branch.map((item: any) => item.branch.id),
+                  },
+                },
               },
             }),
       },
@@ -126,15 +138,17 @@ export const PUT = async (
         }
       );
     }
-    const user_branch = session[1]?.user_branch;
+    const user_branch = session[1].user_branch;
 
     const body = await request.json();
 
     const name = body.name;
+    const username = body.username;
     const telp = body.telp;
-    const address = body.address;
+    const roleUser = body.role;
+    const manageBranch = body.manageBranch;
 
-    if (!name || !telp || !address) {
+    if (!name || !username || !telp || !roleUser || !manageBranch) {
       return new NextResponse(
         JSON.stringify({ status: false, message: "Missing fields" }),
         {
@@ -146,33 +160,52 @@ export const PUT = async (
       );
     }
 
-    const alias = name
-      .split(" ")
-      .map((char: string) => char[0])
-      .join("")
-      .toUpperCase();
+    const manageBranchJson = JSON.parse(manageBranch);
 
-    const update = await prisma.branch.update({
+    const checkUserBranch = manageBranchJson?.every((item: any) => {
+      return user_branch
+        .map((userBranchItem: any) => userBranchItem.branch.id)
+        .includes(Number(item.value));
+    });
+
+    if (!checkUserBranch && role !== "ADMINISTRATOR") {
+      return new NextResponse(
+        JSON.stringify({ status: false, message: "Unauthorized access" }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const update = await prisma.user.update({
       data: {
         name,
+        username,
         telp,
-        address,
-        alias,
+        role: {
+          connect: {
+            id: Number(roleUser),
+          },
+        },
+        user_branch: {
+          deleteMany: {},
+          create: manageBranchJson?.map((item: any) => ({
+            branch_id: Number(item.value),
+          })),
+        },
       },
       where: {
         id: Number(params.id),
         is_deleted: false,
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              id: user_branch.map((item: any) => Number(item.branch.id)),
-            }),
       },
     });
 
     if (!update) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Failed to update cabang" }),
+        JSON.stringify({ status: false, message: "Failed to update user" }),
         {
           status: 500,
           headers: {
@@ -185,7 +218,7 @@ export const PUT = async (
     return new NextResponse(
       JSON.stringify({
         status: true,
-        message: "Success to update cabang",
+        message: "Success to update user",
         data: update,
       }),
       {
@@ -223,7 +256,7 @@ export const DELETE = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR") {
+    if (role !== "ADMINISTRATOR" && role !== "ADMIN_CABANG") {
       return new NextResponse(
         JSON.stringify({
           status: false,
@@ -237,14 +270,26 @@ export const DELETE = async (
         }
       );
     }
+    const user_branch = session[1].user_branch;
 
-    const deleteData = await prisma.branch.update({
+    const deleteData = await prisma.user.update({
       data: {
         is_deleted: true,
       },
       where: {
         id: Number(params.id),
         is_deleted: false,
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              user_branch: {
+                some: {
+                  branch_id: {
+                    in: user_branch.map((item: any) => item.branch.id),
+                  },
+                },
+              },
+            }),
       },
     });
 
@@ -252,7 +297,7 @@ export const DELETE = async (
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Failed to delete cabang",
+          message: "Failed to delete user",
         }),
         {
           status: 500,
@@ -266,7 +311,7 @@ export const DELETE = async (
     return new NextResponse(
       JSON.stringify({
         status: true,
-        message: "Success to delete cabang",
+        message: "Success to delete user",
         data: deleteData,
       }),
       {

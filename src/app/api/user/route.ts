@@ -2,6 +2,8 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import { NextResponse } from "next/server";
 import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
+import { formattedDateNow } from "@/libs/DateFormat";
+const bcrypt = require("bcrypt");
 
 export const GET = async (request: Request) => {
   try {
@@ -37,8 +39,7 @@ export const GET = async (request: Request) => {
         }
       );
     }
-
-    const user_branch = session[1]?.user_branch;
+    const user_branch = session[1].user_branch;
 
     const searchParams = new URL(request.url).searchParams;
 
@@ -47,31 +48,53 @@ export const GET = async (request: Request) => {
     // page
     const page = searchParams.get("page");
 
-    const condition = {};
+    const condition = {
+      where: {
+        is_deleted: false,
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              user_branch: {
+                some: {
+                  branch_id: {
+                    in: user_branch.map((item: any) => item.branch.id),
+                  },
+                },
+              },
+            }),
+        ...(search && {
+          OR: [
+            {
+              name: {
+                contains: search ? search : undefined,
+              },
+              username: {
+                contains: search ? search : undefined,
+              },
+            },
+          ],
+        }),
+      },
+    };
 
-    const totalData = await prisma.branch.count({
+    const totalData = await prisma.user.count({
       ...condition,
     });
 
     // item per page
-    const itemPerPage = page ? 5 : totalData;
+    const itemPerPage = page ? 10 : totalData;
 
-    const data = await prisma.branch.findMany({
-      // ...condition,
-      where: {
-        is_deleted: false,
-        name: {
-          contains: search ? search : undefined,
+    const data = await prisma.user.findMany({
+      include: {
+        user_branch: {
+          include: {
+            branch: true,
+          },
         },
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              id: {
-                in: user_branch.map((item: any) => item.branch.id),
-              },
-            }),
+        role: true,
       },
-      orderBy: { name: "asc" },
+      ...condition,
+      orderBy: [],
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
     });
@@ -96,6 +119,26 @@ export const GET = async (request: Request) => {
       };
     });
 
+    const cabang = await prisma.branch.findMany({
+      where: {
+        is_deleted: false,
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              user_branch: {
+                some: {
+                  branch_id: {
+                    in: user_branch.map((item: any) => item.branch.id),
+                  },
+                },
+              },
+            }),
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
     return new NextResponse(
       JSON.stringify({
         status: true,
@@ -103,6 +146,7 @@ export const GET = async (request: Request) => {
         itemsPerPage: itemPerPage,
         total: totalData,
         data: newData,
+        cabang,
       }),
       {
         status: 200,
@@ -136,7 +180,7 @@ export const POST = async (request: Request) => {
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR") {
+    if (role !== "ADMINISTRATOR" && role !== "ADMIN_CABANG") {
       return new NextResponse(
         JSON.stringify({
           status: false,
@@ -150,14 +194,25 @@ export const POST = async (request: Request) => {
         }
       );
     }
+    const user_branch = session[1].user_branch;
 
     const body = await request.json();
 
     const name = body.name;
+    const username = body.username;
+    const password = body.password;
     const telp = body.telp;
-    const address = body.address;
+    const roleUser = body.role;
+    const manageBranch = body.manageBranch;
 
-    if (!name || !telp || !address) {
+    if (
+      !name ||
+      !username ||
+      !password ||
+      !telp ||
+      !roleUser ||
+      !manageBranch
+    ) {
       return new NextResponse(
         JSON.stringify({ status: false, message: "Missing fields" }),
         {
@@ -169,24 +224,63 @@ export const POST = async (request: Request) => {
       );
     }
 
-    const alias = name
-      .split(" ")
-      .map((char: string) => char[0])
-      .join("")
-      .toUpperCase();
+    const hashPassword = await bcrypt.hash(password, 10);
 
-    const create = await prisma.branch.create({
+    if (!hashPassword) {
+      return new NextResponse(
+        JSON.stringify({ status: false, message: "Failed to hash password" }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const manageBranchJson = JSON.parse(manageBranch);
+
+    const checkUserBranch = manageBranchJson?.every((item: any) => {
+      return user_branch
+        .map((userBranchItem: any) => userBranchItem.branch.id)
+        .includes(Number(item.value));
+    });
+
+    if (!checkUserBranch && role !== "ADMINISTRATOR") {
+      return new NextResponse(
+        JSON.stringify({ status: false, message: "Unauthorized access" }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const create = await prisma.user.create({
       data: {
         name,
+        username,
+        password: hashPassword,
         telp,
-        address,
-        alias,
+        role: {
+          connect: {
+            id: Number(roleUser),
+          },
+        },
+        created_at: formattedDateNow(),
+        user_branch: {
+          create: manageBranchJson?.map((item: any) => ({
+            branch_id: Number(item.value),
+          })),
+        },
       },
     });
 
     if (!create) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Failed to create cabang" }),
+        JSON.stringify({ status: false, message: "Failed to create user" }),
         {
           status: 500,
           headers: {
@@ -199,7 +293,7 @@ export const POST = async (request: Request) => {
     return new NextResponse(
       JSON.stringify({
         status: true,
-        message: "Success to create cabang",
+        message: "Success to create user",
         data: create,
       }),
       {

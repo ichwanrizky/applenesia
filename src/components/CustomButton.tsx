@@ -102,19 +102,17 @@ const CustomButton = (props: CustomButtonProps) => {
       );
     case "action":
       return isLoading ? (
-        <div className="dropdown">
-          <button
-            className="btn btn-secondary dropdown-toggle waves-effect waves-light"
-            type="button"
-            disabled
-          >
-            <span
-              className="spinner-border spinner-border-sm"
-              role="status"
-              aria-hidden="true"
-            ></span>
-          </button>
-        </div>
+        <button
+          className="btn btn-secondary dropdown-toggle waves-effect waves-light"
+          type="button"
+          disabled
+        >
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </button>
       ) : (
         <div className="dropdown">
           <button

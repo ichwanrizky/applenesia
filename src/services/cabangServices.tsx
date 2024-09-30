@@ -1,5 +1,4 @@
 type dataCabang = {
-  id?: number;
   name: string;
   telp: string;
   address: string;
