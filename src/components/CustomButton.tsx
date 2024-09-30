@@ -131,7 +131,11 @@ const CustomButton = (props: CustomButtonProps) => {
             className="dropdown-menu"
             aria-labelledby={`dropdownMenuButton${indexData}`}
           >
-            <a className="dropdown-item d-flex align-items-center" href="#">
+            <a
+              className="dropdown-item d-flex align-items-center"
+              href="#"
+              onClick={onEdit}
+            >
               <i className="mdi mdi-file-document-edit-outline mr-2" />
               Edit
             </a>

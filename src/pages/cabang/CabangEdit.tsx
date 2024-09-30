@@ -7,6 +7,7 @@ type CreateProps = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
+  editData: Branch;
 };
 
 type AlertProps = {
@@ -15,18 +16,31 @@ type AlertProps = {
   message: string;
 };
 
-const CreateCabang = (props: CreateProps) => {
-  const { isOpen, onClose, accessToken } = props;
+type Branch = {
+  number: number;
+  id: number;
+  uuid: string;
+  name: string;
+  address: string;
+  alias: string;
+  telp: string;
+  latitude: null;
+  longitude: null;
+  is_deleted: boolean;
+};
 
-  const [name, setName] = useState("");
-  const [telp, setTelp] = useState("");
-  const [address, setAddress] = useState("");
+const EditCabang = (props: CreateProps) => {
+  const { isOpen, onClose, accessToken, editData } = props;
+
+  const [name, setName] = useState(editData.name);
+  const [telp, setTelp] = useState(editData.telp);
+  const [address, setAddress] = useState(editData.address);
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (confirm("Add this data?")) {
+    if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
         const data = {
@@ -35,7 +49,11 @@ const CreateCabang = (props: CreateProps) => {
           address,
         };
 
-        const result = await cabangServices.createCabang(accessToken, data);
+        const result = await cabangServices.editCabang(
+          accessToken,
+          editData.id,
+          data
+        );
 
         if (!result.status) {
           setAlert({
@@ -68,7 +86,7 @@ const CreateCabang = (props: CreateProps) => {
   return (
     isOpen && (
       <Modal
-        modalTitle="Tambah Data"
+        modalTitle="Edit Data"
         onClose={onClose}
         onSubmit={handleSubmit}
         alert={alert}
@@ -118,4 +136,4 @@ const CreateCabang = (props: CreateProps) => {
   );
 };
 
-export default CreateCabang;
+export default EditCabang;

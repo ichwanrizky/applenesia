@@ -23,7 +23,6 @@ export const GET = async (request: Request) => {
     }
 
     const role = session[1].role.name;
-    console.log(role);
     if (role !== "ADMINISTRATOR") {
       return new NextResponse(
         JSON.stringify({
@@ -46,16 +45,24 @@ export const GET = async (request: Request) => {
     // page
     const page = searchParams.get("page");
 
-    const totalData = await prisma.branch.count({
+    const condition = {
       where: {
         is_deleted: false,
+        name: {
+          contains: search ? search : undefined,
+        },
       },
+    };
+
+    const totalData = await prisma.branch.count({
+      ...condition,
     });
 
     // item per page
-    const itemPerPage = page ? 10 : totalData;
+    const itemPerPage = page ? 5 : totalData;
 
     const data = await prisma.branch.findMany({
+      ...condition,
       orderBy: { name: "asc" },
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
@@ -103,6 +110,39 @@ export const GET = async (request: Request) => {
 
 export const POST = async (request: Request) => {
   try {
+    const authorization = request.headers.get("Authorization");
+    const session = await checkSession(authorization);
+    if (!session[0]) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const role = session[1].role.name;
+    if (role !== "ADMINISTRATOR") {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized access",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     const body = await request.json();
 
     const name = body.name;
