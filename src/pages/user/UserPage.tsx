@@ -8,10 +8,8 @@ import CreateUser from "./UserCreate";
 import userServices from "@/services/userServices";
 import EditUser from "./UserEdit";
 import React from "react";
+
 type Session = {
-  user: UserSession;
-};
-type UserSession = {
   name: string;
   id: number;
   username: string;
@@ -77,13 +75,13 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const accessToken = session!.user.accessToken;
+  const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await userServices.deleteUser(accessToken, id);
+        const result = await userServices.deleteUser(accessToken!, id);
 
         if (!result.status) {
           setAlert({
@@ -115,7 +113,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await userServices.getUserById(accessToken, id);
+      const result = await userServices.getUserById(accessToken!, id);
       if (!result.status) {
         setAlert({
           status: true,
@@ -140,7 +138,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const handleResetPassword = async (id: number) => {
     if (confirm("Reset Password this user?")) {
       try {
-        const result = await userServices.resetPassword(accessToken, id);
+        const result = await userServices.resetPassword(accessToken!, id);
 
         if (!result.status) {
           setAlert({
@@ -361,7 +359,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                               `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}`
                             );
                           }}
-                          accessToken={accessToken}
+                          accessToken={accessToken!}
                           dataCabang={data.cabang as Branch[]}
                         />
                       )}
@@ -374,7 +372,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                               `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}`
                             );
                           }}
-                          accessToken={accessToken}
+                          accessToken={accessToken!}
                           dataCabang={data.cabang as Branch[]}
                           editData={editData}
                         />

@@ -3,7 +3,7 @@ import Modal from "@/components/Modal";
 import cabangServices from "@/services/cabangServices";
 import { useState } from "react";
 
-type CreateProps = {
+type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
@@ -29,12 +29,12 @@ type Branch = {
   is_deleted: boolean;
 };
 
-const EditCabang = (props: CreateProps) => {
+const EditCabang = (props: Props) => {
   const { isOpen, onClose, accessToken, editData } = props;
 
-  const [name, setName] = useState(editData.name);
-  const [telp, setTelp] = useState(editData.telp);
-  const [address, setAddress] = useState(editData.address);
+  const [name, setName] = useState(editData?.name || "");
+  const [telp, setTelp] = useState(editData?.telp || "");
+  const [address, setAddress] = useState(editData?.address || "");
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 

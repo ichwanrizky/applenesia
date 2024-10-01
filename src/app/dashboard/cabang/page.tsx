@@ -15,7 +15,12 @@ type UserSession = {
 };
 
 export default async function Cabang() {
-  const session: Session | null = await getServerSession(authOptions);
+  const session = (await getServerSession(authOptions)) as Session | null;
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <div className="page-content">
       <div className="container-fluid">
@@ -34,7 +39,7 @@ export default async function Cabang() {
             </div>
           </div>
         </div>
-        <CabangPage session={session} />
+        <CabangPage session={session.user} />
       </div>
     </div>
   );

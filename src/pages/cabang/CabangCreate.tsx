@@ -3,7 +3,7 @@ import Modal from "@/components/Modal";
 import cabangServices from "@/services/cabangServices";
 import { useState } from "react";
 
-type CreateProps = {
+type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
@@ -15,7 +15,7 @@ type AlertProps = {
   message: string;
 };
 
-const CreateCabang = (props: CreateProps) => {
+const CreateCabang = (props: Props) => {
   const { isOpen, onClose, accessToken } = props;
 
   const [name, setName] = useState("");

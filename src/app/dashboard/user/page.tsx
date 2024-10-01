@@ -15,7 +15,12 @@ type UserSession = {
 };
 
 export default async function User() {
-  const session: Session | null = await getServerSession(authOptions);
+  const session = (await getServerSession(authOptions)) as Session | null;
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <div className="page-content">
       <div className="container-fluid">
@@ -34,7 +39,7 @@ export default async function User() {
             </div>
           </div>
         </div>
-        <UserPage session={session} />
+        <UserPage session={session.user} />
       </div>
     </div>
   );

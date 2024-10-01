@@ -1,3 +1,5 @@
+"use client";
+
 type Session = {
   user: UserSession;
 };
@@ -8,6 +10,14 @@ type UserSession = {
   role_id: number;
   role_name: string;
   accessToken: string;
+  userBranch: UserBranch[];
+};
+
+type UserBranch = {
+  branch: {
+    id: number;
+    name: string;
+  };
 };
 
 const HeaderAdmin = ({ session }: { session: Session }) => {
@@ -24,11 +34,7 @@ const HeaderAdmin = ({ session }: { session: Session }) => {
             >
               <i className="fa fa-fw fa-bars" />
             </button>
-            <div className="dropdown py-3">
-              <select className="custom-select">
-                <option value="">Cabang 1</option>
-              </select>
-            </div>
+            <div className="dropdown py-3"></div>
           </div>
           <div className="d-flex align-items-left">
             <div className="dropdown d-inline-block ml-2">

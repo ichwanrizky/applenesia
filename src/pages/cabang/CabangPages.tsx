@@ -1,22 +1,22 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import CreateCabang from "./CabangCreate";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
 import cabangServices from "@/services/cabangServices";
 import EditCabang from "./CabangEdit";
+import BranchOptions from "@/components/BranchOptions";
+
 type Session = {
-  user: UserSession;
-};
-type UserSession = {
   name: string;
   id: number;
   username: string;
   role_id: number;
   role_name: string;
   accessToken: string;
+  userBranch: any;
 };
 
 type isLoadingProps = {
@@ -53,13 +53,13 @@ const CabangPage = ({ session }: { session: Session | null }) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const accessToken = session!.user.accessToken;
+  const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await cabangServices.deleteCabang(accessToken, id);
+        const result = await cabangServices.deleteCabang(accessToken!, id);
 
         if (!result.status) {
           setAlert({
@@ -91,7 +91,7 @@ const CabangPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await cabangServices.getCabangById(accessToken, id);
+      const result = await cabangServices.getCabangById(accessToken!, id);
       if (!result.status) {
         setAlert({
           status: true,
@@ -139,9 +139,11 @@ const CabangPage = ({ session }: { session: Session | null }) => {
       clearTimeout(handler);
     };
   }, [search]);
+
   return (
     <>
       <div className="row">
+        <BranchOptions userBranch={session?.userBranch} />
         <div className="col-12">
           <div className="card">
             <div className="card-body">
@@ -283,7 +285,7 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                               `${process.env.NEXT_PUBLIC_API_URL}/api/cabang?page=${currentPage}`
                             );
                           }}
-                          accessToken={accessToken}
+                          accessToken={accessToken!}
                         />
                       )}
                       {isEditOpen && (
@@ -295,7 +297,7 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                               `${process.env.NEXT_PUBLIC_API_URL}/api/cabang?page=${currentPage}`
                             );
                           }}
-                          accessToken={accessToken}
+                          accessToken={accessToken!}
                           editData={editData}
                         />
                       )}

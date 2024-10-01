@@ -4,7 +4,7 @@ import userServices from "@/services/userServices";
 import { useState } from "react";
 import Select from "react-select";
 
-type CreateProps = {
+type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
@@ -30,7 +30,7 @@ type AlertProps = {
   message: string;
 };
 
-const CreateUser = (props: CreateProps) => {
+const CreateUser = (props: Props) => {
   const { isOpen, onClose, accessToken, dataCabang } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +51,7 @@ const CreateUser = (props: CreateProps) => {
     { value: "4", label: "TEKNISI CABANG" },
   ];
 
-  const optionsBranch = dataCabang.map((item) => ({
+  const optionsBranch = dataCabang?.map((item) => ({
     value: item.id,
     label: item.name?.toUpperCase(),
   }));

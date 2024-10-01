@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
         token.role_id = user.role.id;
         token.role_name = user.role.name;
         token.accessToken = user.accessToken;
+        token.userBranch = user.user_branch;
       }
       return token;
     },
@@ -86,6 +87,10 @@ export const authOptions: NextAuthOptions = {
       }
       if ("accessToken" in token) {
         session.user.accessToken = token.accessToken;
+      }
+
+      if ("userBranch" in token) {
+        session.user.userBranch = token.userBranch;
       }
 
       return session;

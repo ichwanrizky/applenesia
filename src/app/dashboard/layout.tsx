@@ -14,6 +14,14 @@ type UserSession = {
   role_id: number;
   role_name: string;
   accessToken: string;
+  userBranch: UserBranch[];
+};
+
+type UserBranch = {
+  branch: {
+    id: number;
+    name: string;
+  };
 };
 
 export default async function DashboardLayout({

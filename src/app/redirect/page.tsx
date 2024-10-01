@@ -1,35 +1,29 @@
-import { authOptions } from "@/libs/AuthOptions";
-import { getServerSession } from "next-auth/next";
+"use client";
+import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
-type Session = {
-  user: UserSession;
-};
-type UserSession = {
-  name: string;
-  id: number;
-  username: string;
-  role_id: number;
-  role_name: string;
-  accessToken: string;
-  refreshToken: string;
-};
+export default function Redirect() {
+  const { data: session, status }: any = useSession();
 
-export default async function Redirect() {
-  const session: Session | null = await getServerSession(authOptions);
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      redirect("/");
+    } else if (status === "authenticated") {
+      switch (session.user.role_name) {
+        case "ADMINISTRATOR":
+          redirect("/dashboard/cabang");
+      }
+    }
+  }, [status]);
 
-  if (!session) {
-    redirect("/");
+  if (status === "loading") {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="text-center">Please Wait ...</div>
+      </div>
+    );
   }
 
-  switch (session.user.role_name) {
-    case "ADMINISTRATOR":
-      redirect("/dashboard/cabang");
-  }
-
-  return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="text-center"> Please Wait ...</div>
-    </div>
-  );
+  return null;
 }

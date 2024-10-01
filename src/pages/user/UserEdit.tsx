@@ -4,7 +4,7 @@ import userServices from "@/services/userServices";
 import { useState } from "react";
 import Select from "react-select";
 
-type CreateProps = {
+type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
@@ -54,18 +54,18 @@ type AlertProps = {
   message: string;
 };
 
-const EditUser = (props: CreateProps) => {
+const EditUser = (props: Props) => {
   const { isOpen, onClose, accessToken, dataCabang, editData } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState(editData.name);
-  const [username, setUsername] = useState(editData.username);
-  const [telp, setTelp] = useState(editData.telp);
-  const [role, setRole] = useState(editData.role.id.toString());
+  const [name, setName] = useState(editData?.name || "");
+  const [username, setUsername] = useState(editData?.username || "");
+  const [telp, setTelp] = useState(editData?.telp || "");
+  const [role, setRole] = useState(editData?.role.id.toString() || "");
   const [manageBranch, setManageBranch] = useState<any>(
-    editData.user_branch?.map((item) => ({
+    editData?.user_branch?.map((item) => ({
       value: item.branch.id,
       label: item.branch.name?.toUpperCase(),
     }))
@@ -78,7 +78,7 @@ const EditUser = (props: CreateProps) => {
     { value: "4", label: "TEKNISI CABANG" },
   ];
 
-  const optionsBranch = dataCabang.map((item) => ({
+  const optionsBranch = dataCabang?.map((item) => ({
     value: item.id,
     label: item.name?.toUpperCase(),
   }));

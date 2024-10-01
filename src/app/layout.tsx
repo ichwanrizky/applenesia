@@ -60,7 +60,6 @@ export default function RootLayout({
       </head>
       <body>
         {children}
-
         <div className="menu-overlay"></div>
 
         <Script src="/themes/assets/js/jquery.min.js"></Script>
