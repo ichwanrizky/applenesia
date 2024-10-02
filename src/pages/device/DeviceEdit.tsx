@@ -37,8 +37,8 @@ const EditDevice = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState(editData.name || "");
-  const [type, setType] = useState(editData.device_type_id || "");
+  const [name, setName] = useState(editData?.name || "");
+  const [type, setType] = useState(editData?.device_type_id || "");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

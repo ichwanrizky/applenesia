@@ -171,7 +171,7 @@ const SidebarAdmin = () => {
             <li className="menu-title">CONFIGURATION</li>
             <li>
               <a href="/dashboard/device" className="waves-effect">
-                <i className="mdi mdi mdi-office-building" />
+                <i className="mdi mdi-tablet-cellphone" />
                 <span>Data Device</span>
               </a>
             </li>
