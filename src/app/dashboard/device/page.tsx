@@ -1,5 +1,5 @@
 import { authOptions } from "@/libs/AuthOptions";
-import UserPage from "@/pages/user/UserPage";
+import DevicePage from "@/pages/device/DevicePage";
 import { getServerSession } from "next-auth";
 
 type Session = {
@@ -15,7 +15,7 @@ type UserSession = {
   userBranch: any;
 };
 
-export default async function User() {
+export default async function Cabang() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
   if (!session) {
@@ -28,19 +28,19 @@ export default async function User() {
         <div className="row">
           <div className="col-12">
             <div className="page-title-box d-flex align-items-center justify-content-between">
-              <h4 className="mb-0 font-size-18">Data User</h4>
+              <h4 className="mb-0 font-size-18">Data Device</h4>
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li className="breadcrumb-item">
                     <a href="#">Dashboard</a>
                   </li>
-                  <li className="breadcrumb-item active">Data User</li>
+                  <li className="breadcrumb-item active">Data Device</li>
                 </ol>
               </div>
             </div>
           </div>
         </div>
-        <UserPage session={session.user} />
+        <DevicePage session={session.user} />
       </div>
     </div>
   );

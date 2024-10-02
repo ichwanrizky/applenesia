@@ -170,6 +170,12 @@ const SidebarAdmin = () => {
             </li> */}
             <li className="menu-title">CONFIGURATION</li>
             <li>
+              <a href="/dashboard/device" className="waves-effect">
+                <i className="mdi mdi mdi-office-building" />
+                <span>Data Device</span>
+              </a>
+            </li>
+            <li>
               <a href="/dashboard/cabang" className="waves-effect">
                 <i className="mdi mdi mdi-office-building" />
                 <span>Data Cabang</span>

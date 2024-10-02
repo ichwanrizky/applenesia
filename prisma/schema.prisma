@@ -52,7 +52,6 @@ model branch {
   longitude   String?
   is_deleted  Boolean       @default(false)
   user_branch user_branch[]
-  device      device[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -97,8 +96,6 @@ model device {
   name           String
   device_type_id Int
   device_type    device_type @relation(fields: [device_type_id], references: [id])
-  branch_id      Int
-  branch         branch      @relation(fields: [branch_id], references: [id])
 }
 
 model category {
