@@ -1,5 +1,7 @@
 type Props = {
   userBranch: UserBranch[];
+  role?: string;
+  setBranchAccess: (value: string) => void;
 };
 
 type UserBranch = {
@@ -9,13 +11,29 @@ type UserBranch = {
   };
 };
 const BranchOptions = (props: Props) => {
-  const { userBranch } = props;
+  const { userBranch, role, setBranchAccess } = props;
   return (
     <div className="dropdown col-auto mb-2">
-      <select className="custom-select">
-        {userBranch?.map((item) => (
-          <option value="">{item.branch.name?.toUpperCase()}</option>
-        ))}
+      <select
+        className="custom-select"
+        onChange={(e) => setBranchAccess(e.target.value)}
+      >
+        {role === "ADMINISTRATOR" ? (
+          <>
+            <option value="all">SEMUA CABANG</option>
+            {userBranch?.map((item, index) => (
+              <option value={item.branch.id} key={index}>
+                {item.branch.name?.toUpperCase()}
+              </option>
+            ))}
+          </>
+        ) : (
+          userBranch?.map((item, index) => (
+            <option value={item.branch.id} key={index}>
+              {item.branch.name?.toUpperCase()}
+            </option>
+          ))
+        )}
       </select>
     </div>
   );

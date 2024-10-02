@@ -47,18 +47,50 @@ export const GET = async (request: Request) => {
     const search = searchParams.get("search");
     // page
     const page = searchParams.get("page");
+    // branch access
+    const branchaccess = searchParams.get("branchaccess");
+
+    const checkUserBranch = user_branch?.filter(
+      (item: any) => item.branch.id == branchaccess
+    );
+
+    if (
+      (!checkUserBranch || checkUserBranch.length === 0) &&
+      role !== "ADMINISTRATOR"
+    ) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized access",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const condition = {
       where: {
         is_deleted: false,
         ...(role === "ADMINISTRATOR"
-          ? {}
+          ? {
+              ...(branchaccess === "all"
+                ? {}
+                : {
+                    user_branch: {
+                      some: {
+                        branch_id: Number(branchaccess),
+                      },
+                    },
+                  }),
+            }
           : {
               user_branch: {
                 some: {
-                  branch_id: {
-                    in: user_branch.map((item: any) => item.branch.id),
-                  },
+                  branch_id: Number(branchaccess),
                 },
               },
             }),
@@ -119,26 +151,6 @@ export const GET = async (request: Request) => {
       };
     });
 
-    const cabang = await prisma.branch.findMany({
-      where: {
-        is_deleted: false,
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              user_branch: {
-                some: {
-                  branch_id: {
-                    in: user_branch.map((item: any) => item.branch.id),
-                  },
-                },
-              },
-            }),
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
-
     return new NextResponse(
       JSON.stringify({
         status: true,
@@ -146,7 +158,6 @@ export const GET = async (request: Request) => {
         itemsPerPage: itemPerPage,
         total: totalData,
         data: newData,
-        cabang,
       }),
       {
         status: 200,

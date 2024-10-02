@@ -8,7 +8,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  dataCabang: Branch[];
+  dataCabang: UserBranch[];
   editData: Users;
 };
 
@@ -33,6 +33,13 @@ type Users = {
 type Role = {
   id: number;
   name: string;
+};
+
+type UserBranch = {
+  branch: {
+    id: number;
+    name: string;
+  };
 };
 
 type Branch = {
@@ -79,8 +86,8 @@ const EditUser = (props: Props) => {
   ];
 
   const optionsBranch = dataCabang?.map((item) => ({
-    value: item.id,
-    label: item.name?.toUpperCase(),
+    value: item.branch.id,
+    label: item.branch.name?.toUpperCase(),
   }));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

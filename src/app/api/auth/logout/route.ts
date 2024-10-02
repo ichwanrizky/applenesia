@@ -25,15 +25,12 @@ export const GET = async (request: Request) => {
 
     const token = authorization?.split(" ")[1];
 
-    const expiresToken = await prisma.token.updateMany({
-      data: {
-        is_expired: true,
-      },
-      where: {
-        access_token: token,
-        user_id: session[1].id,
-      },
-    });
+    const expiresToken = await prisma.$executeRaw<any>`
+      UPDATE token
+      SET is_expired = true
+      WHERE LOWER(access_token) = LOWER(${token})
+      AND user_id = ${session[1].id}
+    `;
 
     if (!expiresToken) {
       return new NextResponse(

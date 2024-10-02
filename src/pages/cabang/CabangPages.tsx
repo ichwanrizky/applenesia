@@ -7,7 +7,6 @@ import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
 import cabangServices from "@/services/cabangServices";
 import EditCabang from "./CabangEdit";
-import BranchOptions from "@/components/BranchOptions";
 
 type Session = {
   name: string;
@@ -16,7 +15,6 @@ type Session = {
   role_id: number;
   role_name: string;
   accessToken: string;
-  userBranch: any;
 };
 
 type isLoadingProps = {
@@ -143,7 +141,6 @@ const CabangPage = ({ session }: { session: Session | null }) => {
   return (
     <>
       <div className="row">
-        <BranchOptions userBranch={session?.userBranch} />
         <div className="col-12">
           <div className="card">
             <div className="card-body">

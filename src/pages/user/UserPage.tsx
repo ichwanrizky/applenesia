@@ -1,6 +1,6 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
@@ -8,6 +8,7 @@ import CreateUser from "./UserCreate";
 import userServices from "@/services/userServices";
 import EditUser from "./UserEdit";
 import React from "react";
+import BranchOptions from "@/components/BranchOptions";
 
 type Session = {
   name: string;
@@ -16,6 +17,7 @@ type Session = {
   role_id: number;
   role_name: string;
   accessToken: string;
+  userBranch: any;
 };
 
 type isLoadingProps = {
@@ -74,6 +76,13 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [branchAccess, setBranchAccess] = useState(
+    session?.role_name === "ADMINISTRATOR"
+      ? "all"
+      : session?.userBranch.length > 0
+      ? session?.userBranch[0].branch.id?.toString()
+      : ""
+  );
 
   const accessToken = session?.accessToken;
 
@@ -96,7 +105,9 @@ const UserPage = ({ session }: { session: Session | null }) => {
             message: result.message,
           });
           setCurrentPage(1);
-          mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/user?page=1`);
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
+          );
         }
       } catch (error) {
         setAlert({
@@ -153,7 +164,9 @@ const UserPage = ({ session }: { session: Session | null }) => {
             message: result.message,
           });
           setCurrentPage(1);
-          mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/user?page=1`);
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
+          );
         }
       } catch (error) {
         setAlert({
@@ -178,8 +191,8 @@ const UserPage = ({ session }: { session: Session | null }) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}&search=${debouncedSearch}`,
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=${currentPage}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -194,6 +207,11 @@ const UserPage = ({ session }: { session: Session | null }) => {
   return (
     <>
       <div className="row">
+        <BranchOptions
+          userBranch={session?.userBranch}
+          role={session?.role_name}
+          setBranchAccess={setBranchAccess}
+        />
         <div className="col-12">
           <div className="card">
             <div className="card-body">
@@ -264,11 +282,19 @@ const UserPage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "1%", textAlign: "center" }}>
                                 No
                               </th>
-                              <th>Nama</th>
-                              <th>Username</th>
-                              <th>Telp</th>
-                              <th>Role</th>
-                              <th>Manage Cabang</th>
+                              <th style={{ textAlign: "center" }}>Nama</th>
+                              <th style={{ width: "15%", textAlign: "center" }}>
+                                Username
+                              </th>
+                              <th style={{ width: "10%", textAlign: "center" }}>
+                                Telp
+                              </th>
+                              <th style={{ width: "15%", textAlign: "center" }}>
+                                Role
+                              </th>
+                              <th style={{ width: "20%", textAlign: "center" }}>
+                                Manage Cabang
+                              </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
                                 Reset Password
                               </th>
@@ -277,14 +303,14 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           <tbody>
                             {items.length === 0 ? (
                               <tr>
-                                <td colSpan={7} align="center">
+                                <td colSpan={8} align="center">
                                   Tidak ada data
                                 </td>
                               </tr>
                             ) : (
                               items.map((item: Users, index: number) => (
                                 <tr key={index}>
-                                  <td align="center">
+                                  <td align="center" className="align-middle">
                                     <CustomButton
                                       buttonType="action"
                                       indexData={index}
@@ -301,13 +327,13 @@ const UserPage = ({ session }: { session: Session | null }) => {
                                   <td className="align-middle">
                                     {item.name?.toUpperCase()}
                                   </td>
-                                  <td className="align-middle" align="center">
+                                  <td className="align-middle" align="left">
                                     {item.username}
                                   </td>
                                   <td className="align-middle" align="center">
                                     {item.telp}
                                   </td>
-                                  <td className="align-middle">
+                                  <td className="align-middle" align="center">
                                     {item.role.name?.toUpperCase()}
                                   </td>
                                   <td className="align-middle">
@@ -356,11 +382,11 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           onClose={() => {
                             setIsCreateOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          dataCabang={data.cabang as Branch[]}
+                          dataCabang={session?.userBranch}
                         />
                       )}
                       {isEditOpen && (
@@ -369,11 +395,11 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           onClose={() => {
                             setisEditOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/user?page=${currentPage}`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          dataCabang={data.cabang as Branch[]}
+                          dataCabang={session?.userBranch}
                           editData={editData}
                         />
                       )}

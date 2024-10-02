@@ -1,6 +1,7 @@
 "use client";
 import Modal from "@/components/Modal";
 import userServices from "@/services/userServices";
+import { user_branch } from "@prisma/client";
 import { useState } from "react";
 import Select from "react-select";
 
@@ -8,20 +9,14 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  dataCabang: Branch[];
+  dataCabang: UserBranch[];
 };
 
-type Branch = {
-  number: number;
-  id: number;
-  uuid: string;
-  name: string;
-  address: string;
-  alias: string;
-  telp: string;
-  latitude: null;
-  longitude: null;
-  is_deleted: boolean;
+type UserBranch = {
+  branch: {
+    id: number;
+    name: string;
+  };
 };
 
 type AlertProps = {
@@ -42,7 +37,7 @@ const CreateUser = (props: Props) => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [telp, setTelp] = useState("");
   const [role, setRole] = useState("");
-  const [manageBranch, setManageBranch] = useState<Branch | []>([]);
+  const [manageBranch, setManageBranch] = useState<UserBranch | []>([]);
 
   const optionsRole = [
     { value: "1", label: "ADMINISTRATOR" },
@@ -52,8 +47,8 @@ const CreateUser = (props: Props) => {
   ];
 
   const optionsBranch = dataCabang?.map((item) => ({
-    value: item.id,
-    label: item.name?.toUpperCase(),
+    value: item.branch.id,
+    label: item.branch.name?.toUpperCase(),
   }));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
