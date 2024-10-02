@@ -21,7 +21,7 @@ model role {
 
 enum role_name {
   ADMINISTRATOR
-  ADMIN_CABANG
+  ADMINCABANG
   CASHIER
   TEKNISI
 }
@@ -51,6 +51,7 @@ model branch {
   longitude   String?
   is_deleted  Boolean       @default(false)
   user_branch user_branch[]
+  device      device[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -65,13 +66,42 @@ model user_branch {
 }
 
 model token {
-  id           Int      @id @unique @default(autoincrement())
-  access_token String   @db.VarChar(1000)
-  created_at   DateTime @db.DateTime(0)
-  expired_at   DateTime @db.DateTime(0)
+  id           Int          @id @unique @default(autoincrement())
+  access_token String       @db.VarChar(1000)
+  created_at   DateTime     @db.DateTime(0)
+  expired_at   DateTime     @db.DateTime(0)
   user_id      Int
-  user         user     @relation(fields: [user_id], references: [id])
-  is_expired   Boolean  @default(false)
+  user         user         @relation(fields: [user_id], references: [id])
+  is_expired   Boolean      @default(false)
+  access_log   access_log[]
 
   @@index([access_token], map: "token_access_token")
+}
+
+model access_log {
+  id          Int      @id @unique @default(autoincrement())
+  token_id    Int
+  token       token    @relation(fields: [token_id], references: [id])
+  description String
+  created_at  DateTime @db.DateTime(0)
+}
+
+model device_type {
+  id     Int      @id @unique @default(autoincrement())
+  name   String
+  device device[]
+}
+
+model device {
+  id             Int         @id @unique @default(autoincrement())
+  name           String
+  device_type_id Int
+  device_type    device_type @relation(fields: [device_type_id], references: [id])
+  branch_id      Int
+  branch         branch      @relation(fields: [branch_id], references: [id])
+}
+
+model category {
+  id   Int    @id @unique @default(autoincrement())
+  name String
 }

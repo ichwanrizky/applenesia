@@ -25,7 +25,7 @@ export const GET = async (request: Request) => {
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMIN_CABANG") {
+    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
       return new NextResponse(
         JSON.stringify({
           status: false,
@@ -191,7 +191,7 @@ export const POST = async (request: Request) => {
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMIN_CABANG") {
+    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
       return new NextResponse(
         JSON.stringify({
           status: false,
