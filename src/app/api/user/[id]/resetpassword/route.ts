@@ -2,6 +2,7 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import { NextResponse } from "next/server";
 import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
+import { accessLog } from "@/libs/AccessLog";
 const bcrypt = require("bcrypt");
 
 export const GET = async (
@@ -104,6 +105,8 @@ export const GET = async (
         }
       );
     }
+
+    accessLog(`reset password user id: ${reset.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
 import { formattedDateNow } from "@/libs/DateFormat";
+import { accessLog } from "@/libs/AccessLog";
 const bcrypt = require("bcrypt");
 
 export const GET = async (request: Request) => {
@@ -300,6 +301,8 @@ export const POST = async (request: Request) => {
         }
       );
     }
+
+    accessLog(`create user id: ${create.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({

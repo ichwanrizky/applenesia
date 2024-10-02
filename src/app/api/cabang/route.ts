@@ -2,6 +2,7 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import { NextResponse } from "next/server";
 import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
+import { accessLog } from "@/libs/AccessLog";
 
 export const GET = async (request: Request) => {
   try {
@@ -195,6 +196,8 @@ export const POST = async (request: Request) => {
         }
       );
     }
+
+    accessLog(`create cabang id: ${create.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({

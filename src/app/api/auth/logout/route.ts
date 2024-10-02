@@ -2,6 +2,7 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import prisma from "@/libs/ConnPrisma";
 import { NextResponse } from "next/server";
 import { checkSession } from "@/libs/CheckSession";
+import { accessLog } from "@/libs/AccessLog";
 
 export const GET = async (request: Request) => {
   try {
@@ -46,6 +47,8 @@ export const GET = async (request: Request) => {
         }
       );
     }
+
+    accessLog("logout", session[1].id);
 
     return new NextResponse(
       JSON.stringify({

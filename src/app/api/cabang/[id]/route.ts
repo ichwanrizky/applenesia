@@ -2,6 +2,7 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import { NextResponse } from "next/server";
 import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
+import { accessLog } from "@/libs/AccessLog";
 
 export const GET = async (
   request: Request,
@@ -182,6 +183,8 @@ export const PUT = async (
       );
     }
 
+    accessLog(`update cabang id: ${update.id}`, session[1].id);
+
     return new NextResponse(
       JSON.stringify({
         status: true,
@@ -262,6 +265,8 @@ export const DELETE = async (
         }
       );
     }
+
+    accessLog(`delete cabang id: ${deleteData.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({

@@ -2,6 +2,7 @@ import { handleError } from "@/libs/ErrorHandlrer";
 import prisma from "@/libs/ConnPrisma";
 import { NextResponse } from "next/server";
 import { formattedDateNow } from "@/libs/DateFormat";
+import { accessLog } from "@/libs/AccessLog";
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -127,6 +128,8 @@ export const POST = async (request: Request) => {
     } else {
       accessToken = existToken?.access_token;
     }
+
+    accessLog("login", user.id);
 
     return new NextResponse(
       JSON.stringify({
