@@ -23,18 +23,26 @@ export const GET = async (request: Request) => {
       );
     }
 
-    const role = session[1].role.name;
-    const user_branch = session[1]?.user_branch;
-
     const searchParams = new URL(request.url).searchParams;
 
     // search
     const search = searchParams.get("search");
     // page
     const page = searchParams.get("page");
+    // device_type
+    const device_type = searchParams.get("device_type");
+
+    const device_type_data = await prisma.device_type.findMany({});
 
     const condition = {
       where: {
+        ...(device_type === ""
+          ? {
+              device_type_id: device_type_data[0].id,
+            }
+          : {
+              device_type_id: Number(device_type),
+            }),
         ...(search && {
           OR: [
             {
@@ -62,7 +70,6 @@ export const GET = async (request: Request) => {
         device_type: true,
       },
       ...condition,
-
       orderBy: { name: "asc" },
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
@@ -88,8 +95,6 @@ export const GET = async (request: Request) => {
       };
     });
 
-    const device_type = await prisma.device_type.findMany({});
-
     return new NextResponse(
       JSON.stringify({
         status: true,
@@ -97,7 +102,7 @@ export const GET = async (request: Request) => {
         itemsPerPage: itemPerPage,
         total: totalData,
         data: newData,
-        device_type: device_type,
+        device_type: device_type_data,
       }),
       {
         status: 200,

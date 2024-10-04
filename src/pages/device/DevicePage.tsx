@@ -49,6 +49,8 @@ const DevicePage = ({ session }: { session: Session | null }) => {
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [deviceType, setDeviceType] = useState("");
+  console.log("🚀 ~ DevicePage ~ deviceType:", deviceType);
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
@@ -123,8 +125,8 @@ const DevicePage = ({ session }: { session: Session | null }) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/device?page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/device?page=${currentPage}&search=${debouncedSearch}`,
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -149,6 +151,19 @@ const DevicePage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
+                    <select
+                      className="custom-select custom-select-sm w-auto mr-2"
+                      onChange={(e) => setDeviceType(e.target.value)}
+                      value={
+                        deviceType === "" ? data.device_type[0]?.id : deviceType
+                      }
+                    >
+                      {data.device_type?.map((item: any, index: number) => (
+                        <option value={item.id} key={index}>
+                          {item.name?.toUpperCase()}
+                        </option>
+                      ))}
+                    </select>
                     <input
                       className="form-control form-control-sm"
                       placeholder="Search"
