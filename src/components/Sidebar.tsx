@@ -169,12 +169,7 @@ const SidebarAdmin = () => {
               </ul>
             </li> */}
             <li className="menu-title">CONFIGURATION</li>
-            <li>
-              <a href="/dashboard/device" className="waves-effect">
-                <i className="mdi mdi-tablet-cellphone" />
-                <span>Data Device</span>
-              </a>
-            </li>
+
             <li>
               <a href="/dashboard/cabang" className="waves-effect">
                 <i className="mdi mdi mdi-office-building" />
@@ -185,6 +180,18 @@ const SidebarAdmin = () => {
               <a href="/dashboard/user" className="waves-effect">
                 <i className="mdi mdi-account-multiple-outline" />
                 <span>Data User</span>
+              </a>
+            </li>
+            <li>
+              <a href="/dashboard/device" className="waves-effect">
+                <i className="mdi mdi-tablet-cellphone" />
+                <span>Data Device</span>
+              </a>
+            </li>
+            <li>
+              <a href="/dashboard/kategori" className="waves-effect">
+                <i className="mdi mdi-tablet-cellphone" />
+                <span>Data Kategori</span>
               </a>
             </li>
           </ul>

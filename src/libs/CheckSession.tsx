@@ -2,7 +2,11 @@ import prisma from "./ConnPrisma";
 import { formattedDateNow } from "./DateFormat";
 const jwt = require("jsonwebtoken");
 
-export const checkSession = async (authorization: any) => {
+export const checkSession = async (
+  authorization: any,
+  module?: string,
+  method?: string
+) => {
   // check if need authorization
   if (!authorization) {
     return [false, null, "unauthorized"];

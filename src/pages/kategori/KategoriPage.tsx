@@ -5,9 +5,9 @@ import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
 import React from "react";
-import CreateDevice from "./DeviceCreate";
-import EditDevice from "./DeviceEdit";
-import deviceServices from "@/services/deviceServices";
+import CreateKategori from "./KategoriCreate";
+import EditKategori from "./KategoriEdit";
+import categoryServices from "@/services/categoryServices";
 
 type Session = {
   name: string;
@@ -23,15 +23,10 @@ type isLoadingProps = {
   [key: number]: boolean;
 };
 
-type Device = {
+type Catgory = {
   number: number;
   id: number;
   name: string;
-  device_type_id: number;
-  device_type: {
-    id: number;
-    name: string;
-  };
 };
 type AlertProps = {
   status: boolean;
@@ -39,24 +34,23 @@ type AlertProps = {
   message: string;
 };
 
-const DevicePage = ({ session }: { session: Session | null }) => {
+const KategoriPage = ({ session }: { session: Session | null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setisEditOpen] = useState(false);
-  const [editData, setEditData] = useState({} as Device);
+  const [editData, setEditData] = useState({} as Catgory);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [deviceType, setDeviceType] = useState("");
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await deviceServices.deleteDevice(accessToken!, id);
+        const result = await categoryServices.deleteCategory(accessToken!, id);
 
         if (!result.status) {
           setAlert({
@@ -71,9 +65,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
             message: result.message,
           });
           setCurrentPage(1);
-          mutate(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
-          );
+          mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`);
         }
       } catch (error) {
         setAlert({
@@ -90,7 +82,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await deviceServices.getDeviceById(accessToken!, id);
+      const result = await categoryServices.getCategoryById(accessToken!, id);
       if (!result.status) {
         setAlert({
           status: true,
@@ -125,8 +117,8 @@ const DevicePage = ({ session }: { session: Session | null }) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}&search=${debouncedSearch}`,
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=${currentPage}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -151,19 +143,6 @@ const DevicePage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    <select
-                      className="custom-select custom-select-sm w-auto mr-2"
-                      onChange={(e) => setDeviceType(e.target.value)}
-                      value={
-                        deviceType === "" ? data.device_type[0]?.id : deviceType
-                      }
-                    >
-                      {data.device_type?.map((item: any, index: number) => (
-                        <option value={item.id} key={index}>
-                          {item.name?.toUpperCase()}
-                        </option>
-                      ))}
-                    </select>
                     <input
                       className="form-control form-control-sm"
                       placeholder="Search"
@@ -225,10 +204,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                                 No
                               </th>
                               <th style={{ textAlign: "center" }}>
-                                Nama Device
-                              </th>
-                              <th style={{ textAlign: "center", width: "20%" }}>
-                                Tipe Device
+                                Nama Kategori
                               </th>
                             </tr>
                           </thead>
@@ -240,7 +216,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                                 </td>
                               </tr>
                             ) : (
-                              items.map((item: Device, index: number) => (
+                              items.map((item: Catgory, index: number) => (
                                 <tr key={index}>
                                   <td align="center" className="align-middle">
                                     <CustomButton
@@ -258,9 +234,6 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                                   </td>
                                   <td align="left" className="align-middle">
                                     {item.name}
-                                  </td>
-                                  <td align="center" className="align-middle">
-                                    {item.device_type.name?.toUpperCase()}
                                   </td>
                                 </tr>
                               ))
@@ -282,29 +255,27 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                       )}
 
                       {isCreateOpen && (
-                        <CreateDevice
+                        <CreateKategori
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
                         />
                       )}
                       {isEditOpen && (
-                        <EditDevice
+                        <EditKategori
                           isOpen={isEditOpen}
                           onClose={() => {
                             setisEditOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
                           editData={editData}
                         />
                       )}
@@ -320,4 +291,4 @@ const DevicePage = ({ session }: { session: Session | null }) => {
   );
 };
 
-export default DevicePage;
+export default KategoriPage;

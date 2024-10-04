@@ -52,6 +52,7 @@ model branch {
   longitude   String?
   is_deleted  Boolean       @default(false)
   user_branch user_branch[]
+  product     product[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -86,19 +87,68 @@ model access_log {
 }
 
 model device_type {
-  id     Int      @id @unique @default(autoincrement())
-  name   String
-  device device[]
+  id            Int             @id @unique @default(autoincrement())
+  name          String          @unique
+  device        device[]
+  form_checking form_checking[]
 }
 
 model device {
+  id             Int              @id @unique @default(autoincrement())
+  name           String           @unique
+  device_type_id Int
+  device_type    device_type      @relation(fields: [device_type_id], references: [id])
+  product_device product_device[]
+}
+
+model category {
+  id      Int       @id @unique @default(autoincrement())
+  name    String    @unique
+  product product[]
+}
+
+model form_checking {
   id             Int         @id @unique @default(autoincrement())
-  name           String
+  name           String      @unique
   device_type_id Int
   device_type    device_type @relation(fields: [device_type_id], references: [id])
 }
 
-model category {
-  id   Int    @id @unique @default(autoincrement())
-  name String
+model product {
+  id             Int              @id @unique @default(autoincrement())
+  name           String
+  sub_name       String?
+  sell_price     Int              @default(0)
+  purchase_price Int              @default(0)
+  warranty       Int              @default(0)
+  is_inventory   Boolean          @default(false)
+  is_pos         Boolean          @default(false)
+  product_type   product_type
+  created_at     DateTime         @db.DateTime(0)
+  is_deleted     Boolean          @default(false)
+  branch_id      Int
+  branch         branch           @relation(fields: [branch_id], references: [id])
+  category_id    Int
+  category       category         @relation(fields: [category_id], references: [id])
+  product_device product_device[]
+
+  @@index([branch_id], map: "product_branch_id")
+}
+
+enum product_type {
+  INTERFACE
+  MACHINE
+  ACCESSORY
+  OTHER
+}
+
+model product_device {
+  product_id Int
+  product    product @relation(fields: [product_id], references: [id])
+  device_id  Int
+  device     device  @relation(fields: [device_id], references: [id])
+
+  @@id([product_id, device_id])
+  @@index([device_id], map: "product_device_device_id")
+  @@index([product_id], map: "product_device_product_id")
 }

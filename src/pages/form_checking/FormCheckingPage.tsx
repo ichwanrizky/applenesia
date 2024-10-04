@@ -5,9 +5,9 @@ import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
 import React from "react";
-import CreateDevice from "./DeviceCreate";
-import EditDevice from "./DeviceEdit";
 import deviceServices from "@/services/deviceServices";
+import CreateFormChecking from "./FormCheckingCreate";
+import EditFormChecking from "./FormCheckingEdit";
 
 type Session = {
   name: string;
@@ -23,7 +23,7 @@ type isLoadingProps = {
   [key: number]: boolean;
 };
 
-type Device = {
+type FormChecking = {
   number: number;
   id: number;
   name: string;
@@ -39,13 +39,13 @@ type AlertProps = {
   message: string;
 };
 
-const DevicePage = ({ session }: { session: Session | null }) => {
+const FormCheckingPage = ({ session }: { session: Session | null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setisEditOpen] = useState(false);
-  const [editData, setEditData] = useState({} as Device);
+  const [editData, setEditData] = useState({} as FormChecking);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -72,7 +72,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
           });
           setCurrentPage(1);
           mutate(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
           );
         }
       } catch (error) {
@@ -125,8 +125,8 @@ const DevicePage = ({ session }: { session: Session | null }) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=${currentPage}&search=${debouncedSearch}`,
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=${currentPage}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -225,7 +225,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                                 No
                               </th>
                               <th style={{ textAlign: "center" }}>
-                                Nama Device
+                                List Checking
                               </th>
                               <th style={{ textAlign: "center", width: "20%" }}>
                                 Tipe Device
@@ -240,7 +240,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                                 </td>
                               </tr>
                             ) : (
-                              items.map((item: Device, index: number) => (
+                              items.map((item: FormChecking, index: number) => (
                                 <tr key={index}>
                                   <td align="center" className="align-middle">
                                     <CustomButton
@@ -282,12 +282,12 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                       )}
 
                       {isCreateOpen && (
-                        <CreateDevice
+                        <CreateFormChecking
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
@@ -295,12 +295,12 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                         />
                       )}
                       {isEditOpen && (
-                        <EditDevice
+                        <EditFormChecking
                           isOpen={isEditOpen}
                           onClose={() => {
                             setisEditOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
@@ -320,4 +320,4 @@ const DevicePage = ({ session }: { session: Session | null }) => {
   );
 };
 
-export default DevicePage;
+export default FormCheckingPage;
