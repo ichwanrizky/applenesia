@@ -1,0 +1,89 @@
+import { formattedDateNow } from "../src/libs/DateFormat";
+import { PrismaClient } from "@prisma/client";
+
+const bcrypt = require("bcrypt");
+const prisma = new PrismaClient();
+
+async function main() {
+  await prisma.$transaction(async (prisma) => {
+    await prisma.role.deleteMany({}),
+      await prisma.device_type.deleteMany({}),
+      await prisma.user.deleteMany({}),
+      await prisma.branch.deleteMany({}),
+      await prisma.role.createMany({
+        data: [
+          {
+            id: 1,
+            name: "ADMINISTRATOR",
+          },
+          {
+            id: 2,
+            name: "ADMINCABANG",
+          },
+          {
+            id: 3,
+            name: "CASHIER",
+          },
+          {
+            id: 4,
+            name: "TEKNISI",
+          },
+        ],
+      });
+
+    await prisma.device_type.createMany({
+      data: [
+        {
+          id: 1,
+          name: "iphone",
+        },
+        {
+          id: 2,
+          name: "ipad",
+        },
+        {
+          id: 3,
+          name: "macbook",
+        },
+      ],
+    });
+
+    const branch = await prisma.branch.create({
+      data: {
+        name: "APPLENESIA BATAM",
+        address: "Batam Center",
+        alias: "AB",
+        telp: "08117779914",
+      },
+    });
+
+    const user = await prisma.user.create({
+      data: {
+        id: 1,
+        username: "ichwan",
+        password: await bcrypt.hash("ichwan", 10),
+        name: "Ichwan Rizky",
+        telp: "08117779914",
+        role_id: 1,
+        created_at: formattedDateNow(),
+      },
+    });
+
+    await prisma.user_branch.create({
+      data: {
+        user_id: user.id,
+        branch_id: branch.id,
+      },
+    });
+  });
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.log(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

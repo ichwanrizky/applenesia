@@ -39,5 +39,18 @@ export const checkSession = async (
     return [false, null, "session expired"];
   }
 
+  const role_name = decoded.data.role.name;
+
+  if (module) {
+    switch (module) {
+      case "product":
+        if (method === "GET" && role_name === "ADMINISTRATOR") {
+          return [true, decoded.data, null];
+        }
+
+        return [false, null, "unauthorized"];
+    }
+  }
+
   return [true, decoded.data, null];
 };
