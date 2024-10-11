@@ -107,7 +107,7 @@ export const PUT = async (
     const update = await prisma.device.update({
       data: {
         name,
-        device_type_id,
+        device_type_id: Number(device_type_id),
       },
       where: {
         id: Number(params.id),

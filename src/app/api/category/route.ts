@@ -164,6 +164,6 @@ export const POST = async (request: Request) => {
       }
     );
   } catch (error) {
-    handleError(error);
+    return handleError(error);
   }
 };

@@ -155,7 +155,7 @@ export const POST = async (request: Request) => {
     const create = await prisma.device.create({
       data: {
         name,
-        device_type_id,
+        device_type_id: Number(device_type_id),
       },
     });
 
@@ -187,6 +187,6 @@ export const POST = async (request: Request) => {
       }
     );
   } catch (error) {
-    handleError(error);
+    return handleError(error);
   }
 };

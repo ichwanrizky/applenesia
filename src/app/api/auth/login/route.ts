@@ -71,7 +71,6 @@ export const POST = async (request: Request) => {
     const user = { ...findUser, password: undefined, role_id: undefined };
 
     let accessToken;
-    let refreshToken;
 
     const existToken = await prisma.token.findFirst({
       where: {
@@ -103,16 +102,6 @@ export const POST = async (request: Request) => {
         }
       );
 
-      refreshToken = await jsonwebtoken.sign(
-        {
-          data: user,
-        },
-        process.env.REFRESH_TOKEN,
-        {
-          expiresIn: "30d",
-        }
-      );
-
       const expiredDate = formattedDateNow();
       expiredDate.setHours(expiredDate.getHours() + 8);
 
@@ -135,7 +124,7 @@ export const POST = async (request: Request) => {
       JSON.stringify({
         status: true,
         message: "Login success",
-        data: { ...user, accessToken, refreshToken },
+        data: { ...user, accessToken },
       }),
       {
         status: 200,
