@@ -1,6 +1,6 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
@@ -10,6 +10,8 @@ import EditKategori from "./ProductEdit";
 import categoryServices from "@/services/categoryServices";
 import CreateProduct from "./ProductCreate";
 import productServices from "@/services/productServices";
+import BranchOptions from "@/components/BranchOptions";
+import SearchInput from "@/components/SearchInput";
 
 type Session = {
   name: string;
@@ -25,11 +27,42 @@ type isLoadingProps = {
   [key: number]: boolean;
 };
 
-type Catgory = {
+type Product = {
   number: number;
   id: number;
   name: string;
+  sub_name: string;
+  sell_price: number;
+  purchase_price: number;
+  warranty: number;
+  is_inventory: boolean;
+  is_pos: boolean;
+  product_type: string;
+  created_at: Date;
+  is_deleted: boolean;
+  branch_id: number;
+  product_category: {
+    category: {
+      id: number;
+      name: string;
+    };
+  }[];
+  product_device: {
+    device: {
+      id: number;
+      name: string;
+      device_type: {
+        id: number;
+        name: string;
+      };
+    };
+  }[];
+  branch: {
+    id: number;
+    name: string;
+  };
 };
+
 type AlertProps = {
   status: boolean;
   color: string;
@@ -53,16 +86,59 @@ const ProductPage = ({ session }: { session: Session | null }) => {
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setisEditOpen] = useState(false);
-  const [editData, setEditData] = useState({} as Catgory);
+  const [editData, setEditData] = useState({} as Product);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [productLib, setProductLib] = useState({} as ProductLib);
+  const [branchAccess, setBranchAccess] = useState(
+    session?.role_name === "ADMINISTRATOR"
+      ? "all"
+      : session?.userBranch.length > 0
+      ? session?.userBranch[0].branch.id?.toString()
+      : ""
+  );
   const accessToken = session?.accessToken;
+
+  const fetcher = useCallback(
+    (url: RequestInfo) => {
+      return fetch(url, {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+        next: { revalidate: 60 },
+      }).then((res) => res.json());
+    },
+    [accessToken]
+  );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+
+  const { data, error, isLoading } = useSWR(
+    debouncedSearch === ""
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}&search=${debouncedSearch}`,
+    fetcher
+  );
 
   const handleCreate = async () => {
     setIsLoadingAction({ ...isLoadingAction, [0]: true });
     try {
+      if (branchAccess == "all") {
+        setAlert({
+          status: true,
+          color: "warning",
+          message: "Please select cabang",
+        });
+        return;
+      }
       const result = await productServices.getProductLib(accessToken!);
       if (!result.status) {
         setAlert({
@@ -143,35 +219,14 @@ const ProductPage = ({ session }: { session: Session | null }) => {
     }
   };
 
-  const fetcher = (url: RequestInfo) => {
-    return fetch(url, {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-      next: {
-        revalidate: 60,
-      },
-    }).then((res) => res.json());
-  };
-
-  const { data, error, isLoading } = useSWR(
-    debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=${currentPage}&search=${debouncedSearch}`,
-    fetcher
-  );
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [search]);
   return (
     <>
       <div className="row">
+        <BranchOptions
+          userBranch={session?.userBranch}
+          role={session?.role_name}
+          setBranchAccess={setBranchAccess}
+        />
         <div className="col-12">
           <div className="card">
             <div className="card-body">
@@ -182,14 +237,8 @@ const ProductPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    <input
-                      className="form-control form-control-sm"
-                      placeholder="Search"
-                      type="text"
-                      style={{ width: 180 }}
-                      onChange={(e) => setSearch(e.target.value)}
-                      value={search}
-                    />
+                    {/* Memoized Search Input */}
+                    <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
@@ -237,25 +286,38 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                           <thead>
                             <tr>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Aksi
+                                AKSI
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                No
+                                NO
                               </th>
-                              <th style={{ textAlign: "center" }}>
-                                Nama Kategori
+                              <th style={{ textAlign: "center" }}>PRODUK</th>
+                              <th style={{ width: "8%", textAlign: "center" }}>
+                                TIPE
+                              </th>
+                              <th style={{ width: "20%", textAlign: "center" }}>
+                                KATEGORI
+                              </th>
+                              <th style={{ width: "20%", textAlign: "center" }}>
+                                DEVICE
+                              </th>
+                              <th style={{ width: "10%", textAlign: "center" }}>
+                                HARGA JUAL
+                              </th>
+                              <th style={{ width: "5%", textAlign: "center" }}>
+                                GARANSI
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             {items.length === 0 ? (
                               <tr>
-                                <td colSpan={4} align="center">
+                                <td colSpan={8} align="center">
                                   Tidak ada data
                                 </td>
                               </tr>
                             ) : (
-                              items.map((item: Catgory, index: number) => (
+                              items.map((item: Product, index: number) => (
                                 <tr key={index}>
                                   <td align="center" className="align-middle">
                                     <CustomButton
@@ -272,7 +334,45 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                                     {item.number}
                                   </td>
                                   <td align="left" className="align-middle">
-                                    {item.name}
+                                    {item.name?.toUpperCase()}
+                                    {item.sub_name &&
+                                      ` - ${item.sub_name?.toUpperCase()}`}
+                                  </td>
+                                  <td align="center" className="align-middle">
+                                    {item.product_type}
+                                  </td>
+                                  <td align="center" className="align-middle">
+                                    {item.product_category
+                                      ?.map((e) =>
+                                        e.category.name?.toUpperCase()
+                                      )
+                                      .join(", ")}
+                                  </td>
+                                  <td
+                                    align="center"
+                                    className="align-middle"
+                                    style={{
+                                      maxWidth: "100px",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                    }}
+                                  >
+                                    {item.product_device
+                                      ?.map((e) => e.device.name?.toUpperCase())
+                                      .join(", ")}
+                                  </td>
+                                  <td
+                                    align="right"
+                                    className="align-middle"
+                                    style={{ whiteSpace: "nowrap" }}
+                                  >
+                                    {`Rp. ${item.sell_price?.toLocaleString(
+                                      "id-ID"
+                                    )}`}
+                                  </td>
+                                  <td align="center" className="align-middle">
+                                    {`${item.warranty} Hari`}
                                   </td>
                                 </tr>
                               ))
@@ -303,6 +403,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
+                          branch={branchAccess}
                           productLib={productLib}
                         />
                       )}

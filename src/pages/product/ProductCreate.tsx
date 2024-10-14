@@ -4,11 +4,14 @@ import deviceServices from "@/services/deviceServices";
 import { useState } from "react";
 import Select from "react-select";
 import { NumericFormat } from "react-number-format";
+import { json } from "stream/consumers";
+import productServices from "@/services/productServices";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
+  branch: number;
   productLib: ProductLib;
 };
 
@@ -35,7 +38,7 @@ type AlertProps = {
 };
 
 const CreateProduct = (props: Props) => {
-  const { isOpen, onClose, accessToken, productLib } = props;
+  const { isOpen, onClose, accessToken, branch, productLib } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
@@ -51,44 +54,56 @@ const CreateProduct = (props: Props) => {
   const [purchasePrice, setPurchasePrice] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
   const [warranty, setWarranty] = useState(0);
+  const [isPos, setIsPos] = useState("");
+  const [isInvent, setIsInvent] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // if (confirm("Add this data?")) {
-    //   setIsLoading(true);
-    //   try {
-    //     const data = {
-    //       name,
-    //     };
+    if (confirm("Add this data?")) {
+      setIsLoading(true);
+      try {
+        const data = {
+          name: productName,
+          sub_name: subProductName,
+          sell_price: Number(sellPrice),
+          purchase_price: Number(purchasePrice),
+          warranty: Number(warranty),
+          is_pos: isPos,
+          is_invent: isInvent,
+          product_type: productType,
+          category: category,
+          device: device,
+          branch: Number(branch),
+        };
 
-    //     const result = await categoryServices.createCategory(accessToken, data);
+        const result = await productServices.createProduct(accessToken, data);
 
-    //     if (!result.status) {
-    //       setAlert({
-    //         status: true,
-    //         color: "danger",
-    //         message: result.message,
-    //       });
-    //       setIsLoading(false);
-    //     } else {
-    //       setAlert({
-    //         status: true,
-    //         color: "success",
-    //         message: result.message,
-    //       });
-    //       setTimeout(() => {
-    //         onClose();
-    //       }, 1000);
-    //     }
-    //   } catch (error) {
-    //     setAlert({
-    //       status: true,
-    //       color: "danger",
-    //       message: "Something went wrong, please refresh and try again",
-    //     });
-    //     setIsLoading(false);
-    //   }
-    // }
+        if (!result.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: result.message,
+          });
+          setIsLoading(false);
+        } else {
+          setAlert({
+            status: true,
+            color: "success",
+            message: result.message,
+          });
+          setTimeout(() => {
+            onClose();
+          }, 1000);
+        }
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Something went wrong, please refresh and try again",
+        });
+        setIsLoading(false);
+      }
+    }
   };
 
   const handleGetDevice = async (deviceType: string) => {
@@ -284,6 +299,37 @@ const CreateProduct = (props: Props) => {
             value={warranty}
             onChange={(e) => setWarranty(Number(e.target.value))}
           />
+        </div>
+        <hr />
+
+        <div className="form-group">
+          <label htmlFor="isPos">Tampilkan Di POS?</label>
+          <select
+            className="custom-select"
+            id="isPos"
+            required
+            value={isPos}
+            onChange={(e) => setIsPos(e.target.value)}
+          >
+            <option value="">--PILIH--</option>
+            <option value="1">YA</option>
+            <option value="0">TIDAK</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="isInvent">Produk Inventaris?</label>
+          <select
+            className="custom-select"
+            id="isInvent"
+            required
+            value={isInvent}
+            onChange={(e) => setIsInvent(e.target.value)}
+          >
+            <option value="">--PILIH--</option>
+            <option value="1">YA</option>
+            <option value="0">TIDAK</option>
+          </select>
         </div>
       </Modal>
     )

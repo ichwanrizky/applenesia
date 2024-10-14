@@ -44,7 +44,10 @@ export const checkSession = async (
   if (module) {
     switch (module) {
       case "product":
-        if (method === "GET" && role_name === "ADMINISTRATOR") {
+        if (
+          (method === "GET" || method === "POST") &&
+          role_name === "ADMINISTRATOR"
+        ) {
           return [true, decoded.data, null];
         }
         return [false, null, "unauthorized"];

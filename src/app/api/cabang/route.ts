@@ -55,7 +55,7 @@ export const GET = async (request: Request) => {
     });
 
     // item per page
-    const itemPerPage = page ? 5 : totalData;
+    const itemPerPage = page ? 10 : totalData;
 
     const data = await prisma.branch.findMany({
       // ...condition,

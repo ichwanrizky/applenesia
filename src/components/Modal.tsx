@@ -42,12 +42,31 @@ const Modal = (props: ModalProps) => {
           <div className="modal-content">
             <form onSubmit={onSubmit}>
               <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalScrollableTitle">
-                  {modalTitle}
-                  {isLoadingHeader && (
-                    <span className="spinner-border spinner-border-sm ml-2"></span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "100%",
+                  }}
+                >
+                  <h5 className="modal-title" id="exampleModalScrollableTitle">
+                    {modalTitle}
+                    {isLoadingHeader && (
+                      <span className="spinner-border spinner-border-sm ml-2"></span>
+                    )}
+                  </h5>
+
+                  {/* Add the alert below the title inside the modal-header */}
+                  {alert?.status && (
+                    <div className="mt-2">
+                      <CustomAlert
+                        message={alert.message}
+                        color={alert.color}
+                      />
+                    </div>
                   )}
-                </h5>
+                </div>
+
                 <button
                   type="button"
                   className="close waves-effect waves-light"
@@ -58,24 +77,18 @@ const Modal = (props: ModalProps) => {
                   <span aria-hidden="true">×</span>
                 </button>
               </div>
-              <div
-                className="modal-body"
-                style={{ maxHeight: "80vh", overflowY: "auto" }}
-              >
-                {alert?.status && (
-                  <CustomAlert message={alert.message} color={alert.color} />
-                )}
 
-                {children}
-              </div>
-              <div className="modal-footer">
-                <CustomButton buttonType="close" onClick={onClose}>
-                  Close
-                </CustomButton>
+              <div style={{ maxHeight: "80vh", overflowY: "auto" }}>
+                <div className="modal-body">{children}</div>
+                <div className="modal-footer">
+                  <CustomButton buttonType="close" onClick={onClose}>
+                    Close
+                  </CustomButton>
 
-                <CustomButton buttonType="submit" isLoading={isLoading}>
-                  Save changes
-                </CustomButton>
+                  <CustomButton buttonType="submit" isLoading={isLoading}>
+                    Save changes
+                  </CustomButton>
+                </div>
               </div>
             </form>
           </div>

@@ -102,9 +102,9 @@ model device {
 }
 
 model category {
-  id      Int       @id @unique @default(autoincrement())
-  name    String    @unique
-  product product[]
+  id               Int                @id @unique @default(autoincrement())
+  name             String             @unique
+  product_category product_category[]
 }
 
 model form_checking {
@@ -115,22 +115,21 @@ model form_checking {
 }
 
 model product {
-  id             Int              @id @unique @default(autoincrement())
-  name           String
-  sub_name       String?
-  sell_price     Int              @default(0)
-  purchase_price Int              @default(0)
-  warranty       Int              @default(0)
-  is_inventory   Boolean          @default(false)
-  is_pos         Boolean          @default(false)
-  product_type   product_type
-  created_at     DateTime         @db.DateTime(0)
-  is_deleted     Boolean          @default(false)
-  branch_id      Int
-  branch         branch           @relation(fields: [branch_id], references: [id])
-  category_id    Int
-  category       category         @relation(fields: [category_id], references: [id])
-  product_device product_device[]
+  id               Int                @id @unique @default(autoincrement())
+  name             String
+  sub_name         String?
+  sell_price       Int                @default(0)
+  purchase_price   Int                @default(0)
+  warranty         Int                @default(0)
+  is_inventory     Boolean            @default(false)
+  is_pos           Boolean            @default(false)
+  product_type     product_type
+  created_at       DateTime           @db.DateTime(0)
+  is_deleted       Boolean            @default(false)
+  branch_id        Int
+  branch           branch             @relation(fields: [branch_id], references: [id])
+  product_device   product_device[]
+  product_category product_category[]
 
   @@index([branch_id], map: "product_branch_id")
 }
@@ -151,4 +150,15 @@ model product_device {
   @@id([product_id, device_id])
   @@index([device_id], map: "product_device_device_id")
   @@index([product_id], map: "product_device_product_id")
+}
+
+model product_category {
+  product_id  Int
+  product     product  @relation(fields: [product_id], references: [id])
+  category_id Int
+  category    category @relation(fields: [category_id], references: [id])
+
+  @@id([product_id, category_id])
+  @@index([category_id], map: "product_category_category_id")
+  @@index([product_id], map: "product_category_product_id")
 }

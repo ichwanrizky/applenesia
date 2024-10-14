@@ -1,5 +1,15 @@
-type DataCategory = {
+type DataProduct = {
   name: string;
+  sub_name: string;
+  sell_price: number;
+  purchase_price: number;
+  warranty: number;
+  is_pos: string;
+  is_invent: string;
+  product_type: string;
+  category: any;
+  device: any;
+  branch: number;
 };
 
 const getProductLib = async (accessToken: string) => {
@@ -30,28 +40,24 @@ const getProductLib = async (accessToken: string) => {
 //   }
 // };
 
-// const createCategory = async (accessToken: string, data: DataCategory) => {
-//   try {
-//     const name = data.name;
+const createProduct = async (accessToken: string, data: DataProduct) => {
+  try {
+    const response = await fetch("/api/product", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-//     const response = await fetch("/api/category", {
-//       method: "POST",
-//       headers: {
-//         authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         name,
-//       }),
-//     });
+    const res = await response.json();
 
-//     const res = await response.json();
-
-//     return res;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
 
 // const deleteCategory = async (accessToken: string, id: number) => {
 //   try {
@@ -96,6 +102,7 @@ const getProductLib = async (accessToken: string) => {
 
 export default {
   getProductLib,
+  createProduct,
   //   getCategoryById,
   //   createCategory,
   //   deleteCategory,
