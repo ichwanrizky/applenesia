@@ -85,9 +85,24 @@ const editDevice = async (
   }
 };
 
+const getDeviceByType = async (accessToken: string, deviceType: number) => {
+  try {
+    const response = await fetch(`/api/libs/device?type=${deviceType}`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createDevice,
   deleteDevice,
   getDeviceById,
   editDevice,
+  getDeviceByType,
 };

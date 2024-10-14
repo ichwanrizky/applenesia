@@ -1,7 +1,6 @@
 "use client";
 import Modal from "@/components/Modal";
 import userServices from "@/services/userServices";
-import { user_branch } from "@prisma/client";
 import { useState } from "react";
 import Select from "react-select";
 

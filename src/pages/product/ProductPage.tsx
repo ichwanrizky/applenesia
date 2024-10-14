@@ -9,6 +9,7 @@ import CreateKategori from "./ProductCreate";
 import EditKategori from "./ProductEdit";
 import categoryServices from "@/services/categoryServices";
 import CreateProduct from "./ProductCreate";
+import productServices from "@/services/productServices";
 
 type Session = {
   name: string;
@@ -35,6 +36,17 @@ type AlertProps = {
   message: string;
 };
 
+type ProductLib = {
+  category: {
+    id: number;
+    name: string;
+  }[];
+  deviceType: {
+    id: number;
+    name: string;
+  }[];
+};
+
 const ProductPage = ({ session }: { session: Session | null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -45,7 +57,33 @@ const ProductPage = ({ session }: { session: Session | null }) => {
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [productLib, setProductLib] = useState({} as ProductLib);
   const accessToken = session?.accessToken;
+
+  const handleCreate = async () => {
+    setIsLoadingAction({ ...isLoadingAction, [0]: true });
+    try {
+      const result = await productServices.getProductLib(accessToken!);
+      if (!result.status) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: result.message,
+        });
+      } else {
+        setIsCreateOpen(true);
+        setProductLib(result.data);
+      }
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "Something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsLoadingAction({ ...isLoadingAction, [0]: false });
+    }
+  };
 
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
@@ -156,10 +194,10 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
                       buttonType="add"
-                      isLoading={false}
+                      isLoading={isLoadingAction[0]}
                       disabled={false}
                       children="Tambah Data"
-                      onClick={() => setIsCreateOpen(true)}
+                      onClick={() => handleCreate()}
                     />
                   </div>
                 </div>
@@ -265,6 +303,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
+                          productLib={productLib}
                         />
                       )}
                       {isEditOpen && (

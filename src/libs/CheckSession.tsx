@@ -47,7 +47,16 @@ export const checkSession = async (
         if (method === "GET" && role_name === "ADMINISTRATOR") {
           return [true, decoded.data, null];
         }
-
+        return [false, null, "unauthorized"];
+      case "product_library":
+        if (method === "GET") {
+          return [true, decoded.data, null];
+        }
+        return [false, null, "unauthorized"];
+      case "libs_device":
+        if (method === "GET") {
+          return [true, decoded.data, null];
+        }
         return [false, null, "unauthorized"];
     }
   }

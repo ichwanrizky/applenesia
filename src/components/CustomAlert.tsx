@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 type CustomAlertProps = {
   color: string;
   message: string;
+  hidden?: boolean;
 };
 
 const CustomAlert = (props: CustomAlertProps) => {
-  const { color, message } = props;
+  const { color, message, hidden = true } = props;
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ const CustomAlert = (props: CustomAlertProps) => {
     return () => clearTimeout(timer); // Cleanup the timer when the component unmounts
   }, []);
 
-  if (!isVisible) return null;
+  if (!isVisible && hidden) return null;
   return (
     <div
       className={`alert alert-${color} d-flex align-items-center`}

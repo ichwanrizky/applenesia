@@ -14,31 +14,39 @@ type ModalProps = {
   isLoading?: boolean;
   onSubmit: any;
   alert?: AlertProps | null;
+  isLoadingHeader?: boolean;
 };
 
 const Modal = (props: ModalProps) => {
-  const { modalTitle, children, onClose, isLoading, onSubmit, alert } = props;
+  const {
+    modalTitle,
+    children,
+    onClose,
+    isLoading,
+    onSubmit,
+    alert,
+    isLoadingHeader,
+  } = props;
   return (
     <>
-      <div
-        className="modal-backdrop fade show"
-        style={{ display: "block" }}
-      ></div>
+      <div className="modal-backdrop fade show"></div>
       <div
         className="modal fade show"
-        id="exampleModalScrollable"
         tabIndex={-1}
         role="dialog"
         aria-labelledby="exampleModalScrollableTitle"
         aria-hidden="true"
         style={{ display: "block" }}
       >
-        <div className="modal-dialog modal-dialog-scrollable" role="document">
+        <div className="modal-dialog" role="document">
           <div className="modal-content">
             <form onSubmit={onSubmit}>
               <div className="modal-header">
                 <h5 className="modal-title" id="exampleModalScrollableTitle">
                   {modalTitle}
+                  {isLoadingHeader && (
+                    <span className="spinner-border spinner-border-sm ml-2"></span>
+                  )}
                 </h5>
                 <button
                   type="button"
@@ -50,7 +58,10 @@ const Modal = (props: ModalProps) => {
                   <span aria-hidden="true">×</span>
                 </button>
               </div>
-              <div className="modal-body">
+              <div
+                className="modal-body"
+                style={{ maxHeight: "80vh", overflowY: "auto" }}
+              >
                 {alert?.status && (
                   <CustomAlert message={alert.message} color={alert.color} />
                 )}
@@ -61,6 +72,7 @@ const Modal = (props: ModalProps) => {
                 <CustomButton buttonType="close" onClick={onClose}>
                   Close
                 </CustomButton>
+
                 <CustomButton buttonType="submit" isLoading={isLoading}>
                   Save changes
                 </CustomButton>
