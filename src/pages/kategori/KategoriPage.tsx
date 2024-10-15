@@ -40,7 +40,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setisEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as Catgory);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
@@ -91,7 +91,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
           message: result.message,
         });
       } else {
-        setisEditOpen(true);
+        setIsEditOpen(true);
         setEditData(result.data);
       }
     } catch (error) {
@@ -262,7 +262,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
                         <EditKategori
                           isOpen={isEditOpen}
                           onClose={() => {
-                            setisEditOpen(false);
+                            setIsEditOpen(false);
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );

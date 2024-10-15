@@ -6,7 +6,8 @@ import { checkSession } from "@/libs/CheckSession";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product_library", "GET");
+
+    const session = await checkSession(authorization, "libs_category", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -22,19 +23,11 @@ export const GET = async (request: Request) => {
       );
     }
 
-    const category = await prisma.category.findMany({
-      orderBy: {
-        name: "asc",
-      },
+    const data = await prisma.category.findMany({
+      orderBy: { name: "asc" },
     });
 
-    const deviceType = await prisma.device_type.findMany({
-      orderBy: {
-        id: "asc",
-      },
-    });
-
-    if (!category || !deviceType) {
+    if (!data) {
       return new NextResponse(
         JSON.stringify({
           status: false,
@@ -53,10 +46,7 @@ export const GET = async (request: Request) => {
       JSON.stringify({
         status: true,
         message: "Success get data",
-        data: {
-          category,
-          deviceType,
-        },
+        data: data,
       }),
       {
         status: 200,

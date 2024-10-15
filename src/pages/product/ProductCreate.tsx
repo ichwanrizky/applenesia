@@ -4,7 +4,6 @@ import deviceServices from "@/services/deviceServices";
 import { useState } from "react";
 import Select from "react-select";
 import { NumericFormat } from "react-number-format";
-import { json } from "stream/consumers";
 import productServices from "@/services/productServices";
 
 type Props = {
@@ -12,18 +11,17 @@ type Props = {
   onClose: () => void;
   accessToken: string;
   branch: number;
-  productLib: ProductLib;
+  categoryData: Category[];
+  deviceTypeData: DeviceType[];
 };
 
-type ProductLib = {
-  category: {
-    id: number;
-    name: string;
-  }[];
-  deviceType: {
-    id: number;
-    name: string;
-  }[];
+type Category = {
+  id: number;
+  name: string;
+};
+type DeviceType = {
+  id: number;
+  name: string;
 };
 
 type Device = {
@@ -38,7 +36,8 @@ type AlertProps = {
 };
 
 const CreateProduct = (props: Props) => {
-  const { isOpen, onClose, accessToken, branch, productLib } = props;
+  const { isOpen, onClose, accessToken, branch, categoryData, deviceTypeData } =
+    props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
@@ -141,12 +140,12 @@ const CreateProduct = (props: Props) => {
     { value: "OTHER", label: "DLL" },
   ];
 
-  const optionsCategory = productLib.category?.map((e) => ({
+  const optionsCategory = categoryData?.map((e) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
   }));
 
-  const optionsDeviceType = productLib.deviceType?.map((e) => ({
+  const optionsDeviceType = deviceTypeData?.map((e) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
   }));
@@ -228,6 +227,7 @@ const CreateProduct = (props: Props) => {
             required
             onChange={(e: any) => {
               setDeviceType(e ? e.value : "");
+              setDevice([]);
               if (e) {
                 handleGetDevice(e.value);
               }

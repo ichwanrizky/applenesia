@@ -44,7 +44,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setisEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as FormChecking);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
@@ -98,7 +98,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
           message: result.message,
         });
       } else {
-        setisEditOpen(true);
+        setIsEditOpen(true);
         setEditData(result.data);
       }
     } catch (error) {
@@ -298,7 +298,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
                         <EditFormChecking
                           isOpen={isEditOpen}
                           onClose={() => {
-                            setisEditOpen(false);
+                            setIsEditOpen(false);
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
                             );

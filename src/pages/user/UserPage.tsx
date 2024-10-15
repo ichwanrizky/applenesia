@@ -9,6 +9,7 @@ import userServices from "@/services/userServices";
 import EditUser from "./UserEdit";
 import React from "react";
 import BranchOptions from "@/components/BranchOptions";
+import SearchInput from "@/components/SearchInput";
 
 type Session = {
   name: string;
@@ -71,7 +72,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setisEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as Users);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
@@ -132,7 +133,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
           message: result.message,
         });
       } else {
-        setisEditOpen(true);
+        setIsEditOpen(true);
         setEditData(result.data);
       }
     } catch (error) {
@@ -222,14 +223,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    <input
-                      className="form-control form-control-sm"
-                      placeholder="Search"
-                      type="text"
-                      style={{ width: 180 }}
-                      onChange={(e) => setSearch(e.target.value)}
-                      value={search}
-                    />
+                    <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
@@ -393,7 +387,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                         <EditUser
                           isOpen={isEditOpen}
                           onClose={() => {
-                            setisEditOpen(false);
+                            setIsEditOpen(false);
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
                             );

@@ -1,17 +1,16 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
 import React from "react";
-import CreateKategori from "./ProductCreate";
-import EditKategori from "./ProductEdit";
-import categoryServices from "@/services/categoryServices";
-import CreateProduct from "./ProductCreate";
-import productServices from "@/services/productServices";
 import BranchOptions from "@/components/BranchOptions";
+import CreateProduct from "./ProductCreate";
+import libServices from "@/services/libServices";
 import SearchInput from "@/components/SearchInput";
+import productServices from "@/services/productServices";
+import EditProduct from "./ProductEdit";
 
 type Session = {
   name: string;
@@ -63,21 +62,19 @@ type Product = {
   };
 };
 
+type Category = {
+  id: number;
+  name: string;
+};
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
 type AlertProps = {
   status: boolean;
   color: string;
   message: string;
-};
-
-type ProductLib = {
-  category: {
-    id: number;
-    name: string;
-  }[];
-  deviceType: {
-    id: number;
-    name: string;
-  }[];
 };
 
 const ProductPage = ({ session }: { session: Session | null }) => {
@@ -85,12 +82,13 @@ const ProductPage = ({ session }: { session: Session | null }) => {
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setisEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as Product);
+  const [categoryData, setCategoryData] = useState([] as Category[]);
+  const [deviceTypeData, setDeviceTypeData] = useState([] as DeviceType[]);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [productLib, setProductLib] = useState({} as ProductLib);
   const [branchAccess, setBranchAccess] = useState(
     session?.role_name === "ADMINISTRATOR"
       ? "all"
@@ -98,57 +96,35 @@ const ProductPage = ({ session }: { session: Session | null }) => {
       ? session?.userBranch[0].branch.id?.toString()
       : ""
   );
+
   const accessToken = session?.accessToken;
 
-  const fetcher = useCallback(
-    (url: RequestInfo) => {
-      return fetch(url, {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        next: { revalidate: 60 },
-      }).then((res) => res.json());
-    },
-    [accessToken]
-  );
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 500);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [search]);
-
-  const { data, error, isLoading } = useSWR(
-    debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}&search=${debouncedSearch}`,
-    fetcher
-  );
-
   const handleCreate = async () => {
+    if (branchAccess === "all") {
+      setAlert({
+        status: true,
+        color: "warning",
+        message: "Please select cabang",
+      });
+
+      return;
+    }
+
     setIsLoadingAction({ ...isLoadingAction, [0]: true });
     try {
-      if (branchAccess == "all") {
-        setAlert({
-          status: true,
-          color: "warning",
-          message: "Please select cabang",
-        });
-        return;
-      }
-      const result = await productServices.getProductLib(accessToken!);
-      if (!result.status) {
+      const result = await libServices.getCategory(accessToken!);
+      const result2 = await libServices.getDeviceType(accessToken!);
+
+      if (!result.status || !result2.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: result.status ? result.message : result2.message,
         });
       } else {
         setIsCreateOpen(true);
-        setProductLib(result.data);
+        setCategoryData(result.data);
+        setDeviceTypeData(result2.data);
       }
     } catch (error) {
       setAlert({
@@ -165,7 +141,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await categoryServices.deleteCategory(accessToken!, id);
+        const result = await productServices.deleteProduct(accessToken!, id);
 
         if (!result.status) {
           setAlert({
@@ -180,7 +156,9 @@ const ProductPage = ({ session }: { session: Session | null }) => {
             message: result.message,
           });
           setCurrentPage(1);
-          mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`);
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=1`
+          );
         }
       } catch (error) {
         setAlert({
@@ -197,16 +175,26 @@ const ProductPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await categoryServices.getCategoryById(accessToken!, id);
-      if (!result.status) {
+      const result = await productServices.getProductById(accessToken!, id);
+
+      const result2 = await libServices.getCategory(accessToken!);
+      const result3 = await libServices.getDeviceType(accessToken!);
+
+      if (!result.status || !result2.status || !result3.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: result.status
+            ? result.message
+            : result2.message
+            ? result2.message
+            : result3.message,
         });
       } else {
-        setisEditOpen(true);
+        setIsEditOpen(true);
         setEditData(result.data);
+        setCategoryData(result2.data);
+        setDeviceTypeData(result3.data);
       }
     } catch (error) {
       setAlert({
@@ -218,6 +206,33 @@ const ProductPage = ({ session }: { session: Session | null }) => {
       setIsLoadingAction({ ...isLoadingAction, [id]: false });
     }
   };
+
+  const fetcher = (url: RequestInfo) => {
+    return fetch(url, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+      next: {
+        revalidate: 60,
+      },
+    }).then((res) => res.json());
+  };
+
+  const { data, error, isLoading } = useSWR(
+    debouncedSearch === ""
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}&search=${debouncedSearch}`,
+    fetcher
+  );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
 
   return (
     <>
@@ -237,7 +252,6 @@ const ProductPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    {/* Memoized Search Input */}
                     <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
@@ -246,7 +260,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                       isLoading={isLoadingAction[0]}
                       disabled={false}
                       children="Tambah Data"
-                      onClick={() => handleCreate()}
+                      onClick={handleCreate}
                     />
                   </div>
                 </div>
@@ -399,24 +413,27 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                           onClose={() => {
                             setIsCreateOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
                           branch={branchAccess}
-                          productLib={productLib}
+                          categoryData={categoryData}
+                          deviceTypeData={deviceTypeData}
                         />
                       )}
                       {isEditOpen && (
-                        <EditKategori
+                        <EditProduct
                           isOpen={isEditOpen}
                           onClose={() => {
-                            setisEditOpen(false);
+                            setIsEditOpen(false);
                             mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
+                              `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
+                          categoryData={categoryData}
+                          deviceTypeData={deviceTypeData}
                           editData={editData}
                         />
                       )}

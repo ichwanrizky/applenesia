@@ -7,7 +7,7 @@ export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
 
-    const session = await checkSession(authorization, "lib_devicetype", "GET");
+    const session = await checkSession(authorization, "libs_devicetype", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

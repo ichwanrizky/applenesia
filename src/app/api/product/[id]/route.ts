@@ -5,7 +5,10 @@ import { checkSession } from "@/libs/CheckSession";
 import { accessLog } from "@/libs/AccessLog";
 import { formattedDateNow } from "@/libs/DateFormat";
 
-export const GET = async (request: Request) => {
+export const GET = async (
+  request: Request,
+  { params }: { params: { id: string } }
+) => {
   try {
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(authorization, "product", "GET");
@@ -24,94 +27,10 @@ export const GET = async (request: Request) => {
       );
     }
 
-    const searchParams = new URL(request.url).searchParams;
-    // search
-    const search = searchParams.get("search");
-    // page
-    const page = searchParams.get("page");
-    // branch access
-    const branchaccess = searchParams.get("branchaccess");
-
     const role = session[1].role.name;
     const user_branch = session[1].user_branch;
-    const checkUserBranch = user_branch?.filter(
-      (item: any) => item.branch.id == branchaccess
-    );
 
-    if (
-      (!checkUserBranch || checkUserBranch.length === 0) &&
-      role !== "ADMINISTRATOR"
-    ) {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const condition = {
-      where: {
-        is_deleted: false,
-        ...(role === "ADMINISTRATOR"
-          ? {
-              ...(branchaccess === "all"
-                ? {}
-                : {
-                    branch_id: Number(branchaccess),
-                  }),
-            }
-          : {
-              branch_id: Number(branchaccess),
-            }),
-        ...(search && {
-          OR: [
-            {
-              name: {
-                contains: search ? search : undefined,
-              },
-            },
-            {
-              product_category: {
-                some: {
-                  category: {
-                    name: {
-                      contains: search ? search : undefined,
-                    },
-                  },
-                },
-              },
-            },
-            {
-              product_device: {
-                some: {
-                  device: {
-                    name: {
-                      contains: search ? search : undefined,
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        }),
-      },
-    };
-
-    const totalData = await prisma.product.count({
-      ...condition,
-    });
-
-    // item per page
-    const itemPerPage = page ? 10 : totalData;
-
-    const data = await prisma.product.findMany({
+    const data = await prisma.product.findFirst({
       include: {
         product_category: {
           select: {
@@ -146,39 +65,39 @@ export const GET = async (request: Request) => {
           },
         },
       },
-      ...condition,
-      orderBy: { name: "asc" },
-      skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
-      take: itemPerPage,
+      where: {
+        id: Number(params.id),
+        is_deleted: false,
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              branch_id: {
+                in: user_branch.map((item: any) => item.branch.id),
+              },
+            }),
+      },
     });
+
     if (!data) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Data not found",
+          message: "Failed to get data",
         }),
         {
-          status: 404,
+          status: 500,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
     }
-    const newData = data.map((item, index) => {
-      return {
-        number: page ? (Number(page) - 1) * itemPerPage + index + 1 : index + 1,
-        ...item,
-      };
-    });
 
     return new NextResponse(
       JSON.stringify({
         status: true,
-        message: "Success get data",
-        itemsPerPage: itemPerPage,
-        total: totalData,
-        data: newData,
+        message: "Success to get data",
+        data: data,
       }),
       {
         status: 200,
@@ -192,10 +111,13 @@ export const GET = async (request: Request) => {
   }
 };
 
-export const POST = async (request: Request) => {
+export const PUT = async (
+  request: Request,
+  { params }: { params: { id: string } }
+) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product", "POST");
+    const session = await checkSession(authorization, "product", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -277,7 +199,7 @@ export const POST = async (request: Request) => {
       );
     }
 
-    const create = await prisma.product.create({
+    const update = await prisma.product.update({
       data: {
         name,
         sub_name,
@@ -288,11 +210,13 @@ export const POST = async (request: Request) => {
         is_inventory: is_invent === "1" ? true : false,
         product_type,
         product_category: {
+          deleteMany: {},
           create: category?.map((item: any) => ({
             category_id: item.value,
           })),
         },
         product_device: {
+          deleteMany: {},
           create: device?.map((item: any) => ({
             device_id: item.value,
           })),
@@ -300,11 +224,15 @@ export const POST = async (request: Request) => {
         created_at: formattedDateNow(),
         branch_id: Number(branch),
       },
+      where: {
+        id: Number(params.id),
+        is_deleted: false,
+      },
     });
 
-    if (!create) {
+    if (!update) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Failed to create product" }),
+        JSON.stringify({ status: false, message: "Failed to edit product" }),
         {
           status: 500,
           headers: {
@@ -314,13 +242,90 @@ export const POST = async (request: Request) => {
       );
     }
 
-    accessLog(`create product id: ${create.id}`, session[1].id);
+    accessLog(`edit product id: ${update.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({
         status: true,
-        message: "Success to create product",
-        data: create,
+        message: "Success to edit product",
+        data: update,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const DELETE = async (
+  request: Request,
+  { params }: { params: { id: string } }
+) => {
+  try {
+    const authorization = request.headers.get("Authorization");
+    const session = await checkSession(authorization, "product", "DELETE");
+    if (!session[0]) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const role = session[1].role.name;
+    const user_branch = session[1].user_branch;
+
+    const deleteData = await prisma.product.update({
+      data: {
+        is_deleted: true,
+      },
+      where: {
+        id: Number(params.id),
+        is_deleted: false,
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              branch_id: {
+                in: user_branch.map((item: any) => item.branch.id),
+              },
+            }),
+      },
+    });
+
+    if (!deleteData) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Failed to delete product",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    accessLog(`delete product id: ${deleteData.id}`, session[1].id);
+
+    return new NextResponse(
+      JSON.stringify({
+        status: true,
+        message: "Success to delete product",
+        data: deleteData,
       }),
       {
         status: 200,

@@ -54,7 +54,7 @@ const DevicePage = ({
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setisEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as Device);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
@@ -108,7 +108,7 @@ const DevicePage = ({
           message: result.message,
         });
       } else {
-        setisEditOpen(true);
+        setIsEditOpen(true);
         setEditData(result.data);
       }
     } catch (error) {
@@ -298,7 +298,7 @@ const DevicePage = ({
                         <EditDevice
                           isOpen={isEditOpen}
                           onClose={() => {
-                            setisEditOpen(false);
+                            setIsEditOpen(false);
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
                             );

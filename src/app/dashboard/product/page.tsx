@@ -15,7 +15,7 @@ type UserSession = {
   userBranch: any;
 };
 
-export default async function Cabang() {
+export default async function Product() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
   if (!session) {

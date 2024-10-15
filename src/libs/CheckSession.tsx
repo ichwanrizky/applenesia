@@ -46,12 +46,6 @@ export const checkSession = async (
   const role_name = decoded.data.role.name;
 
   switch (module) {
-    case "lib_devicetype":
-      if (method === "GET") {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
-
     case "category":
       if (
         method === "GET" ||
@@ -114,14 +108,23 @@ export const checkSession = async (
 
     case "product":
       if (
-        (method === "GET" || method === "POST") &&
-        role_name === "ADMINISTRATOR"
+        (method === "GET" ||
+          method === "POST" ||
+          method === "DELETE" ||
+          method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
       ) {
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
 
-    case "product_library":
+    case "libs_category":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    case "libs_devicetype":
       if (method === "GET") {
         return [true, decoded.data, null];
       }

@@ -12,9 +12,9 @@ type DataProduct = {
   branch: number;
 };
 
-const getProductLib = async (accessToken: string) => {
+const getProductById = async (accessToken: string, id: number) => {
   try {
-    const response = await fetch(`/api/product/lib`, {
+    const response = await fetch(`/api/product/${id}`, {
       headers: {
         authorization: `Bearer ${accessToken}`,
       },
@@ -25,20 +25,6 @@ const getProductLib = async (accessToken: string) => {
     throw error;
   }
 };
-
-// const getCategoryById = async (accessToken: string, id: number) => {
-//   try {
-//     const response = await fetch(`/api/category/${id}`, {
-//       headers: {
-//         authorization: `Bearer ${accessToken}`,
-//       },
-//     });
-//     const res = await response.json();
-//     return res;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
 const createProduct = async (accessToken: string, data: DataProduct) => {
   try {
@@ -59,52 +45,46 @@ const createProduct = async (accessToken: string, data: DataProduct) => {
   }
 };
 
-// const deleteCategory = async (accessToken: string, id: number) => {
-//   try {
-//     const response = await fetch(`/api/category/${id}`, {
-//       method: "DELETE",
-//       headers: {
-//         authorization: `Bearer ${accessToken}`,
-//       },
-//     });
-//     const res = await response.json();
-//     return res;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+const deleteProduct = async (accessToken: string, id: number) => {
+  try {
+    const response = await fetch(`/api/product/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
 
-// const editCategory = async (
-//   accessToken: string,
-//   id: number,
-//   data: DataCategory
-// ) => {
-//   try {
-//     const name = data.name;
+const editProduct = async (
+  accessToken: string,
+  id: number,
+  data: DataProduct
+) => {
+  try {
+    const response = await fetch(`/api/product/${id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-//     const response = await fetch(`/api/category/${id}`, {
-//       method: "PUT",
-//       headers: {
-//         authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         name,
-//       }),
-//     });
-
-//     const res = await response.json();
-//     return res;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export default {
-  getProductLib,
   createProduct,
-  //   getCategoryById,
-  //   createCategory,
-  //   deleteCategory,
-  //   editCategory,
+  getProductById,
+  editProduct,
+  deleteProduct,
 };

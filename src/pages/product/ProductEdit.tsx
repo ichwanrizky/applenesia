@@ -1,17 +1,66 @@
 "use client";
 import Modal from "@/components/Modal";
-import categoryServices from "@/services/categoryServices";
+import deviceServices from "@/services/deviceServices";
 import { useState } from "react";
+import Select from "react-select";
+import { NumericFormat } from "react-number-format";
+import productServices from "@/services/productServices";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  editData: Catgory;
+  categoryData: Category[];
+  deviceTypeData: DeviceType[];
+  editData: Product;
 };
 
-type Catgory = {
+type Product = {
   number: number;
+  id: number;
+  name: string;
+  sub_name: string;
+  sell_price: number;
+  purchase_price: number;
+  warranty: number;
+  is_inventory: boolean;
+  is_pos: boolean;
+  product_type: string;
+  created_at: Date;
+  is_deleted: boolean;
+  branch_id: number;
+  product_category: {
+    category: {
+      id: number;
+      name: string;
+    };
+  }[];
+  product_device: {
+    device: {
+      id: number;
+      name: string;
+      device_type: {
+        id: number;
+        name: string;
+      };
+    };
+  }[];
+  branch: {
+    id: number;
+    name: string;
+  };
+};
+
+type Category = {
+  id: number;
+  name: string;
+};
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
+type Device = {
   id: number;
   name: string;
 };
@@ -22,24 +71,69 @@ type AlertProps = {
   message: string;
 };
 
-const EditKategori = (props: Props) => {
-  const { isOpen, onClose, accessToken, editData } = props;
+const EditProduct = (props: Props) => {
+  const {
+    isOpen,
+    onClose,
+    accessToken,
+    categoryData,
+    deviceTypeData,
+    editData,
+  } = props;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHeader, setIsLoadingHeader] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
+  const [dataDevice, setDataDevice] = useState([] as Device[]);
 
-  const [name, setName] = useState(editData?.name || "");
+  const [productName, setProductName] = useState(editData?.name || "");
+  const [subProductName, setSubProductName] = useState(
+    editData?.sub_name || ""
+  );
+  const [productType, setProductType] = useState(editData?.product_type || "");
+  const [category, setCategory] = useState(
+    editData?.product_category.map((e) => ({
+      value: e.category.id,
+      label: e.category.name?.toUpperCase(),
+    }))
+  );
+  const [deviceType, setDeviceType] = useState(
+    editData?.product_device[0].device.device_type.id || ""
+  );
+  const [device, setDevice] = useState(
+    editData?.product_device.map((e) => ({
+      value: e.device.id,
+      label: e.device.name?.toUpperCase(),
+    }))
+  );
+  const [purchasePrice, setPurchasePrice] = useState(
+    editData?.purchase_price || ""
+  );
+  const [sellPrice, setSellPrice] = useState(editData?.sell_price || "");
+  const [warranty, setWarranty] = useState(editData?.warranty || "");
+  const [isPos, setIsPos] = useState(editData?.is_pos ? "1" : "0");
+  const [isInvent, setIsInvent] = useState(editData?.is_inventory ? "1" : "0");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (confirm("Add this data?")) {
+    if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
         const data = {
-          name,
+          name: productName,
+          sub_name: subProductName,
+          sell_price: Number(sellPrice),
+          purchase_price: Number(purchasePrice),
+          warranty: Number(warranty),
+          is_pos: isPos,
+          is_invent: isInvent,
+          product_type: productType,
+          category: category,
+          device: device,
+          branch: editData.branch_id,
         };
 
-        const result = await categoryServices.editCategory(
+        const result = await productServices.editProduct(
           accessToken,
           editData.id,
           data
@@ -73,6 +167,56 @@ const EditKategori = (props: Props) => {
     }
   };
 
+  const handleGetDevice = async (deviceType: string) => {
+    setIsLoadingHeader(true);
+    try {
+      const result = await deviceServices.getDeviceByType(
+        accessToken!,
+        Number(deviceType)
+      );
+
+      if (!result.status) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: result.message,
+        });
+      }
+
+      setDataDevice(result.data);
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "Something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsLoadingHeader(false);
+    }
+  };
+
+  const optionsProductType = [
+    { value: "INTERFACE", label: "INTERFACE" },
+    { value: "MACHINE", label: "MACHINE" },
+    { value: "ACCESSORY", label: "ACCESSORY" },
+    { value: "OTHER", label: "DLL" },
+  ];
+
+  const optionsCategory = categoryData?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
+  const optionsDeviceType = deviceTypeData?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
+  const optionsDevice = dataDevice?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
   return (
     isOpen && (
       <Modal
@@ -81,22 +225,177 @@ const EditKategori = (props: Props) => {
         onSubmit={handleSubmit}
         alert={alert}
         isLoading={isLoading}
+        isLoadingHeader={isLoadingHeader}
       >
         <div className="form-group">
-          <label htmlFor="category_name">Nama Kategori</label>
+          <label htmlFor="product_name">Nama Product</label>
           <input
             type="text"
-            id="category_name"
+            id="product_name"
             className="form-control"
             style={{ textTransform: "uppercase" }}
             required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
           />
+        </div>
+        <div className="form-group">
+          <label htmlFor="product_sub_name">Sub Nama Product</label>
+          <input
+            type="text"
+            id="product_sub_name"
+            className="form-control"
+            style={{ textTransform: "uppercase" }}
+            value={subProductName}
+            onChange={(e) => setSubProductName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="product_type">Tipe Produk</label>
+          <Select
+            placeholder="Pilih Tipe Product"
+            isClearable
+            options={optionsProductType}
+            required
+            onChange={(e: any) => setProductType(e ? e.value : "")}
+            value={
+              productType
+                ? optionsProductType.find(
+                    (option: any) => option.value === productType
+                  )
+                : null
+            }
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="product_type">Kategori</label>
+          <Select
+            placeholder="Pilih Kategori"
+            isClearable
+            options={optionsCategory}
+            required
+            isMulti
+            onChange={(e: any) => setCategory(e)}
+            value={category}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="product_device_type">Tipe Device</label>
+          <Select
+            placeholder="Pilih Tipe Device"
+            isClearable
+            options={optionsDeviceType}
+            required
+            onChange={(e: any) => {
+              setDeviceType(e ? e.value : "");
+              setDevice([]);
+              if (e) {
+                handleGetDevice(e.value);
+              }
+            }}
+            value={
+              deviceType
+                ? optionsDeviceType.find(
+                    (option: any) => option.value === deviceType
+                  )
+                : null
+            }
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="product_device_type">Device</label>
+          <Select
+            placeholder="Pilih Device"
+            isClearable
+            options={optionsDevice}
+            required
+            isMulti
+            onChange={(e: any) => setDevice(e)}
+            value={device}
+            closeMenuOnSelect={false}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="purchase_price">Harga Beli</label>
+          <NumericFormat
+            className="form-control"
+            defaultValue={purchasePrice}
+            thousandSeparator=","
+            displayType="input"
+            onValueChange={(values: any) => {
+              setPurchasePrice(values.floatValue);
+            }}
+            allowLeadingZeros={false}
+            allowNegative={false}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="sell_price">Harga Jual</label>
+          <NumericFormat
+            className="form-control"
+            defaultValue={sellPrice}
+            thousandSeparator=","
+            displayType="input"
+            onValueChange={(values: any) => {
+              setSellPrice(values.floatValue);
+            }}
+            allowLeadingZeros={false}
+            allowNegative={false}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="product_warranty">Garansi</label>
+          <input
+            type="number"
+            id="product_warranty"
+            className="form-control"
+            style={{ textTransform: "uppercase" }}
+            required
+            value={warranty}
+            onChange={(e) => setWarranty(Number(e.target.value))}
+          />
+        </div>
+        <hr />
+
+        <div className="form-group">
+          <label htmlFor="isPos">Tampilkan Di POS?</label>
+          <select
+            className="custom-select"
+            id="isPos"
+            required
+            value={isPos}
+            onChange={(e) => setIsPos(e.target.value)}
+          >
+            <option value="">--PILIH--</option>
+            <option value="1">YA</option>
+            <option value="0">TIDAK</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="isInvent">Produk Inventaris?</label>
+          <select
+            className="custom-select"
+            id="isInvent"
+            required
+            value={isInvent}
+            onChange={(e) => setIsInvent(e.target.value)}
+          >
+            <option value="">--PILIH--</option>
+            <option value="1">YA</option>
+            <option value="0">TIDAK</option>
+          </select>
         </div>
       </Modal>
     )
   );
 };
 
-export default EditKategori;
+export default EditProduct;
