@@ -1,5 +1,7 @@
 import { authOptions } from "@/libs/AuthOptions";
 import DevicePage from "@/pages/device/DevicePage";
+import deviceServices from "@/services/deviceServices";
+import libServices from "@/services/libServices";
 import { getServerSession } from "next-auth";
 
 type Session = {
@@ -15,12 +17,27 @@ type UserSession = {
   userBranch: any;
 };
 
-export default async function Cabang() {
+const getDeviceType = async (accessToken: string) => {
+  try {
+    const result = await libServices.getDeviceType(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+export default async function Device() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
   if (!session) {
     return null;
   }
+
+  const deviceType = await getDeviceType(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -32,7 +49,7 @@ export default async function Cabang() {
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li className="breadcrumb-item">
-                    <a href="#">Dashboard</a>
+                    <a href="#">Configuration</a>
                   </li>
                   <li className="breadcrumb-item active">Data Device</li>
                 </ol>
@@ -40,7 +57,7 @@ export default async function Cabang() {
             </div>
           </div>
         </div>
-        <DevicePage session={session.user} />
+        <DevicePage session={session.user} deviceTypeData={deviceType} />
       </div>
     </div>
   );

@@ -46,7 +46,22 @@ export const checkSession = async (
   const role_name = decoded.data.role.name;
 
   switch (module) {
+    case "lib_devicetype":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
     case "category":
+      if (
+        method === "GET" ||
+        method === "POST" ||
+        method === "DELETE" ||
+        method === "PUT"
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+    case "device":
       if (
         method === "GET" ||
         method === "POST" ||

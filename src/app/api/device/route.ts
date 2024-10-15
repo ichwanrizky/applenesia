@@ -7,7 +7,7 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "device", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -32,14 +32,10 @@ export const GET = async (request: Request) => {
     // device_type
     const device_type = searchParams.get("device_type");
 
-    const device_type_data = await prisma.device_type.findMany({});
-
     const condition = {
       where: {
-        ...(device_type === ""
-          ? {
-              device_type_id: device_type_data[0].id,
-            }
+        ...(device_type === "all"
+          ? {}
           : {
               device_type_id: Number(device_type),
             }),
@@ -102,7 +98,6 @@ export const GET = async (request: Request) => {
         itemsPerPage: itemPerPage,
         total: totalData,
         data: newData,
-        device_type: device_type_data,
       }),
       {
         status: 200,
@@ -119,7 +114,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "device", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

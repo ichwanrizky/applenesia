@@ -8,6 +8,7 @@ import React from "react";
 import CreateDevice from "./DeviceCreate";
 import EditDevice from "./DeviceEdit";
 import deviceServices from "@/services/deviceServices";
+import SearchInput from "@/components/SearchInput";
 
 type Session = {
   name: string;
@@ -28,18 +29,27 @@ type Device = {
   id: number;
   name: string;
   device_type_id: number;
-  device_type: {
-    id: number;
-    name: string;
-  };
+  device_type: DeviceType;
 };
+
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
 type AlertProps = {
   status: boolean;
   color: string;
   message: string;
 };
 
-const DevicePage = ({ session }: { session: Session | null }) => {
+const DevicePage = ({
+  session,
+  deviceTypeData,
+}: {
+  session: Session | null;
+  deviceTypeData: DeviceType[];
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
@@ -49,7 +59,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [deviceType, setDeviceType] = useState("");
+  const [deviceType, setDeviceType] = useState("all");
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
@@ -154,24 +164,16 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                     <select
                       className="custom-select custom-select-sm w-auto mr-2"
                       onChange={(e) => setDeviceType(e.target.value)}
-                      value={
-                        deviceType === "" ? data.device_type[0]?.id : deviceType
-                      }
+                      value={deviceType === "all" ? "all" : deviceType}
                     >
-                      {data.device_type?.map((item: any, index: number) => (
+                      <option value="all">SEMUA</option>
+                      {deviceTypeData?.map((item, index: number) => (
                         <option value={item.id} key={index}>
                           {item.name?.toUpperCase()}
                         </option>
                       ))}
                     </select>
-                    <input
-                      className="form-control form-control-sm"
-                      placeholder="Search"
-                      type="text"
-                      style={{ width: 180 }}
-                      onChange={(e) => setSearch(e.target.value)}
-                      value={search}
-                    />
+                    <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
@@ -219,16 +221,14 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                           <thead>
                             <tr>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Aksi
+                                AKSI
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                No
+                                NO
                               </th>
-                              <th style={{ textAlign: "center" }}>
-                                Nama Device
-                              </th>
+                              <th style={{ textAlign: "center" }}>DEVICE</th>
                               <th style={{ textAlign: "center", width: "20%" }}>
-                                Tipe Device
+                                TIPE DEVICE
                               </th>
                             </tr>
                           </thead>
@@ -291,7 +291,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
+                          deviceType={deviceTypeData}
                         />
                       )}
                       {isEditOpen && (
@@ -304,7 +304,7 @@ const DevicePage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
+                          deviceType={deviceTypeData}
                           editData={editData}
                         />
                       )}
