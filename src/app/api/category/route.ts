@@ -7,7 +7,7 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "category", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -98,7 +98,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "category", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

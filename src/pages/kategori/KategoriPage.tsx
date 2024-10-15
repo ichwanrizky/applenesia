@@ -8,6 +8,7 @@ import React from "react";
 import CreateKategori from "./KategoriCreate";
 import EditKategori from "./KategoriEdit";
 import categoryServices from "@/services/categoryServices";
+import SearchInput from "@/components/SearchInput";
 
 type Session = {
   name: string;
@@ -143,14 +144,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    <input
-                      className="form-control form-control-sm"
-                      placeholder="Search"
-                      type="text"
-                      style={{ width: 180 }}
-                      onChange={(e) => setSearch(e.target.value)}
-                      value={search}
-                    />
+                    <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
@@ -198,14 +192,12 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
                           <thead>
                             <tr>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Aksi
+                                AKSI
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                No
+                                NO
                               </th>
-                              <th style={{ textAlign: "center" }}>
-                                Nama Kategori
-                              </th>
+                              <th style={{ textAlign: "center" }}>KATEGORI</th>
                             </tr>
                           </thead>
                           <tbody>

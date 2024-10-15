@@ -10,7 +10,7 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "category", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -71,7 +71,7 @@ export const PUT = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "category", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -150,7 +150,7 @@ export const DELETE = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "category", "DELETE");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

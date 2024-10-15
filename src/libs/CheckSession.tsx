@@ -4,11 +4,15 @@ const jwt = require("jsonwebtoken");
 
 export const checkSession = async (
   authorization: any,
-  module?: string,
-  method?: string
+  module: string,
+  method: string
 ) => {
   // check if need authorization
   if (!authorization) {
+    return [false, null, "unauthorized"];
+  }
+
+  if (!module || !method) {
     return [false, null, "unauthorized"];
   }
 
@@ -41,28 +45,36 @@ export const checkSession = async (
 
   const role_name = decoded.data.role.name;
 
-  if (module) {
-    switch (module) {
-      case "product":
-        if (
-          (method === "GET" || method === "POST") &&
-          role_name === "ADMINISTRATOR"
-        ) {
-          return [true, decoded.data, null];
-        }
-        return [false, null, "unauthorized"];
-      case "product_library":
-        if (method === "GET") {
-          return [true, decoded.data, null];
-        }
-        return [false, null, "unauthorized"];
-      case "libs_device":
-        if (method === "GET") {
-          return [true, decoded.data, null];
-        }
-        return [false, null, "unauthorized"];
-    }
+  switch (module) {
+    case "category":
+      if (
+        method === "GET" ||
+        method === "POST" ||
+        method === "DELETE" ||
+        method === "PUT"
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+    case "product":
+      if (
+        (method === "GET" || method === "POST") &&
+        role_name === "ADMINISTRATOR"
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+    case "product_library":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+    case "libs_device":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
   }
 
-  return [true, decoded.data, null];
+  return [false, null, "unauthorized"];
 };
