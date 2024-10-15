@@ -239,8 +239,7 @@ export const POST = async (request: Request) => {
       !product_type ||
       !category ||
       !device ||
-      !branch ||
-      !qty
+      !branch
     ) {
       return new NextResponse(
         JSON.stringify({
