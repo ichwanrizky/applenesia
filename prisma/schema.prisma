@@ -27,18 +27,20 @@ enum role_name {
 }
 
 model user {
-  id          Int           @id @unique @default(autoincrement())
-  username    String        @unique
-  password    String
-  name        String
-  telp        String?
-  created_at  DateTime      @db.DateTime(0)
-  is_deleted  Boolean       @default(false)
-  user_branch user_branch[]
-  role_id     Int
-  role        role          @relation(fields: [role_id], references: [id])
-  token       token[]
-  access_log  access_log[]
+  id               Int                @id @unique @default(autoincrement())
+  username         String             @unique
+  password         String
+  name             String
+  telp             String?
+  created_at       DateTime           @db.DateTime(0)
+  is_deleted       Boolean            @default(false)
+  user_branch      user_branch[]
+  role_id          Int
+  role             role               @relation(fields: [role_id], references: [id])
+  token            token[]
+  access_log       access_log[]
+  log_product      log_product[]
+  product_purchase product_purchase[]
 }
 
 model branch {
@@ -114,6 +116,12 @@ model form_checking {
   device_type    device_type @relation(fields: [device_type_id], references: [id])
 }
 
+model payment_method {
+  id               Int                @id @default(autoincrement())
+  name             String
+  product_purchase product_purchase[]
+}
+
 model product {
   id               Int                @id @unique @default(autoincrement())
   name             String
@@ -130,6 +138,8 @@ model product {
   branch           branch             @relation(fields: [branch_id], references: [id])
   product_device   product_device[]
   product_category product_category[]
+  log_product      log_product[]
+  product_purchase product_purchase[]
 
   @@index([branch_id], map: "product_branch_id")
 }
@@ -161,4 +171,38 @@ model product_category {
   @@id([product_id, category_id])
   @@index([category_id], map: "product_category_category_id")
   @@index([product_id], map: "product_category_product_id")
+}
+
+model log_product {
+  id           Int              @id @unique @default(autoincrement())
+  product_id   Int
+  product      product          @relation(fields: [product_id], references: [id])
+  qty          Int
+  type         log_product_type
+  created_at   DateTime         @db.DateTime(0)
+  created_by   Int
+  user_created user             @relation(fields: [created_by], references: [id])
+  desc         String?
+
+  @@index([product_id], map: "log_product_product_id")
+}
+
+model product_purchase {
+  id           Int            @id @unique @default(autoincrement())
+  product_id   Int
+  product      product        @relation(fields: [product_id], references: [id])
+  qty          Int            @default(0)
+  price        Int            @default(0)
+  created_at   DateTime       @db.DateTime(0)
+  created_by   Int
+  user_created user           @relation(fields: [created_by], references: [id])
+  payment_id   Int
+  payment      payment_method @relation(fields: [payment_id], references: [id])
+
+  @@index([product_id], map: "product_purchase_product_id")
+}
+
+enum log_product_type {
+  IN
+  OUT
 }
