@@ -1,6 +1,6 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CreateCabang from "./CabangCreate";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
@@ -206,17 +206,16 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                           <thead>
                             <tr>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Aksi
+                                AKSI
                               </th>
-
                               <th style={{ width: "5%", textAlign: "center" }}>
-                                No
+                                NO
                               </th>
-                              <th>Nama Cabang</th>
-                              <th style={{ textAlign: "center" }}>Alias</th>
-                              <th>No Telp</th>
-                              <th>Alamat</th>
-                              <th>Lokasi</th>
+                              <th>CABANG</th>
+                              <th style={{ textAlign: "center" }}>ALIAS</th>
+                              <th>TELP</th>
+                              <th>ALAMAT</th>
+                              <th>LOKASI</th>
                             </tr>
                           </thead>
                           <tbody>

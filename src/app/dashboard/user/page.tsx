@@ -32,7 +32,7 @@ export default async function User() {
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li className="breadcrumb-item">
-                    <a href="#">Dashboard</a>
+                    <a href="#">Configuration</a>
                   </li>
                   <li className="breadcrumb-item active">Data User</li>
                 </ol>

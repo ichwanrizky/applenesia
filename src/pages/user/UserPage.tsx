@@ -277,26 +277,26 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           <thead>
                             <tr>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Aksi
+                                AKSI
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                No
+                                NO
                               </th>
-                              <th style={{ textAlign: "center" }}>Nama</th>
+                              <th style={{ textAlign: "center" }}>NAMA</th>
                               <th style={{ width: "15%", textAlign: "center" }}>
-                                Username
+                                USERNAME
                               </th>
                               <th style={{ width: "10%", textAlign: "center" }}>
-                                Telp
+                                TELP
                               </th>
                               <th style={{ width: "15%", textAlign: "center" }}>
-                                Role
+                                ROLE
                               </th>
                               <th style={{ width: "20%", textAlign: "center" }}>
-                                Manage Cabang
+                                MANAGE CABANG
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
-                                Reset Password
+                                RESET PASSWORD
                               </th>
                             </tr>
                           </thead>

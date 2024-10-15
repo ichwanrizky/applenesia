@@ -95,6 +95,23 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    case "cabang":
+      if (
+        (method === "GET" || method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+
+      if (
+        (method === "POST" || method === "DELETE") &&
+        role_name === "ADMINISTRATOR"
+      ) {
+        return [true, decoded.data, null];
+      }
+
+      return [false, null, "unauthorized"];
+
     case "product":
       if (
         (method === "GET" || method === "POST") &&

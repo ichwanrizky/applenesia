@@ -10,7 +10,7 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "cabang", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -27,20 +27,6 @@ export const GET = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
     const user_branch = session[1]?.user_branch;
 
     const data = await prisma.branch.findFirst({
@@ -96,7 +82,7 @@ export const PUT = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "cabang", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -113,20 +99,6 @@ export const PUT = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
     const user_branch = session[1]?.user_branch;
 
     const body = await request.json();
@@ -209,28 +181,12 @@ export const DELETE = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "cabang", "DELETE");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
           status: false,
           message: "Unauthorized",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
         }),
         {
           status: 401,

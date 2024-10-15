@@ -31,7 +31,7 @@ export default async function Cabang() {
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li className="breadcrumb-item">
-                    <a href="#">Dashboard</a>
+                    <a href="#">Configuration</a>
                   </li>
                   <li className="breadcrumb-item active">Data Cabang</li>
                 </ol>

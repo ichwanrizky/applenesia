@@ -7,7 +7,7 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "cabang", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -24,21 +24,6 @@ export const GET = async (request: Request) => {
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
     const user_branch = session[1]?.user_branch;
 
     const searchParams = new URL(request.url).searchParams;
@@ -48,17 +33,7 @@ export const GET = async (request: Request) => {
     // page
     const page = searchParams.get("page");
 
-    const condition = {};
-
-    const totalData = await prisma.branch.count({
-      ...condition,
-    });
-
-    // item per page
-    const itemPerPage = page ? 10 : totalData;
-
-    const data = await prisma.branch.findMany({
-      // ...condition,
+    const condition = {
       where: {
         is_deleted: false,
         name: {
@@ -72,6 +47,17 @@ export const GET = async (request: Request) => {
               },
             }),
       },
+    };
+
+    const totalData = await prisma.branch.count({
+      ...condition,
+    });
+
+    // item per page
+    const itemPerPage = page ? 10 : totalData;
+
+    const data = await prisma.branch.findMany({
+      ...condition,
       orderBy: { name: "asc" },
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
@@ -120,28 +106,12 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "cabang", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
           status: false,
           message: "Unauthorized",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
         }),
         {
           status: 401,
