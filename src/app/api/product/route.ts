@@ -4,6 +4,7 @@ import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
 import { accessLog } from "@/libs/AccessLog";
 import { formattedDateNow } from "@/libs/DateFormat";
+import { productLog } from "@/libs/ProductLog";
 
 export const GET = async (request: Request) => {
   try {
@@ -226,6 +227,7 @@ export const POST = async (request: Request) => {
     const category = body.category;
     const device = body.device;
     const branch = body.branch;
+    const qty = body.qty;
 
     if (
       !name ||
@@ -237,7 +239,8 @@ export const POST = async (request: Request) => {
       !product_type ||
       !category ||
       !device ||
-      !branch
+      !branch ||
+      !qty
     ) {
       return new NextResponse(
         JSON.stringify({
@@ -315,6 +318,7 @@ export const POST = async (request: Request) => {
     }
 
     accessLog(`create product id: ${create.id}`, session[1].id);
+    productLog(create.id, qty, session[1].id, "IN", `create product`);
 
     return new NextResponse(
       JSON.stringify({

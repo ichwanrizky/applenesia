@@ -10,6 +10,7 @@ type DataProduct = {
   category: any;
   device: any;
   branch: number;
+  qty?: number;
 };
 
 const getProductById = async (accessToken: string, id: number) => {

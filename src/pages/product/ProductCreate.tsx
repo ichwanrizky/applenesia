@@ -50,11 +50,12 @@ const CreateProduct = (props: Props) => {
   const [category, setCategory] = useState([]);
   const [deviceType, setDeviceType] = useState("");
   const [device, setDevice] = useState([]);
-  const [purchasePrice, setPurchasePrice] = useState(0);
-  const [sellPrice, setSellPrice] = useState(0);
-  const [warranty, setWarranty] = useState(0);
+  const [purchasePrice, setPurchasePrice] = useState("");
+  const [sellPrice, setSellPrice] = useState("");
+  const [warranty, setWarranty] = useState("");
   const [isPos, setIsPos] = useState("");
   const [isInvent, setIsInvent] = useState("");
+  const [qty, setQty] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -73,6 +74,7 @@ const CreateProduct = (props: Props) => {
           category: category,
           device: device,
           branch: Number(branch),
+          qty: qty === "" ? 0 : Number(qty),
         };
 
         const result = await productServices.createProduct(accessToken, data);
@@ -290,14 +292,17 @@ const CreateProduct = (props: Props) => {
 
         <div className="form-group">
           <label htmlFor="product_warranty">Garansi</label>
-          <input
-            type="number"
-            id="product_warranty"
+          <NumericFormat
             className="form-control"
-            style={{ textTransform: "uppercase" }}
+            defaultValue={warranty}
+            thousandSeparator=","
+            displayType="input"
+            onValueChange={(values: any) => {
+              setWarranty(values.floatValue);
+            }}
+            allowLeadingZeros={false}
+            allowNegative={false}
             required
-            value={warranty}
-            onChange={(e) => setWarranty(Number(e.target.value))}
           />
         </div>
         <hr />
@@ -331,6 +336,24 @@ const CreateProduct = (props: Props) => {
             <option value="0">TIDAK</option>
           </select>
         </div>
+
+        {isInvent === "1" && (
+          <div className="form-group">
+            <label htmlFor="qty">QTY Awal Produk</label>
+            <NumericFormat
+              className="form-control"
+              defaultValue={qty}
+              thousandSeparator=","
+              displayType="input"
+              onValueChange={(values: any) => {
+                setQty(values.floatValue);
+              }}
+              allowLeadingZeros={false}
+              allowNegative={false}
+              required={isInvent === "1" ? true : false}
+            />
+          </div>
+        )}
       </Modal>
     )
   );

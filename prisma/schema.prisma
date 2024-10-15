@@ -39,7 +39,7 @@ model user {
   role             role               @relation(fields: [role_id], references: [id])
   token            token[]
   access_log       access_log[]
-  log_product      log_product[]
+  product_log      product_log[]
   product_purchase product_purchase[]
 }
 
@@ -138,7 +138,7 @@ model product {
   branch           branch             @relation(fields: [branch_id], references: [id])
   product_device   product_device[]
   product_category product_category[]
-  log_product      log_product[]
+  product_log      product_log[]
   product_purchase product_purchase[]
 
   @@index([branch_id], map: "product_branch_id")
@@ -173,18 +173,18 @@ model product_category {
   @@index([product_id], map: "product_category_product_id")
 }
 
-model log_product {
+model product_log {
   id           Int              @id @unique @default(autoincrement())
   product_id   Int
   product      product          @relation(fields: [product_id], references: [id])
   qty          Int
-  type         log_product_type
+  type         product_log_type
   created_at   DateTime         @db.DateTime(0)
   created_by   Int
   user_created user             @relation(fields: [created_by], references: [id])
   desc         String?
 
-  @@index([product_id], map: "log_product_product_id")
+  @@index([product_id], map: "product_log_product_id")
 }
 
 model product_purchase {
@@ -202,7 +202,7 @@ model product_purchase {
   @@index([product_id], map: "product_purchase_product_id")
 }
 
-enum log_product_type {
+enum product_log_type {
   IN
   OUT
 }
