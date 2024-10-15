@@ -2,6 +2,7 @@
 import Modal from "@/components/Modal";
 import deviceServices from "@/services/deviceServices";
 import { useState } from "react";
+import Select from "react-select";
 
 type Props = {
   isOpen: boolean;
@@ -84,6 +85,11 @@ const EditDevice = (props: Props) => {
     }
   };
 
+  const optionsDeviceType = deviceType?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
   return (
     isOpen && (
       <Modal
@@ -95,20 +101,18 @@ const EditDevice = (props: Props) => {
       >
         <div className="form-group">
           <label htmlFor="device_type">Tipe Device</label>
-          <select
-            className="custom-select"
-            id="device_type"
+          <Select
+            placeholder="Pilih Tipe Device"
+            isClearable
+            options={optionsDeviceType}
             required
-            onChange={(e) => setType(e.target.value)}
-            value={type}
-          >
-            <option value="">Pilih Tipe Device</option>
-            {deviceType?.map((item, index) => (
-              <option value={item.id} key={index}>
-                {item.name?.toUpperCase()}
-              </option>
-            ))}
-          </select>
+            onChange={(e: any) => setType(e ? e.value : "")}
+            value={
+              type
+                ? optionsDeviceType.find((option: any) => option.value === type)
+                : null
+            }
+          />
         </div>
 
         <div className="form-group">

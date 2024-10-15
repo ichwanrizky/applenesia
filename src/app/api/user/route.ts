@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "user", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -25,23 +25,6 @@ export const GET = async (request: Request) => {
       );
     }
 
-    const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-    const user_branch = session[1].user_branch;
-
     const searchParams = new URL(request.url).searchParams;
 
     // search
@@ -51,10 +34,12 @@ export const GET = async (request: Request) => {
     // branch access
     const branchaccess = searchParams.get("branchaccess");
 
+    const user_branch = session[1].user_branch;
     const checkUserBranch = user_branch?.filter(
       (item: any) => item.branch.id == branchaccess
     );
 
+    const role = session[1].role.name;
     if (
       (!checkUserBranch || checkUserBranch.length === 0) &&
       role !== "ADMINISTRATOR"
@@ -175,7 +160,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "user", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -190,23 +175,6 @@ export const POST = async (request: Request) => {
         }
       );
     }
-
-    const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-    const user_branch = session[1].user_branch;
 
     const body = await request.json();
 
@@ -252,12 +220,14 @@ export const POST = async (request: Request) => {
 
     const manageBranchJson = JSON.parse(manageBranch);
 
+    const user_branch = session[1].user_branch;
     const checkUserBranch = manageBranchJson?.every((item: any) => {
       return user_branch
         .map((userBranchItem: any) => userBranchItem.branch.id)
         .includes(Number(item.value));
     });
 
+    const role = session[1].role.name;
     if (!checkUserBranch && role !== "ADMINISTRATOR") {
       return new NextResponse(
         JSON.stringify({ status: false, message: "Unauthorized access" }),

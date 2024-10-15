@@ -1,6 +1,6 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";

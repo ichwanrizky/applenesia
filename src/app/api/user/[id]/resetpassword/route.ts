@@ -11,7 +11,11 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(
+      authorization,
+      "user_resetpassword",
+      "GET"
+    );
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -28,20 +32,6 @@ export const GET = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
     const user_branch = session[1].user_branch;
 
     const data = await prisma.user.findFirst({

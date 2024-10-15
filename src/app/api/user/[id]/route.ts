@@ -10,7 +10,7 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "user", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -27,20 +27,6 @@ export const GET = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
     const user_branch = session[1].user_branch;
 
     const data = await prisma.user.findFirst({
@@ -108,7 +94,7 @@ export const PUT = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "user", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -123,23 +109,6 @@ export const PUT = async (
         }
       );
     }
-
-    const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-    const user_branch = session[1].user_branch;
 
     const body = await request.json();
 
@@ -163,12 +132,14 @@ export const PUT = async (
 
     const manageBranchJson = JSON.parse(manageBranch);
 
+    const user_branch = session[1].user_branch;
     const checkUserBranch = manageBranchJson?.every((item: any) => {
       return user_branch
         .map((userBranchItem: any) => userBranchItem.branch.id)
         .includes(Number(item.value));
     });
 
+    const role = session[1].role.name;
     if (!checkUserBranch && role !== "ADMINISTRATOR") {
       return new NextResponse(
         JSON.stringify({ status: false, message: "Unauthorized access" }),
@@ -242,7 +213,7 @@ export const DELETE = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization);
+    const session = await checkSession(authorization, "user", "DELETE");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -259,20 +230,6 @@ export const DELETE = async (
     }
 
     const role = session[1].role.name;
-    if (role !== "ADMINISTRATOR" && role !== "ADMINCABANG") {
-      return new NextResponse(
-        JSON.stringify({
-          status: false,
-          message: "Unauthorized access",
-        }),
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
     const user_branch = session[1].user_branch;
 
     const deleteData = await prisma.user.update({

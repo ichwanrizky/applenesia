@@ -51,6 +51,7 @@ export const checkSession = async (
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
     case "category":
       if (
         method === "GET" ||
@@ -61,6 +62,7 @@ export const checkSession = async (
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
     case "device":
       if (
         method === "GET" ||
@@ -71,6 +73,28 @@ export const checkSession = async (
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
+    case "user":
+      if (
+        (method === "GET" ||
+          method === "POST" ||
+          method === "DELETE" ||
+          method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    case "user_resetpassword":
+      if (
+        method === "GET" &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "product":
       if (
         (method === "GET" || method === "POST") &&
@@ -79,11 +103,13 @@ export const checkSession = async (
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
     case "product_library":
       if (method === "GET") {
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
     case "libs_device":
       if (method === "GET") {
         return [true, decoded.data, null];
