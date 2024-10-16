@@ -194,6 +194,7 @@ export const PUT = async (
       JSON.stringify({
         status: true,
         message: "Success to update product inventory",
+        data: update,
       }),
       {
         status: 200,

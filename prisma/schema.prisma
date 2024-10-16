@@ -41,6 +41,7 @@ model user {
   access_log       access_log[]
   product_log      product_log[]
   product_purchase product_purchase[]
+  cash_flow        cash_flow[]
 }
 
 model branch {
@@ -55,6 +56,7 @@ model branch {
   is_deleted  Boolean       @default(false)
   user_branch user_branch[]
   product     product[]
+  cash_flow   cash_flow[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -120,6 +122,7 @@ model payment_method {
   id               Int                @id @default(autoincrement())
   name             String
   product_purchase product_purchase[]
+  cash_flow        cash_flow[]
 }
 
 model product {
@@ -205,4 +208,26 @@ model product_purchase {
 enum product_log_type {
   IN
   OUT
+}
+
+model cash_flow {
+  id           Int            @id @unique @default(autoincrement())
+  desc         String
+  amount       Int            @default(0)
+  type         cash_flow_type
+  payment_id   Int
+  payment      payment_method @relation(fields: [payment_id], references: [id])
+  created_at   DateTime       @db.DateTime(0)
+  created_by   Int
+  user_created user           @relation(fields: [created_by], references: [id])
+  branch_id    Int
+  branch       branch         @relation(fields: [branch_id], references: [id])
+
+  @@index([payment_id], map: "cash_flow_payment_id")
+  @@index([branch_id], map: "cash_flow_branch_id")
+}
+
+enum cash_flow_type {
+  DEBIT
+  CREDIT
 }

@@ -10,6 +10,7 @@ async function main() {
       await prisma.device_type.deleteMany({}),
       await prisma.user.deleteMany({}),
       await prisma.branch.deleteMany({}),
+      await prisma.payment_method.deleteMany({}),
       await prisma.role.createMany({
         data: [
           {
@@ -44,6 +45,31 @@ async function main() {
         {
           id: 3,
           name: "macbook",
+        },
+      ],
+    });
+
+    await prisma.payment_method.createMany({
+      data: [
+        {
+          id: 1,
+          name: "double payment",
+        },
+        {
+          id: 2,
+          name: "CASH",
+        },
+        {
+          id: 3,
+          name: "BNI",
+        },
+        {
+          id: 4,
+          name: "BCA",
+        },
+        {
+          id: 5,
+          name: "MANDIRI",
         },
       ],
     });
