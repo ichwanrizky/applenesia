@@ -146,10 +146,13 @@ const ProductLogPage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "5%", textAlign: "center" }}>
                                 QTY
                               </th>
-                              <th style={{ width: "20%", textAlign: "center" }}>
+                              <th style={{ width: "20%", textAlign: "left" }}>
+                                KET
+                              </th>
+                              <th style={{ width: "10%", textAlign: "center" }}>
                                 TANGGAL
                               </th>
-                              <th style={{ width: "20%", textAlign: "center" }}>
+                              <th style={{ width: "10%", textAlign: "left" }}>
                                 USER
                               </th>
                             </tr>
@@ -186,6 +189,9 @@ const ProductLogPage = ({ session }: { session: Session | null }) => {
                                   <td align="center" className="align-middle">
                                     {item.qty}
                                   </td>
+                                  <td align="left" className="align-middle">
+                                    {item.desc?.toUpperCase()}
+                                  </td>
                                   <td align="center" className="align-middle">
                                     {new Date(item.created_at).toLocaleString(
                                       "id-ID",
@@ -194,7 +200,7 @@ const ProductLogPage = ({ session }: { session: Session | null }) => {
                                       }
                                     )}
                                   </td>
-                                  <td align="center" className="align-middle">
+                                  <td align="left" className="align-middle">
                                     {item.user_created.name?.toUpperCase()}
                                   </td>
                                 </tr>
