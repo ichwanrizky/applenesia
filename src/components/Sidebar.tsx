@@ -17,8 +17,15 @@ const SidebarAdmin = () => {
             <li className="menu-title">INVENTORY & PRODUCT</li>
             <li>
               <a href="/dashboard/product" className="waves-effect">
-                <i className="mdi mdi-tablet-cellphone" />
+                <i className="mdi mdi-file-document-box" />
                 <span>Data Product</span>
+              </a>
+            </li>
+
+            <li>
+              <a href="/dashboard/productlog" className="waves-effect">
+                <i className="mdi mdi-file-document-box" />
+                <span>Product LOG</span>
               </a>
             </li>
 
@@ -38,13 +45,13 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a href="/dashboard/device" className="waves-effect">
-                <i className="mdi mdi-tablet-cellphone" />
+                <i className="mdi mdi-cellphone-android" />
                 <span>Data Device</span>
               </a>
             </li>
             <li>
               <a href="/dashboard/kategori" className="waves-effect">
-                <i className="mdi mdi-tablet-cellphone" />
+                <i className="mdi mdi-format-list-checkbox" />
                 <span>Data Kategori</span>
               </a>
             </li>
