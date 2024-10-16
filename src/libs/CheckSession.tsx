@@ -127,6 +127,15 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    case "product_inventory":
+      if (
+        (method === "GET" || method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "libs_category":
       if (method === "GET") {
         return [true, decoded.data, null];

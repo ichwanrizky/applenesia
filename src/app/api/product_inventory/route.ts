@@ -6,7 +6,11 @@ import { checkSession } from "@/libs/CheckSession";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product_log", "GET");
+    const session = await checkSession(
+      authorization,
+      "product_inventory",
+      "GET"
+    );
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -56,50 +60,43 @@ export const GET = async (request: Request) => {
 
     const condition = {
       where: {
-        product: {
-          is_deleted: false,
-          ...(role === "ADMINISTRATOR"
-            ? {
-                ...(branchaccess === "all"
-                  ? {}
-                  : {
-                      branch_id: Number(branchaccess),
-                    }),
-              }
-            : {
-                branch_id: Number(branchaccess),
-              }),
-        },
+        is_deleted: false,
+        is_inventory: true,
+        ...(role === "ADMINISTRATOR"
+          ? {
+              ...(branchaccess === "all"
+                ? {}
+                : {
+                    branch_id: Number(branchaccess),
+                  }),
+            }
+          : {
+              branch_id: Number(branchaccess),
+            }),
         ...(search && {
           OR: [
             {
-              product: {
-                name: {
-                  contains: search ? search : undefined,
-                },
+              name: {
+                contains: search ? search : undefined,
               },
             },
             {
-              product: {
-                product_category: {
-                  some: {
-                    category: {
-                      name: {
-                        contains: search ? search : undefined,
-                      },
+              product_category: {
+                some: {
+                  category: {
+                    name: {
+                      contains: search ? search : undefined,
                     },
                   },
                 },
               },
             },
             {
-              product: {
-                product_device: {
-                  some: {
-                    device: {
-                      name: {
-                        contains: search ? search : undefined,
-                      },
+              product_device: {
+                some: {
+                  device: {
+                    name: {
+                      contains: search ? search : undefined,
                     },
                   },
                 },
@@ -110,30 +107,28 @@ export const GET = async (request: Request) => {
       },
     };
 
-    const totalData = await prisma.product_log.count({
+    const totalData = await prisma.product.count({
       ...condition,
     });
 
     // item per page
     const itemPerPage = page ? 10 : totalData;
 
-    const data = await prisma.product_log.findMany({
-      include: {
-        product: {
+    const data = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        sub_name: true,
+        product_log: {
           select: {
-            name: true,
-            sub_name: true,
-          },
-        },
-        user_created: {
-          select: {
-            name: true,
+            qty: true,
+            type: true,
           },
         },
       },
       ...condition,
       orderBy: {
-        id: "desc",
+        name: "asc",
       },
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
@@ -159,13 +154,34 @@ export const GET = async (request: Request) => {
       };
     });
 
+    const stockProduct = newData.map((item) => {
+      let inStock = 0;
+      let outStock = 0;
+
+      item.product_log.forEach((log) => {
+        if (log.type === "IN") {
+          inStock += log.qty;
+        } else {
+          outStock += log.qty;
+        }
+      });
+
+      return {
+        number: item.number,
+        id: item.id,
+        name: item.name,
+        sub_name: item.sub_name,
+        stock: inStock - outStock,
+      };
+    });
+
     return new NextResponse(
       JSON.stringify({
         status: true,
         message: "Success get data",
         itemsPerPage: itemPerPage,
         total: totalData,
-        data: newData,
+        data: stockProduct,
       }),
       {
         status: 200,

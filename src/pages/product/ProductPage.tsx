@@ -305,7 +305,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "1%", textAlign: "center" }}>
                                 NO
                               </th>
-                              <th style={{ textAlign: "center" }}>PRODUK</th>
+                              <th style={{ textAlign: "left" }}>PRODUK</th>
                               <th style={{ width: "8%", textAlign: "center" }}>
                                 TIPE
                               </th>
@@ -315,7 +315,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "20%", textAlign: "center" }}>
                                 DEVICE
                               </th>
-                              <th style={{ width: "10%", textAlign: "center" }}>
+                              <th style={{ width: "10%", textAlign: "right" }}>
                                 HARGA JUAL
                               </th>
                               <th style={{ width: "5%", textAlign: "center" }}>

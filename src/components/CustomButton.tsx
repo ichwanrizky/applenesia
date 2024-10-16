@@ -148,6 +148,42 @@ const CustomButton = (props: CustomButtonProps) => {
           </div>
         </div>
       );
+    case "in":
+      return isLoading ? (
+        <button className="btn btn-outline-success" type="button" disabled>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </button>
+      ) : (
+        <button
+          className="btn btn-outline-success"
+          type="button"
+          onClick={onEdit}
+        >
+          {children}
+        </button>
+      );
+    case "out":
+      return isLoading ? (
+        <button className="btn btn-outline-danger" type="button" disabled>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </button>
+      ) : (
+        <button
+          className="btn btn-outline-danger"
+          type="button"
+          onClick={onEdit}
+        >
+          {children}
+        </button>
+      );
   }
 };
 

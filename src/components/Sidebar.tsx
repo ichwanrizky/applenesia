@@ -23,8 +23,15 @@ const SidebarAdmin = () => {
             </li>
 
             <li>
+              <a href="/dashboard/productinventory" className="waves-effect">
+                <i className="mdi mdi-package" />
+                <span>Product Inventory</span>
+              </a>
+            </li>
+
+            <li>
               <a href="/dashboard/productlog" className="waves-effect">
-                <i className="mdi mdi-file-document-box" />
+                <i className="mdi mdi-history" />
                 <span>Product LOG</span>
               </a>
             </li>
