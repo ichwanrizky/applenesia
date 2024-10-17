@@ -106,7 +106,7 @@ const ProductPurchasePage = ({ session }: { session: Session | null }) => {
         accessToken!,
         branchAccess
       );
-      const result2 = await libServices.getPaymentMethod(accessToken!, "all");
+      const result2 = await libServices.getPaymentMethod(accessToken!);
       if (!result.status || !result2.status) {
         setAlert({
           status: true,
@@ -173,7 +173,7 @@ const ProductPurchasePage = ({ session }: { session: Session | null }) => {
         accessToken!,
         id
       );
-      const result2 = await libServices.getPaymentMethod(accessToken!, "all");
+      const result2 = await libServices.getPaymentMethod(accessToken!);
 
       if (!result.status || !result2.status) {
         setAlert({

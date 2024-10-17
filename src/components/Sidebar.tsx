@@ -14,6 +14,16 @@ const SidebarAdmin = () => {
 
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
+            {/*  */}
+            <li className="menu-title">POINT OF SALE</li>
+            <li>
+              <a href="/dashboard/product" className="waves-effect">
+                <i className="mdi mdi-toolbox" />
+                <span>Data Service</span>
+              </a>
+            </li>
+
+            {/*  */}
             <li className="menu-title">INVENTORY & PRODUCT</li>
             <li>
               <a href="/dashboard/product" className="waves-effect">
