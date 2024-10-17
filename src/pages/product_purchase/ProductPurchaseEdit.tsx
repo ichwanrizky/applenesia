@@ -54,9 +54,9 @@ const EditProductPurchase = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [qty, setQty] = useState(editData.qty || "");
-  const [price, setPrice] = useState(editData.price || "");
-  const [payment, setPayment] = useState(editData.payment_id || "");
+  const [qty, setQty] = useState(editData?.qty || "");
+  const [price, setPrice] = useState(editData?.price || "");
+  const [payment, setPayment] = useState(editData?.payment_id || "");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,12 +67,12 @@ const EditProductPurchase = (props: Props) => {
           qty: Number(qty),
           price: Number(price),
           payment_id: Number(payment),
-          branch: Number(editData.product.branch_id),
+          branch: Number(editData?.product.branch_id),
         };
 
         const result = await productPurchaseServices.editProductPurchase(
           accessToken,
-          editData.id,
+          editData?.id,
           data
         );
 

@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 
 export const checkSession = async (
   authorization: any,
-  module: string,
-  method: string
+  module?: string,
+  method?: string
 ) => {
   // check if need authorization
   if (!authorization) {
