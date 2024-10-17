@@ -201,6 +201,7 @@ model product_purchase {
   user_created user           @relation(fields: [created_by], references: [id])
   payment_id   Int
   payment      payment_method @relation(fields: [payment_id], references: [id])
+  is_deleted   Boolean        @default(false)
 
   @@index([product_id], map: "product_purchase_product_id")
 }
@@ -211,17 +212,19 @@ enum product_log_type {
 }
 
 model cash_flow {
-  id           Int            @id @unique @default(autoincrement())
-  desc         String
-  amount       Int            @default(0)
-  type         cash_flow_type
-  payment_id   Int
-  payment      payment_method @relation(fields: [payment_id], references: [id])
-  created_at   DateTime       @db.DateTime(0)
-  created_by   Int
-  user_created user           @relation(fields: [created_by], references: [id])
-  branch_id    Int
-  branch       branch         @relation(fields: [branch_id], references: [id])
+  id                  Int            @id @unique @default(autoincrement())
+  desc                String
+  amount              Int            @default(0)
+  type                cash_flow_type
+  payment_id          Int
+  payment             payment_method @relation(fields: [payment_id], references: [id])
+  created_at          DateTime       @db.DateTime(0)
+  created_by          Int
+  user_created        user           @relation(fields: [created_by], references: [id])
+  branch_id           Int
+  branch              branch         @relation(fields: [branch_id], references: [id])
+  is_deleted          Boolean        @default(false)
+  product_purchase_id Int?
 
   @@index([payment_id], map: "cash_flow_payment_id")
   @@index([branch_id], map: "cash_flow_branch_id")

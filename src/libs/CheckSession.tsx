@@ -138,7 +138,10 @@ export const checkSession = async (
 
     case "product_purchase":
       if (
-        (method === "GET" || method === "POST") &&
+        (method === "GET" ||
+          method === "POST" ||
+          method === "PUT" ||
+          method === "DELETE") &&
         (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
       ) {
         return [true, decoded.data, null];

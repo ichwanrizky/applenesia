@@ -129,7 +129,7 @@ export const GET = async (request: Request) => {
           },
         },
       },
-
+      ...condition,
       orderBy: { id: "desc" },
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
@@ -292,11 +292,12 @@ export const POST = async (request: Request) => {
             dataProduct.sub_name && ` - ${dataProduct.sub_name}`
           } `,
           amount: price,
-          type: "CREDIT",
+          type: "DEBIT",
           payment_id,
           created_at: formattedDateNow(),
           created_by: session[1].id,
           branch_id: branch,
+          product_purchase_id: createProductPurchase.id,
         },
       });
 
@@ -322,7 +323,7 @@ export const POST = async (request: Request) => {
       `create product purchase id: ${create.createProductPurchase.id}`,
       session[1].id
     );
-    productLog(product_id, qty, session[1].id, "IN", `purchase product`);
+    productLog(product_id, qty, session[1].id, "IN", `create purchase product`);
 
     return new NextResponse(
       JSON.stringify({
