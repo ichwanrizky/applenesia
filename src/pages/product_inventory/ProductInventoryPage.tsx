@@ -125,6 +125,10 @@ const ProductInventoryPage = ({ session }: { session: Session | null }) => {
         <div className="col-12">
           <div className="card">
             <div className="card-body">
+              {alert?.status && (
+                <CustomAlert message={alert.message} color={alert.color} />
+              )}
+
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">

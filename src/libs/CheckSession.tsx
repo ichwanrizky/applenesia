@@ -165,6 +165,12 @@ export const checkSession = async (
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
+
+    case "libs_payment_method":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
   }
 
   return [false, null, "unauthorized"];

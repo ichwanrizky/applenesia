@@ -42,6 +42,7 @@ export const GET = async (
             id: true,
             name: true,
             sub_name: true,
+            branch_id: true,
           },
         },
         payment: true,

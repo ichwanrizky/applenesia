@@ -30,6 +30,13 @@ const SidebarAdmin = () => {
             </li>
 
             <li>
+              <a href="/dashboard/productpurchase" className="waves-effect">
+                <i className="mdi mdi-cart" />
+                <span>Product Pembelian</span>
+              </a>
+            </li>
+
+            <li>
               <a href="/dashboard/productlog" className="waves-effect">
                 <i className="mdi mdi-history" />
                 <span>Product LOG</span>

@@ -63,6 +63,7 @@ export const GET = async (request: Request) => {
 
     const condition = {
       where: {
+        is_deleted: false,
         product: {
           is_deleted: false,
           ...(role === "ADMINISTRATOR"
