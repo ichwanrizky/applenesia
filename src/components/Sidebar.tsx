@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 
 const SidebarAdmin = () => {
   return (
@@ -17,7 +16,7 @@ const SidebarAdmin = () => {
             {/*  */}
             <li className="menu-title">POINT OF SALE</li>
             <li>
-              <a href="/dashboard/product" className="waves-effect">
+              <a href="/dashboard/service" className="waves-effect">
                 <i className="mdi mdi-toolbox" />
                 <span>Data Service</span>
               </a>
