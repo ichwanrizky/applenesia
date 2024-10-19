@@ -234,3 +234,10 @@ enum cash_flow_type {
   DEBIT
   CREDIT
 }
+
+model customer {
+  id    Int     @id @unique @default(autoincrement())
+  name  String
+  telp  String?
+  email String?
+}
