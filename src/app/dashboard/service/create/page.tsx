@@ -1,5 +1,6 @@
 import { authOptions } from "@/libs/AuthOptions";
 import CreateServicePage from "@/pages/service/ServiceCreate";
+import libServices from "@/services/libServices";
 import { getServerSession } from "next-auth";
 
 type Session = {
@@ -15,12 +16,41 @@ type UserSession = {
   userBranch: any;
 };
 
+const getDeviceType = async (accessToken: string) => {
+  try {
+    const result = await libServices.getDeviceType(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+const getCustomer = async (accessToken: string) => {
+  try {
+    const result = await libServices.getCustomer(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export default async function CreateService() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
   if (!session) {
     return null;
   }
+
+  const deviceType = await getDeviceType(session.user.accessToken);
+  const customer = await getCustomer(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -41,7 +71,11 @@ export default async function CreateService() {
             </div>
           </div>
         </div>
-        <CreateServicePage />
+        <CreateServicePage
+          session={session.user}
+          deviceTypeData={deviceType}
+          customerData={customer}
+        />
       </div>
     </div>
   );

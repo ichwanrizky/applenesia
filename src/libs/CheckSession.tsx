@@ -68,6 +68,17 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    case "form_checking":
+      if (
+        method === "GET" ||
+        method === "POST" ||
+        method === "DELETE" ||
+        method === "PUT"
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "user":
       if (
         (method === "GET" ||

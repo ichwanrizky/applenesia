@@ -68,9 +68,45 @@ const getPaymentMethod = async (accessToken: string, type?: string) => {
   }
 };
 
+const getCustomer = async (accessToken: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/customer`,
+      {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getFormCheck = async (accessToken: string, deviceType: number) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}`,
+      {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getDeviceType,
   getCategory,
   getProductInventory,
   getPaymentMethod,
+  getCustomer,
+  getFormCheck,
 };
