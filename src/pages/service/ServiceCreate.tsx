@@ -4,6 +4,8 @@ import Select from "react-select";
 import deviceServices from "@/services/deviceServices";
 import CustomAlert from "@/components/CustomAlert";
 import libServices from "@/services/libServices";
+import serviceServices from "@/services/serviceServices";
+import { useRouter } from "next/navigation";
 
 type Session = {
   name: string;
@@ -67,10 +69,13 @@ const CreateServicePage = ({
 }) => {
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [deviceData, setDeviceData] = useState([] as Device[]);
   const [listFormCheck, setListFormCheck] = useState([] as FormChecking[]);
   const [branchData, setBranchData] = useState([] as Branch[]);
   const [techncianData, setTechncianData] = useState([] as Technician[]);
+
+  const { push } = useRouter();
 
   const [step, setStep] = useState(1);
   const [customer, setCustomer] = useState("");
@@ -271,23 +276,61 @@ const CreateServicePage = ({
   };
 
   const handleSubmit = async () => {
-    if (confirm("Add this data?")) {
-      const data = {
-        customer_id: customer,
-        customer_name: customerName?.toUpperCase(),
-        customer_telp: customerTelp,
-        customer_email: customerEmail,
-        device_type: deviceType,
-        device: device,
-        imei: imei,
-        service_desc: description,
-        service_form_checking: listFormCheck,
-        branch: branch,
-        techncian: technician,
-        service_status: serviceStatus,
-      };
+    const form3 = document.getElementById("step3Form") as HTMLFormElement;
 
-      console.log(data);
+    if (step === 3 && form3) {
+      if (!form3.reportValidity()) {
+        return;
+      }
+    }
+
+    if (confirm("Add this data?")) {
+      setIsLoadingSubmit(true);
+      try {
+        const data = {
+          customer_id: customer,
+          customer_name: customerName?.toUpperCase(),
+          customer_telp: customerTelp,
+          customer_email: customerEmail,
+          device_type: deviceType,
+          device: device,
+          imei: imei,
+          service_desc: description,
+          service_form_checking: listFormCheck,
+          branch: branch,
+          techncian: technician,
+          service_status: serviceStatus,
+        };
+
+        const result = await serviceServices.createService(
+          session!.accessToken,
+          data
+        );
+
+        if (!result.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: result.message,
+          });
+          setIsLoadingSubmit(false);
+        } else {
+          setAlert({
+            status: true,
+            color: "success",
+            message: result.message,
+          });
+
+          push("/dashboard/service");
+        }
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Something went wrong, please refresh and try again",
+        });
+        setIsLoadingSubmit(false);
+      }
     }
   };
 
@@ -776,9 +819,28 @@ const CreateServicePage = ({
 
               <div className="form-group ">
                 <label htmlFor="serviceStatus">Status Service</label>
-                <select className="custom-select">
-                  <option value="">SERVICE MASUK</option>
-                </select>
+                <Select
+                  instanceId="serviceStatus"
+                  placeholder="Pilih Status Service"
+                  isClearable
+                  required
+                  options={[
+                    { value: "1", label: "SERVICE MASUK - BARANG DITINGGAL" },
+                    { value: "2", label: "SERVICE MASUK - LANGSUNG" },
+                  ]}
+                  onChange={(e: any) => setServiceStatus(e ? e.value : "")}
+                  value={
+                    serviceStatus
+                      ? [
+                          {
+                            value: "1",
+                            label: "SERVICE MASUK - BARANG DITINGGAL",
+                          },
+                          { value: "2", label: "SERVICE MASUK - LANGSUNG" },
+                        ].find((option) => option.value === serviceStatus)
+                      : null
+                  }
+                />
               </div>
             </div>
           </form>
@@ -831,7 +893,12 @@ const CreateServicePage = ({
                 </a>
               </li>
             </ul>
-            <div className="tab-content p-2">{renderStepContent()}</div>
+            <div
+              className="tab-content p-2"
+              style={{ maxHeight: "500px", overflow: "auto" }}
+            >
+              {renderStepContent()}
+            </div>
           </div>
           <div className="card-footer text-end">
             <button
@@ -844,9 +911,28 @@ const CreateServicePage = ({
             <button
               className="btn btn-primary"
               onClick={step === 3 ? () => handleSubmit() : nextStep}
-              disabled={step === 3 ? technician === "" || branch === "" : false}
+              disabled={
+                step === 3
+                  ? technician === "" || branch === "" || isLoadingSubmit
+                  : false
+              }
             >
-              {step === 3 ? "Submit" : "Next"}
+              {step === 3 ? (
+                isLoadingSubmit ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    />{" "}
+                    Loading...
+                  </>
+                ) : (
+                  "Submit"
+                )
+              ) : (
+                "Next"
+              )}
             </button>
           </div>
         </div>
