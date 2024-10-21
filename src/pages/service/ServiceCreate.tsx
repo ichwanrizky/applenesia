@@ -1,11 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import Select from "react-select";
-import { NumericFormat } from "react-number-format";
 import deviceServices from "@/services/deviceServices";
 import CustomAlert from "@/components/CustomAlert";
 import libServices from "@/services/libServices";
-import BranchOptions from "@/components/BranchOptions";
 
 type Session = {
   name: string;
@@ -43,9 +41,19 @@ type AlertProps = {
 type FormChecking = {
   id: number;
   name: string;
-  inCheck: boolean;
-  outCheck: boolean;
-  desc: string;
+  in_check: boolean;
+  out_check: boolean;
+  notes: string;
+};
+
+type Branch = {
+  id: number;
+  name: string;
+};
+
+type Technician = {
+  id: number;
+  name: string;
 };
 
 const CreateServicePage = ({
@@ -61,6 +69,8 @@ const CreateServicePage = ({
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
   const [deviceData, setDeviceData] = useState([] as Device[]);
   const [listFormCheck, setListFormCheck] = useState([] as FormChecking[]);
+  const [branchData, setBranchData] = useState([] as Branch[]);
+  const [techncianData, setTechncianData] = useState([] as Technician[]);
 
   const [step, setStep] = useState(1);
   const [customer, setCustomer] = useState("");
@@ -71,13 +81,9 @@ const CreateServicePage = ({
   const [device, setDevice] = useState("");
   const [imei, setImei] = useState("");
   const [description, setDescription] = useState("");
-  const [branchAccess, setBranchAccess] = useState(
-    session?.role_name === "ADMINISTRATOR"
-      ? "all"
-      : session?.userBranch.length > 0
-      ? session?.userBranch[0].branch.id?.toString()
-      : ""
-  );
+  const [branch, setBranch] = useState("");
+  const [technician, setTechnician] = useState("");
+  const [serviceStatus, setServiceStatus] = useState("");
 
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;
@@ -108,11 +114,40 @@ const CreateServicePage = ({
             result.data?.map((e: FormChecking) => ({
               id: e.id,
               name: e.name?.toUpperCase(),
-              inCheck: false,
-              outCheck: false,
-              desc: "",
+              in_check: false,
+              out_check: false,
+              notes: "",
             }))
           );
+        } catch (error) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: "Something went wrong, please refresh and try again",
+          });
+          return;
+        } finally {
+          setIsLoadingHeader(false);
+        }
+      }
+    }
+
+    if (step === 2) {
+      if (branchData.length === 0) {
+        setIsLoadingHeader(true);
+        try {
+          const result = await libServices.getCabang(session!.accessToken);
+
+          if (!result.status) {
+            setAlert({
+              status: true,
+              color: "danger",
+              message: result.message,
+            });
+            return;
+          }
+
+          setBranchData(result.data);
         } catch (error) {
           setAlert({
             status: true,
@@ -178,7 +213,7 @@ const CreateServicePage = ({
     }
   };
 
-  const handleCheck = (id: number, field: "inCheck" | "outCheck") => {
+  const handleCheck = (id: number, field: "in_check" | "out_check") => {
     setListFormCheck(
       listFormCheck?.map((e) =>
         e.id === id
@@ -191,13 +226,13 @@ const CreateServicePage = ({
     );
   };
 
-  const handleDescCheck = (id: number, desc: string) => {
+  const handleDescCheck = (id: number, notes: string) => {
     setListFormCheck(
-      listFormCheck?.map((e) => (e.id === id ? { ...e, desc: desc } : e))
+      listFormCheck?.map((e) => (e.id === id ? { ...e, notes: notes } : e))
     );
   };
 
-  const handleCheckAll = (field: "inCheck" | "outCheck") => {
+  const handleCheckAll = (field: "in_check" | "out_check") => {
     const checking = listFormCheck.every((e) => e[field]);
     setListFormCheck(
       listFormCheck?.map((e) => ({
@@ -205,6 +240,55 @@ const CreateServicePage = ({
         [field]: !checking,
       }))
     );
+  };
+
+  const handleGetTechnician = async (branch: number) => {
+    setIsLoadingHeader(true);
+    try {
+      const result = await libServices.getTechnician(
+        session!.accessToken,
+        Number(branch)
+      );
+
+      if (!result.status) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: result.message,
+        });
+      }
+
+      setTechncianData(result.data);
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "Something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsLoadingHeader(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (confirm("Add this data?")) {
+      const data = {
+        customer_id: customer,
+        customer_name: customerName?.toUpperCase(),
+        customer_telp: customerTelp,
+        customer_email: customerEmail,
+        device_type: deviceType,
+        device: device,
+        imei: imei,
+        service_desc: description,
+        service_form_checking: listFormCheck,
+        branch: branch,
+        techncian: technician,
+        service_status: serviceStatus,
+      };
+
+      console.log(data);
+    }
   };
 
   const optionsCustomer = customerData?.map((e) => ({
@@ -218,6 +302,16 @@ const CreateServicePage = ({
   }));
 
   const optionsDevice = deviceData?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
+  const optionsBranch = branchData?.map((e) => ({
+    value: e.id,
+    label: e.name?.toUpperCase(),
+  }));
+
+  const optionsTechnician = techncianData?.map((e) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
   }));
@@ -386,14 +480,14 @@ const CreateServicePage = ({
                       IN <br />
                       <input
                         type="checkbox"
-                        onChange={() => handleCheckAll("inCheck")}
+                        onChange={() => handleCheckAll("in_check")}
                       />
                     </th>
                     <th style={{ width: "8%", textAlign: "center" }}>
                       OUT <br />
                       <input
                         type="checkbox"
-                        onChange={() => handleCheckAll("outCheck")}
+                        onChange={() => handleCheckAll("out_check")}
                         disabled
                       />
                     </th>
@@ -423,15 +517,15 @@ const CreateServicePage = ({
                         <td align="center">
                           <input
                             type="checkbox"
-                            checked={item.inCheck}
-                            onChange={() => handleCheck(item.id, "inCheck")}
+                            checked={item.in_check}
+                            onChange={() => handleCheck(item.id, "in_check")}
                           />
                         </td>
                         <td align="center">
                           <input
                             type="checkbox"
-                            checked={item.outCheck}
-                            onChange={() => handleCheck(item.id, "outCheck")}
+                            checked={item.out_check}
+                            onChange={() => handleCheck(item.id, "out_check")}
                             disabled
                           />
                         </td>
@@ -439,7 +533,7 @@ const CreateServicePage = ({
                           <input
                             type="text"
                             style={{ width: "100%" }}
-                            value={item.desc}
+                            value={item.notes}
                             onChange={(e) =>
                               handleDescCheck(item.id, e.target.value)
                             }
@@ -608,14 +702,14 @@ const CreateServicePage = ({
                           <td align="center">
                             <input
                               type="checkbox"
-                              checked={item.inCheck}
+                              checked={item.in_check}
                               disabled
                             />
                           </td>
                           <td align="center">
                             <input
                               type="checkbox"
-                              checked={item.outCheck}
+                              checked={item.out_check}
                               disabled
                             />
                           </td>
@@ -623,7 +717,7 @@ const CreateServicePage = ({
                             <input
                               type="text"
                               style={{ width: "100%" }}
-                              value={item.desc}
+                              value={item.notes}
                               disabled
                             />
                           </td>
@@ -638,10 +732,26 @@ const CreateServicePage = ({
             <div className="card p-3 shadow-lg mt-3">
               <div className="form-group mb-3">
                 <label htmlFor="branch">Pilih Cabang</label>
-                <BranchOptions
-                  userBranch={session?.userBranch}
-                  role={session?.role_name}
-                  setBranchAccess={setBranchAccess}
+                <Select
+                  instanceId="branch"
+                  placeholder="Pilih Cabang"
+                  isClearable
+                  required
+                  options={optionsBranch}
+                  onChange={(e: any) => {
+                    setTechncianData([]);
+                    setBranch(e ? e.value : "");
+                    if (e) {
+                      handleGetTechnician(e.value);
+                    }
+                  }}
+                  value={
+                    branch
+                      ? optionsBranch.find(
+                          (option: any) => option.value === branch
+                        )
+                      : null
+                  }
                 />
               </div>
 
@@ -651,7 +761,16 @@ const CreateServicePage = ({
                   instanceId="techncian"
                   placeholder="Pilih Teknisi"
                   isClearable
-                  options={optionsDevice}
+                  required
+                  options={optionsTechnician}
+                  onChange={(e: any) => setTechnician(e ? e.value : "")}
+                  value={
+                    technician
+                      ? optionsTechnician.find(
+                          (option: any) => option.value === technician
+                        )
+                      : null
+                  }
                 />
               </div>
 
@@ -724,8 +843,8 @@ const CreateServicePage = ({
             </button>
             <button
               className="btn btn-primary"
-              onClick={nextStep}
-              disabled={step === 3}
+              onClick={step === 3 ? () => handleSubmit() : nextStep}
+              disabled={step === 3 ? technician === "" || branch === "" : false}
             >
               {step === 3 ? "Submit" : "Next"}
             </button>

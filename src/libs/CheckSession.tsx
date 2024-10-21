@@ -159,6 +159,18 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    case "service":
+      if (
+        (method === "GET" ||
+          method === "POST" ||
+          method === "DELETE" ||
+          method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "customer":
       if (method === "GET") {
         return [true, decoded.data, null];
@@ -184,6 +196,18 @@ export const checkSession = async (
       return [false, null, "unauthorized"];
 
     case "libs_payment_method":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    case "libs_cabang":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    case "libs_technician":
       if (method === "GET") {
         return [true, decoded.data, null];
       }

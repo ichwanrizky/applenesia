@@ -11,26 +11,51 @@ async function main() {
       await prisma.user.deleteMany({}),
       await prisma.branch.deleteMany({}),
       await prisma.payment_method.deleteMany({}),
-      await prisma.role.createMany({
+      await prisma.service_status.deleteMany({}),
+      await prisma.service_status.createMany({
         data: [
           {
             id: 1,
-            name: "ADMINISTRATOR",
+            name: "service masuk - barang ditinggal",
+            label_color: "warning",
           },
           {
             id: 2,
-            name: "ADMINCABANG",
+            name: "service masuk - langsung",
+            label_color: "warning",
           },
           {
             id: 3,
-            name: "CASHIER",
+            name: "service selesai",
+            label_color: "success",
           },
           {
             id: 4,
-            name: "TEKNISI",
+            name: "service batal",
+            label_color: "danger",
           },
         ],
       });
+    await prisma.role.createMany({
+      data: [
+        {
+          id: 1,
+          name: "ADMINISTRATOR",
+        },
+        {
+          id: 2,
+          name: "ADMINCABANG",
+        },
+        {
+          id: 3,
+          name: "CASHIER",
+        },
+        {
+          id: 4,
+          name: "TEKNISI",
+        },
+      ],
+    });
 
     await prisma.device_type.createMany({
       data: [

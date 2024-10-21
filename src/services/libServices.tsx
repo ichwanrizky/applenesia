@@ -102,6 +102,40 @@ const getFormCheck = async (accessToken: string, deviceType: number) => {
   }
 };
 
+const getCabang = async (accessToken: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/libs/cabang`,
+      {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getTechnician = async (accessToken: string, branch: number) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/libs/technician?branch=${branch}`,
+      {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getDeviceType,
   getCategory,
@@ -109,4 +143,6 @@ export default {
   getPaymentMethod,
   getCustomer,
   getFormCheck,
+  getCabang,
+  getTechnician,
 };

@@ -27,21 +27,23 @@ enum role_name {
 }
 
 model user {
-  id               Int                @id @unique @default(autoincrement())
-  username         String             @unique
-  password         String
-  name             String
-  telp             String?
-  created_at       DateTime           @db.DateTime(0)
-  is_deleted       Boolean            @default(false)
-  user_branch      user_branch[]
-  role_id          Int
-  role             role               @relation(fields: [role_id], references: [id])
-  token            token[]
-  access_log       access_log[]
-  product_log      product_log[]
-  product_purchase product_purchase[]
-  cash_flow        cash_flow[]
+  id                   Int                @id @unique @default(autoincrement())
+  username             String             @unique
+  password             String
+  name                 String
+  telp                 String?
+  created_at           DateTime           @db.DateTime(0)
+  is_deleted           Boolean            @default(false)
+  user_branch          user_branch[]
+  role_id              Int
+  role                 role               @relation(fields: [role_id], references: [id])
+  token                token[]
+  access_log           access_log[]
+  product_log          product_log[]
+  product_purchase     product_purchase[]
+  cash_flow            cash_flow[]
+  service_technician   service[]          @relation("service_technician")
+  service_user_created service[]          @relation("service_user_created")
 }
 
 model branch {
@@ -57,6 +59,7 @@ model branch {
   user_branch user_branch[]
   product     product[]
   cash_flow   cash_flow[]
+  service     service[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -103,6 +106,7 @@ model device {
   device_type_id Int
   device_type    device_type      @relation(fields: [device_type_id], references: [id])
   product_device product_device[]
+  service        service[]
 }
 
 model category {
@@ -236,8 +240,61 @@ enum cash_flow_type {
 }
 
 model customer {
-  id    Int     @id @unique @default(autoincrement())
-  name  String
-  telp  String?
-  email String?
+  id      Int       @id @unique @default(autoincrement())
+  name    String
+  telp    String?
+  email   String?
+  service service[]
+}
+
+model service {
+  id                    Int                     @id @unique @default(autoincrement())
+  uuid                  String                  @unique @default(dbgenerated("uuid()"))
+  service_number        String                  @unique
+  unique_code           String
+  customer_id           Int
+  customer              customer                @relation(fields: [customer_id], references: [id])
+  device_id             Int
+  device                device                  @relation(fields: [device_id], references: [id])
+  imei                  String?
+  service_desc          String?
+  technician_id         Int
+  user_technician       user                    @relation("service_technician", fields: [technician_id], references: [id])
+  branch_id             Int
+  branch                branch                  @relation(fields: [branch_id], references: [id])
+  is_deleted            Boolean                 @default(false)
+  created_at            DateTime                @db.DateTime(0)
+  created_by            Int
+  user_created          user                    @relation("service_user_created", fields: [created_by], references: [id])
+  month                 Int
+  year                  Int
+  service_status_id     Int
+  service_status        service_status          @relation(fields: [service_status_id], references: [id])
+  service_form_checking service_form_checking[]
+
+  @@index([uuid], map: "service_uuid")
+  @@index([service_number], map: "service_service_number")
+  @@index([unique_code], map: "service_unique_code")
+  @@index([customer_id], map: "service_customer_id")
+  @@index([device_id], map: "service_device_id")
+  @@index([service_status_id], map: "service_service_status_id")
+}
+
+model service_form_checking {
+  id         Int     @id @default(autoincrement())
+  name       String?
+  in_check   Boolean @default(false)
+  out_check  Boolean @default(false)
+  notes      String?
+  service_id Int
+  service    service @relation(fields: [service_id], references: [id])
+
+  @@index([service_id], map: "service_form_checking_service_id")
+}
+
+model service_status {
+  id          Int       @id @default(autoincrement())
+  name        String
+  label_color String
+  service     service[]
 }
