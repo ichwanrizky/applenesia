@@ -1,4 +1,5 @@
 import { authOptions } from "@/libs/AuthOptions";
+import ServicePage from "@/pages/service/ServicePage";
 import { getServerSession } from "next-auth";
 
 type Session = {
@@ -39,7 +40,7 @@ export default async function Service() {
             </div>
           </div>
         </div>
-        {/* <ProductPurchasePage session={session.user} /> */}
+        <ServicePage session={session.user} />
       </div>
     </div>
   );
