@@ -232,7 +232,6 @@ export const POST = async (request: Request) => {
     if (
       !name ||
       !sell_price ||
-      !purchase_price ||
       !warranty ||
       !is_pos ||
       !is_invent ||

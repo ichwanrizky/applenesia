@@ -330,7 +330,6 @@ const EditProduct = (props: Props) => {
             }}
             allowLeadingZeros={false}
             allowNegative={false}
-            required
           />
         </div>
 

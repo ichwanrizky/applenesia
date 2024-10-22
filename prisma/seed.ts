@@ -12,6 +12,24 @@ async function main() {
       await prisma.branch.deleteMany({}),
       await prisma.payment_method.deleteMany({}),
       await prisma.service_status.deleteMany({}),
+      await prisma.category.deleteMany({}),
+      //
+      await prisma.category.createMany({
+        data: [
+          {
+            name: "AKSESORIS",
+          },
+          {
+            name: "BATTTERY",
+          },
+          {
+            name: "HOUSING",
+          },
+          {
+            name: "LCD",
+          },
+        ],
+      }),
       await prisma.service_status.createMany({
         data: [
           {

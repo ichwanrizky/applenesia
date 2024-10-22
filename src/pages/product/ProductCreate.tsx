@@ -270,7 +270,6 @@ const CreateProduct = (props: Props) => {
             }}
             allowLeadingZeros={false}
             allowNegative={false}
-            required
           />
         </div>
 
