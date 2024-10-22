@@ -6,6 +6,7 @@ import CustomAlert from "@/components/CustomAlert";
 import libServices from "@/services/libServices";
 import serviceServices from "@/services/serviceServices";
 import { useRouter } from "next/navigation";
+import ServiceProductList from "./ServiceProductList";
 
 type Session = {
   name: string;
@@ -58,6 +59,16 @@ type Technician = {
   name: string;
 };
 
+type SelectedProduct = {
+  id: number;
+  name: string;
+  sub_name?: string;
+  price: number;
+  qty: number;
+  warranty: number;
+  is_product: boolean;
+};
+
 const CreateServicePage = ({
   session,
   deviceTypeData,
@@ -74,10 +85,11 @@ const CreateServicePage = ({
   const [listFormCheck, setListFormCheck] = useState([] as FormChecking[]);
   const [branchData, setBranchData] = useState([] as Branch[]);
   const [techncianData, setTechncianData] = useState([] as Technician[]);
+  const [isProductOpen, setIsProductOpen] = useState(false);
 
   const { push } = useRouter();
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [customer, setCustomer] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerTelp, setCustomerTelp] = useState("");
@@ -89,6 +101,14 @@ const CreateServicePage = ({
   const [branch, setBranch] = useState("");
   const [technician, setTechnician] = useState("");
   const [serviceStatus, setServiceStatus] = useState("");
+  const [serviceFinish, setServiceFinish] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState([] as any);
+  console.log("🚀 ~ selectedProduct:", selectedProduct);
+
+  const closeProductList = (selectedProduct: any) => {
+    setIsProductOpen(false);
+    setSelectedProduct(selectedProduct);
+  };
 
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;
@@ -528,7 +548,6 @@ const CreateServicePage = ({
                       <input
                         type="checkbox"
                         onChange={() => handleCheckAll("out_check")}
-                        disabled
                       />
                     </th>
                     <th
@@ -566,7 +585,6 @@ const CreateServicePage = ({
                             type="checkbox"
                             checked={item.out_check}
                             onChange={() => handleCheck(item.id, "out_check")}
-                            disabled
                           />
                         </td>
                         <td>
@@ -841,7 +859,11 @@ const CreateServicePage = ({
               </div>
 
               <div className="form-group">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={serviceFinish}
+                  onChange={() => setServiceFinish(!serviceFinish)}
+                />
                 <span className="ml-2 text-danger">
                   Tandai Service Ini Sebagai Selesai dan Tampilkan Form
                   Sparepart / Product / Jasa
@@ -849,33 +871,84 @@ const CreateServicePage = ({
               </div>
             </div>
 
-            <hr />
+            {serviceFinish && (
+              <>
+                <hr />
 
-            <div className="card p-3 shadow-lg mt-3">
-              <div className="table-responsive mt-2">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary btn-sm mb-2"
-                >
-                  Tambah Produk
-                </button>
-                <table className="table table-sm table-striped table-bordered nowrap mb-5">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "1%", textAlign: "center" }}> NO </th>
-                      <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
-                      <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
-                      <th style={{ width: "20%", textAlign: "center" }}>
-                        PRICE
-                      </th>
-                      <th style={{ width: "25%", textAlign: "center" }}>
-                        AMOUNT
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-            </div>
+                <div className="card p-3 shadow-lg mt-3">
+                  <div className="table-responsive mt-2">
+                    <button
+                      type="button"
+                      className="btn btn-outline-primary btn-sm mb-2"
+                      onClick={() => {
+                        if (branch !== "" && serviceFinish) {
+                          setIsProductOpen(true);
+                        } else {
+                          setAlert({
+                            status: true,
+                            color: "danger",
+                            message: "Pilih cabang terlebih dahulu",
+                          });
+                        }
+                      }}
+                    >
+                      Tambah Produk
+                    </button>
+                    <table className="table table-sm table-striped table-bordered nowrap mb-5">
+                      <thead>
+                        <tr>
+                          <th style={{ width: "1%", textAlign: "center" }}>
+                            {" "}
+                            NO{" "}
+                          </th>
+                          <th style={{ textAlign: "center" }}>
+                            {" "}
+                            PRODUK / JASA{" "}
+                          </th>
+                          <th style={{ width: "10%", textAlign: "center" }}>
+                            QTY
+                          </th>
+                          <th style={{ width: "20%", textAlign: "center" }}>
+                            PRICE
+                          </th>
+                          <th style={{ width: "25%", textAlign: "center" }}>
+                            AMOUNT
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedProduct.length === 0 ? (
+                          <tr>
+                            <td></td>
+                          </tr>
+                        ) : (
+                          selectedProduct?.map(
+                            (item: SelectedProduct, index: number) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.name?.toUpperCase()}</td>
+                                <td>{item.qty}</td>
+                                <td>{item.price}</td>
+                                <td>{item.price * item.qty}</td>
+                              </tr>
+                            )
+                          )
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {isProductOpen && (
+                  <ServiceProductList
+                    isOpen={isProductOpen}
+                    onClose={closeProductList}
+                    accessToken={session!.accessToken}
+                    branch={branch}
+                  />
+                )}
+              </>
+            )}
           </form>
         );
 
