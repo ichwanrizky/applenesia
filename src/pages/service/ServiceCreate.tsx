@@ -498,10 +498,7 @@ const CreateServicePage = ({
         return (
           <form id="step2Form">
             <h5>Step 2: Form Checking</h5>
-            <div
-              className="table-responsive"
-              style={{ maxHeight: "300px", overflow: "auto" }}
-            >
+            <div className="table-responsive">
               <table className="table table-sm table-striped table-bordered nowrap mb-5">
                 <thead>
                   <tr>
@@ -575,7 +572,10 @@ const CreateServicePage = ({
                         <td>
                           <input
                             type="text"
-                            style={{ width: "100%" }}
+                            style={{
+                              width: "100%",
+                              textTransform: "uppercase",
+                            }}
                             value={item.notes}
                             onChange={(e) =>
                               handleDescCheck(item.id, e.target.value)
@@ -696,10 +696,7 @@ const CreateServicePage = ({
             </div>
 
             <div className="card p-3 shadow-lg mt-3">
-              <div
-                className="table-responsive"
-                style={{ maxHeight: "450px", overflow: "auto" }}
-              >
+              <div className="table-responsive">
                 <table className="table table-sm table-striped table-bordered nowrap mb-5">
                   <thead>
                     <tr>
@@ -798,7 +795,7 @@ const CreateServicePage = ({
                 />
               </div>
 
-              <div className="form-group ">
+              <div className="form-group">
                 <label htmlFor="techncian">Teknisi</label>
                 <Select
                   instanceId="techncian"
@@ -817,7 +814,7 @@ const CreateServicePage = ({
                 />
               </div>
 
-              <div className="form-group ">
+              <div className="form-group">
                 <label htmlFor="serviceStatus">Status Service</label>
                 <Select
                   instanceId="serviceStatus"
@@ -841,6 +838,42 @@ const CreateServicePage = ({
                       : null
                   }
                 />
+              </div>
+
+              <div className="form-group">
+                <input type="checkbox" />
+                <span className="ml-2 text-danger">
+                  Tandai Service Ini Sebagai Selesai dan Tampilkan Form
+                  Sparepart / Product / Jasa
+                </span>
+              </div>
+            </div>
+
+            <hr />
+
+            <div className="card p-3 shadow-lg mt-3">
+              <div className="table-responsive mt-2">
+                <button
+                  type="button"
+                  className="btn btn-outline-primary btn-sm mb-2"
+                >
+                  Tambah Produk
+                </button>
+                <table className="table table-sm table-striped table-bordered nowrap mb-5">
+                  <thead>
+                    <tr>
+                      <th style={{ width: "1%", textAlign: "center" }}> NO </th>
+                      <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
+                      <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
+                      <th style={{ width: "20%", textAlign: "center" }}>
+                        PRICE
+                      </th>
+                      <th style={{ width: "25%", textAlign: "center" }}>
+                        AMOUNT
+                      </th>
+                    </tr>
+                  </thead>
+                </table>
               </div>
             </div>
           </form>
