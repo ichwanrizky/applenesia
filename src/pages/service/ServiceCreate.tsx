@@ -103,7 +103,6 @@ const CreateServicePage = ({
   const [serviceStatus, setServiceStatus] = useState("");
   const [serviceFinish, setServiceFinish] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState([] as any);
-  console.log("🚀 ~ selectedProduct:", selectedProduct);
 
   const closeProductList = (selectedProduct: any) => {
     setIsProductOpen(false);
@@ -945,6 +944,8 @@ const CreateServicePage = ({
                     onClose={closeProductList}
                     accessToken={session!.accessToken}
                     branch={branch}
+                    productList={selectedProduct}
+                    deviceTypeData={deviceTypeData}
                   />
                 )}
               </>

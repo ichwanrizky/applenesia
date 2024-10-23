@@ -29,7 +29,6 @@ export const GET = async (request: Request) => {
 
     const searchParams = new URL(request.url).searchParams;
     const branch = searchParams.get("branch");
-    const category = searchParams.get("category");
     const device_type = searchParams.get("device_type");
     const search = searchParams.get("search");
 
@@ -116,21 +115,14 @@ export const GET = async (request: Request) => {
             },
           ],
         }),
-        ...(category === "all"
-          ? {}
-          : {
-              product_category: {
-                some: {
-                  category_id: Number(category),
-                },
-              },
-            }),
         ...(device_type === "all"
           ? {}
           : {
               product_device: {
                 some: {
-                  device_id: Number(device_type),
+                  device: {
+                    device_type_id: Number(device_type),
+                  },
                 },
               },
             }),
