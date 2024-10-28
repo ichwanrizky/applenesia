@@ -1,12 +1,3 @@
-type dataUser = {
-  name: string;
-  username: string;
-  password?: string;
-  telp: string;
-  role: string;
-  manageBranch: string;
-};
-
 const getUserById = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/user/${id}`, {
@@ -21,29 +12,15 @@ const getUserById = async (accessToken: string, id: number) => {
   }
 };
 
-const createUser = async (accessToken: string, data: dataUser) => {
+const createUser = async (accessToken: string, data: string) => {
   try {
-    const name = data.name;
-    const username = data.username;
-    const password = data.password;
-    const telp = data.telp;
-    const role = data.role;
-    const manageBranch = data.manageBranch;
-
     const response = await fetch("/api/user", {
       method: "POST",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        username,
-        password,
-        telp,
-        role,
-        manageBranch,
-      }),
+      body: data,
     });
 
     const res = await response.json();
@@ -69,27 +46,15 @@ const deleteUser = async (accessToken: string, id: number) => {
   }
 };
 
-const editUser = async (accessToken: string, id: number, data: dataUser) => {
+const editUser = async (accessToken: string, id: number, data: string) => {
   try {
-    const name = data.name;
-    const username = data.username;
-    const telp = data.telp;
-    const role = data.role;
-    const manageBranch = data.manageBranch;
-
     const response = await fetch(`/api/user/${id}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        username,
-        telp,
-        role,
-        manageBranch,
-      }),
+      body: data,
     });
 
     const res = await response.json();
@@ -114,3 +79,4 @@ const resetPassword = async (accessToken: string, id: number) => {
 };
 
 export default { createUser, getUserById, deleteUser, editUser, resetPassword };
+1;

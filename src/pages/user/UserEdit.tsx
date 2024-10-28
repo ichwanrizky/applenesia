@@ -67,16 +67,17 @@ const EditUser = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState(editData?.name || "");
-  const [username, setUsername] = useState(editData?.username || "");
-  const [telp, setTelp] = useState(editData?.telp || "");
-  const [role, setRole] = useState(editData?.role.id.toString() || "");
-  const [manageBranch, setManageBranch] = useState<any>(
-    editData?.user_branch?.map((item) => ({
-      value: item.branch.id,
-      label: item.branch.name?.toUpperCase(),
-    }))
-  );
+  const [formData, setFormData] = useState({
+    name: editData?.name || "",
+    username: editData?.username || "",
+    telp: editData?.telp || "",
+    role: editData?.role?.id?.toString() || "",
+    manageBranch:
+      editData?.user_branch?.map((item) => ({
+        value: item.branch.id,
+        label: item.branch.name?.toUpperCase(),
+      })) || [],
+  });
 
   const optionsRole = [
     { value: "1", label: "ADMINISTRATOR" },
@@ -95,18 +96,10 @@ const EditUser = (props: Props) => {
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name,
-          username,
-          telp,
-          role,
-          manageBranch: JSON.stringify(manageBranch),
-        };
-
         const result = await userServices.editUser(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
         if (!result.status) {
@@ -155,8 +148,8 @@ const EditUser = (props: Props) => {
             style={{ textTransform: "uppercase" }}
             autoComplete="off"
             required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
           />
         </div>
 
@@ -168,8 +161,10 @@ const EditUser = (props: Props) => {
             className="form-control"
             autoComplete="off"
             required
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
+            onChange={(e) =>
+              setFormData({ ...formData, username: e.target.value })
+            }
+            value={formData.username}
           />
         </div>
 
@@ -181,8 +176,8 @@ const EditUser = (props: Props) => {
             className="form-control"
             autoComplete="off"
             required
-            onChange={(e) => setTelp(e.target.value)}
-            value={telp}
+            onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
+            value={formData.telp}
           />
         </div>
 
@@ -194,10 +189,14 @@ const EditUser = (props: Props) => {
             isClearable
             options={optionsRole}
             required
-            onChange={(e: any) => setRole(e ? e.value : "")}
+            onChange={(e) =>
+              setFormData({ ...formData, role: e ? e.value : "" })
+            }
             value={
-              role
-                ? optionsRole.find((option: any) => option.value === role)
+              formData.role
+                ? optionsRole.find(
+                    (option: any) => option.value === formData.role
+                  )
                 : null
             }
           />
@@ -211,8 +210,8 @@ const EditUser = (props: Props) => {
             isClearable
             isMulti
             options={optionsBranch}
-            onChange={(e: any) => setManageBranch(e)}
-            value={manageBranch}
+            onChange={(e: any) => setFormData({ ...formData, manageBranch: e })}
+            value={formData.manageBranch}
             required
           />
         </div>
