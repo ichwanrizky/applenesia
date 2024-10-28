@@ -62,6 +62,7 @@ const Modal = (props: ModalProps) => {
                       <CustomAlert
                         message={alert.message}
                         color={alert.color}
+                        isModal={true}
                       />
                     </div>
                   )}
