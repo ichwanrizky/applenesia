@@ -10,7 +10,7 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "cabang", "GET");
+    const session = await checkSession(authorization, "MENU_CABANG", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -26,20 +26,10 @@ export const GET = async (
       );
     }
 
-    const role = session[1].role.name;
-    const user_branch = session[1]?.user_branch;
-
     const data = await prisma.branch.findFirst({
       where: {
         id: Number(params.id),
         is_deleted: false,
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              id: {
-                in: user_branch.map((item: any) => item.branch.id),
-              },
-            }),
       },
     });
 
@@ -82,7 +72,7 @@ export const PUT = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "cabang", "PUT");
+    const session = await checkSession(authorization, "MENU_CABANG", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -97,9 +87,6 @@ export const PUT = async (
         }
       );
     }
-
-    const role = session[1].role.name;
-    const user_branch = session[1]?.user_branch;
 
     const body = await request.json();
 
@@ -135,11 +122,6 @@ export const PUT = async (
       where: {
         id: Number(params.id),
         is_deleted: false,
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              id: user_branch.map((item: any) => Number(item.branch.id)),
-            }),
       },
     });
 
@@ -181,7 +163,7 @@ export const DELETE = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "cabang", "DELETE");
+    const session = await checkSession(authorization, "MENU_CABANG", "DELETE");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

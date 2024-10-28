@@ -57,9 +57,18 @@ const CreateUser = (props: Props) => {
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
+        const data = {
+          name: formData.name,
+          username: formData.username,
+          password: formData.password,
+          telp: formData.telp,
+          role: Number(formData.role),
+          manageBranch: formData.manageBranch,
+        };
+
         const result = await userServices.createUser(
           accessToken,
-          JSON.stringify(formData)
+          JSON.stringify(data)
         );
 
         if (!result.status) {

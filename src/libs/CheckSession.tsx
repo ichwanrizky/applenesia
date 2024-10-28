@@ -46,6 +46,14 @@ export const checkSession = async (
   const role_name = decoded.data.role.name;
 
   switch (module) {
+    // cabang
+    case "MENU_CABANG":
+      if (role_name === "ADMINISTRATOR") {
+        return [true, decoded.data, null];
+      }
+
+      return [false, null, "unauthorized"];
+
     case "category":
       if (
         method === "GET" ||
@@ -98,23 +106,6 @@ export const checkSession = async (
       ) {
         return [true, decoded.data, null];
       }
-      return [false, null, "unauthorized"];
-
-    case "cabang":
-      if (
-        (method === "GET" || method === "PUT") &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
-      ) {
-        return [true, decoded.data, null];
-      }
-
-      if (
-        (method === "POST" || method === "DELETE") &&
-        role_name === "ADMINISTRATOR"
-      ) {
-        return [true, decoded.data, null];
-      }
-
       return [false, null, "unauthorized"];
 
     case "product":

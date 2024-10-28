@@ -72,6 +72,10 @@ async function main() {
           id: 4,
           name: "TEKNISI",
         },
+        {
+          id: 5,
+          name: "SUPERVISOR",
+        },
       ],
     });
 
@@ -117,31 +121,75 @@ async function main() {
       ],
     });
 
-    const branch = await prisma.branch.create({
-      data: {
-        name: "APPLENESIA BATAM",
-        address: "Batam Center",
-        alias: "AB",
-        telp: "08117779914",
-      },
+    const branch = await prisma.branch.createMany({
+      data: [
+        {
+          id: 1,
+          name: "TEST 1",
+          address: "TEST 1",
+          alias: "T1",
+          telp: "08117779914",
+        },
+        {
+          id: 2,
+          name: "TEST 2",
+          address: "TEST 2",
+          alias: "T2",
+          telp: "08117779914",
+        },
+      ],
     });
 
-    const user = await prisma.user.create({
-      data: {
-        id: 1,
-        username: "ichwan",
-        password: await bcrypt.hash("ichwan", 10),
-        name: "Ichwan Rizky",
-        telp: "08117779914",
-        role_id: 1,
-        created_at: formattedDateNow(),
-      },
+    const user = await prisma.user.createMany({
+      data: [
+        {
+          id: 1,
+          username: "ichwan",
+          password: await bcrypt.hash("ichwan", 10),
+          name: "Ichwan Rizky",
+          telp: "08117779914",
+          role_id: 1,
+          created_at: formattedDateNow(),
+        },
+        {
+          username: "admincabang",
+          password: await bcrypt.hash("admincabang", 10),
+          name: "EX ADMIN CABANG",
+          telp: "08117779914",
+          role_id: 2,
+          created_at: formattedDateNow(),
+        },
+        {
+          username: "cashier",
+          password: await bcrypt.hash("cashier", 10),
+          name: "EX CASHIER",
+          telp: "08117779914",
+          role_id: 3,
+          created_at: formattedDateNow(),
+        },
+        {
+          username: "teknisi",
+          password: await bcrypt.hash("teknisi", 10),
+          name: "EX TEKNISI",
+          telp: "08117779914",
+          role_id: 4,
+          created_at: formattedDateNow(),
+        },
+        {
+          username: "supervisor",
+          password: await bcrypt.hash("supervisor", 10),
+          name: "EX SUPERVISOR",
+          telp: "08117779914",
+          role_id: 5,
+          created_at: formattedDateNow(),
+        },
+      ],
     });
 
     await prisma.user_branch.create({
       data: {
-        user_id: user.id,
-        branch_id: branch.id,
+        user_id: 1,
+        branch_id: 1,
       },
     });
   });

@@ -24,6 +24,7 @@ enum role_name {
   ADMINCABANG
   CASHIER
   TEKNISI
+  SUPERVISOR
 }
 
 model user {

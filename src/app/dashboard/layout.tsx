@@ -40,7 +40,7 @@ export default async function DashboardLayout({
       <title> Dashboard - Applenesia</title>
       <div id="layout-wrapper">
         <HeaderAdmin session={session} />
-        <SidebarAdmin />
+        <SidebarAdmin session={session} />
         <div className="main-content">
           {children}
           <FooterAdmin />

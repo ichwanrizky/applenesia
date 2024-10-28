@@ -7,7 +7,7 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "cabang", "GET");
+    const session = await checkSession(authorization, "MENU_CABANG", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -23,9 +23,6 @@ export const GET = async (request: Request) => {
       );
     }
 
-    const role = session[1].role.name;
-    const user_branch = session[1]?.user_branch;
-
     const searchParams = new URL(request.url).searchParams;
 
     // search
@@ -39,13 +36,6 @@ export const GET = async (request: Request) => {
         name: {
           contains: search ? search : undefined,
         },
-        ...(role === "ADMINISTRATOR"
-          ? {}
-          : {
-              id: {
-                in: user_branch.map((item: any) => item.branch.id),
-              },
-            }),
       },
     };
 
@@ -62,6 +52,7 @@ export const GET = async (request: Request) => {
       skip: page ? (parseInt(page) - 1) * itemPerPage : 0,
       take: itemPerPage,
     });
+
     if (!data) {
       return new NextResponse(
         JSON.stringify({
@@ -106,7 +97,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "cabang", "POST");
+    const session = await checkSession(authorization, "MENU_CABANG", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

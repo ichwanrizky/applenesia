@@ -1,6 +1,18 @@
 "use client";
 
-const SidebarAdmin = () => {
+type Session = {
+  user: UserSession;
+};
+type UserSession = {
+  name: string;
+  id: number;
+  username: string;
+  role_id: number;
+  role_name: string;
+  accessToken: string;
+};
+
+const SidebarAdmin = ({ session }: { session: Session }) => {
   return (
     <div className="vertical-menu">
       <div data-simplebar="" className="h-100">
@@ -54,12 +66,14 @@ const SidebarAdmin = () => {
 
             {/*  */}
             <li className="menu-title">CONFIGURATION</li>
-            <li>
-              <a href="/dashboard/cabang" className="waves-effect">
-                <i className="mdi mdi mdi-office-building" />
-                <span>Data Cabang</span>
-              </a>
-            </li>
+            {session.user.role_name === "ADMINISTRATOR" && (
+              <li>
+                <a href="/dashboard/cabang" className="waves-effect">
+                  <i className="mdi mdi mdi-office-building" />
+                  <span>Data Cabang</span>
+                </a>
+              </li>
+            )}
             <li>
               <a href="/dashboard/user" className="waves-effect">
                 <i className="mdi mdi-account-multiple-outline" />

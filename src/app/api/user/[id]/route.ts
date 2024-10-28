@@ -130,10 +130,8 @@ export const PUT = async (
       );
     }
 
-    const manageBranchJson = JSON.parse(manageBranch);
-
     const user_branch = session[1].user_branch;
-    const checkUserBranch = manageBranchJson?.every((item: any) => {
+    const checkUserBranch = manageBranch?.every((item: any) => {
       return user_branch
         .map((userBranchItem: any) => userBranchItem.branch.id)
         .includes(Number(item.value));
@@ -164,7 +162,7 @@ export const PUT = async (
         },
         user_branch: {
           deleteMany: {},
-          create: manageBranchJson?.map((item: any) => ({
+          create: manageBranch?.map((item: any) => ({
             branch_id: Number(item.value),
           })),
         },

@@ -32,27 +32,24 @@ type Branch = {
 const EditCabang = (props: Props) => {
   const { isOpen, onClose, accessToken, editData } = props;
 
-  const [name, setName] = useState(editData?.name || "");
-  const [telp, setTelp] = useState(editData?.telp || "");
-  const [address, setAddress] = useState(editData?.address || "");
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: editData?.name || "",
+    telp: editData?.telp || "",
+    address: editData?.address || "",
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name,
-          telp,
-          address,
-        };
-
         const result = await cabangServices.editCabang(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
         if (!result.status) {
@@ -83,56 +80,56 @@ const EditCabang = (props: Props) => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <Modal
-        modalTitle="Edit Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-      >
-        <div className="form-group">
-          <label htmlFor="name">Nama Cabang</label>
-          <input
-            type="text"
-            id="name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            autoComplete="off"
-            required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-        </div>
+    <Modal
+      modalTitle="Edit Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+    >
+      <div className="form-group">
+        <label htmlFor="branch_name">Nama Cabang</label>
+        <input
+          type="text"
+          id="branch_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.name}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="telp">Telp</label>
-          <input
-            type="number"
-            id="telp"
-            className="form-control"
-            inputMode="numeric"
-            autoComplete="off"
-            required
-            onChange={(e) => setTelp(e.target.value)}
-            value={telp}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="branch_telp">Telp</label>
+        <input
+          type="number"
+          id="branch_telp"
+          className="form-control"
+          inputMode="numeric"
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
+          value={formData.telp}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="address">Alamat</label>
-          <textarea
-            id="address"
-            className="form-control"
-            autoComplete="off"
-            required
-            onChange={(e) => setAddress(e.target.value)}
-            value={address}
-          />
-        </div>
-      </Modal>
-    )
+      <div className="form-group">
+        <label htmlFor="branch_address">Alamat</label>
+        <textarea
+          id="branch_address"
+          className="form-control"
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
+          value={formData.telp}
+        />
+      </div>
+    </Modal>
   );
 };
 
