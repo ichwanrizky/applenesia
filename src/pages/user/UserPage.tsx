@@ -10,6 +10,7 @@ import EditUser from "./UserEdit";
 import React from "react";
 import BranchOptions from "@/components/BranchOptions";
 import SearchInput from "@/components/SearchInput";
+import libServices from "@/services/libServices";
 
 type Session = {
   name: string;
@@ -74,6 +75,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editData, setEditData] = useState({} as Users);
+  const [branchData, setBranchData] = useState([] as Branch[]);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -87,23 +89,48 @@ const UserPage = ({ session }: { session: Session | null }) => {
 
   const accessToken = session?.accessToken;
 
+  const handleCreate = async () => {
+    setIsLoadingAction({ ...isLoadingAction, [0]: true });
+    try {
+      const resultBranchData = await libServices.getCabang(accessToken!);
+      if (!resultBranchData.status) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: resultBranchData.message,
+        });
+      } else {
+        setIsCreateOpen(true);
+        setBranchData(resultBranchData.data);
+      }
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "Something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsLoadingAction({ ...isLoadingAction, [0]: false });
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await userServices.deleteUser(accessToken!, id);
+        const resultDelete = await userServices.deleteUser(accessToken!, id);
 
-        if (!result.status) {
+        if (!resultDelete.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultDelete.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultDelete.message,
           });
           setCurrentPage(1);
           mutate(
@@ -125,16 +152,21 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await userServices.getUserById(accessToken!, id);
-      if (!result.status) {
+      const resultEdit = await userServices.getUserById(accessToken!, id);
+      const resultBranchData = await libServices.getCabang(accessToken!);
+
+      if (!resultEdit.status || !resultBranchData.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: !resultEdit.status
+            ? resultEdit.message
+            : resultBranchData.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
+        setBranchData(resultBranchData.data);
+        setEditData(resultEdit.data);
       }
     } catch (error) {
       setAlert({
@@ -150,19 +182,22 @@ const UserPage = ({ session }: { session: Session | null }) => {
   const handleResetPassword = async (id: number) => {
     if (confirm("Reset Password this user?")) {
       try {
-        const result = await userServices.resetPassword(accessToken!, id);
+        const resultResetPass = await userServices.resetPassword(
+          accessToken!,
+          id
+        );
 
-        if (!result.status) {
+        if (!resultResetPass.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultResetPass.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultResetPass.message,
           });
           setCurrentPage(1);
           mutate(
@@ -228,10 +263,10 @@ const UserPage = ({ session }: { session: Session | null }) => {
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
                       buttonType="add"
-                      isLoading={false}
+                      isLoading={isLoadingAction[0]}
                       disabled={false}
                       children="Tambah Data"
-                      onClick={() => setIsCreateOpen(true)}
+                      onClick={handleCreate}
                     />
                   </div>
                 </div>
@@ -380,7 +415,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
-                          dataCabang={session?.userBranch}
+                          dataCabang={branchData}
                         />
                       )}
                       {isEditOpen && (
@@ -393,7 +428,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                             );
                           }}
                           accessToken={accessToken!}
-                          dataCabang={session?.userBranch}
+                          dataCabang={branchData}
                           editData={editData}
                         />
                       )}

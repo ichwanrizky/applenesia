@@ -46,24 +46,24 @@ const EditCabang = (props: Props) => {
     if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
-        const result = await cabangServices.editCabang(
+        const resultEdit = await cabangServices.editCabang(
           accessToken,
           editData.id,
           JSON.stringify(formData)
         );
 
-        if (!result.status) {
+        if (!resultEdit.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultEdit.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultEdit.message,
           });
           setTimeout(() => {
             onClose();
@@ -125,8 +125,10 @@ const EditCabang = (props: Props) => {
           className="form-control"
           autoComplete="off"
           required
-          onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
-          value={formData.telp}
+          onChange={(e) =>
+            setFormData({ ...formData, address: e.target.value })
+          }
+          value={formData.address}
         />
       </div>
     </Modal>

@@ -8,16 +8,21 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  dataCabang: UserBranch[];
+  dataCabang: Branch[];
 };
 
-type UserBranch = {
-  branch: {
-    id: number;
-    name: string;
-  };
+type Branch = {
+  number: number;
+  id: number;
+  uuid: string;
+  name: string;
+  address: string;
+  alias: string;
+  telp: string;
+  latitude: null;
+  longitude: null;
+  is_deleted: boolean;
 };
-
 type AlertProps = {
   status: boolean;
   color: string;
@@ -37,19 +42,19 @@ const CreateUser = (props: Props) => {
     repeatPassword: "",
     telp: "",
     role: "",
-    manageBranch: [] as UserBranch[],
+    manageBranch: [] as Branch[],
   });
 
   const optionsRole = [
-    { value: "1", label: "ADMINISTRATOR" },
     { value: "2", label: "ADMIN CABANG" },
     { value: "3", label: "KASIR CABANG" },
     { value: "4", label: "TEKNISI CABANG" },
+    { value: "5", label: "SUPERVISOR" },
   ];
 
   const optionsBranch = dataCabang?.map((item) => ({
-    value: item.branch.id,
-    label: item.branch.name?.toUpperCase(),
+    value: item.id,
+    label: item.name?.toUpperCase(),
   }));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -66,23 +71,23 @@ const CreateUser = (props: Props) => {
           manageBranch: formData.manageBranch,
         };
 
-        const result = await userServices.createUser(
+        const resultCreate = await userServices.createUser(
           accessToken,
           JSON.stringify(data)
         );
 
-        if (!result.status) {
+        if (!resultCreate.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultCreate.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultCreate.message,
           });
           setTimeout(() => {
             onClose();
@@ -110,10 +115,10 @@ const CreateUser = (props: Props) => {
       isLoading={isLoading}
     >
       <div className="form-group">
-        <label htmlFor="name">Nama</label>
+        <label htmlFor="user_name">Nama</label>
         <input
           type="text"
-          id="name"
+          id="user_name"
           className="form-control"
           style={{ textTransform: "uppercase" }}
           autoComplete="off"
@@ -124,10 +129,10 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="username">Username</label>
+        <label htmlFor="user_username">Username</label>
         <input
           type="text"
-          id="username"
+          id="user_username"
           className="form-control"
           autoComplete="off"
           required
@@ -139,10 +144,10 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="password">Password</label>
+        <label htmlFor="user_password">Password</label>
         <input
           type="password"
-          id="password"
+          id="user_password"
           className="form-control"
           autoComplete="off"
           required
@@ -154,10 +159,10 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="re-password">Ulangi Password</label>
+        <label htmlFor="user_repassword">Ulangi Password</label>
         <input
           type="password"
-          id="re-password"
+          id="user_repassword"
           className="form-control"
           autoComplete="off"
           required
@@ -169,10 +174,10 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="telp">Telp</label>
+        <label htmlFor="user_telp">Telp</label>
         <input
           type="number"
-          id="telp"
+          id="user_telp"
           className="form-control"
           autoComplete="off"
           required
@@ -182,9 +187,9 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="role">Role</label>
+        <label htmlFor="user_role">Role</label>
         <Select
-          id="role"
+          instanceId="user_role"
           placeholder="Pilih Role"
           isClearable
           options={optionsRole}
@@ -201,9 +206,9 @@ const CreateUser = (props: Props) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="cabang">Manage Cabang</label>
+        <label htmlFor="user_branch">Manage Cabang</label>
         <Select
-          id="cabang"
+          instanceId="user_branch"
           placeholder="Pilih Cabang"
           isClearable
           isMulti

@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "user", "GET");
+    const session = await checkSession(authorization, "MENU_USER", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -160,7 +160,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "user", "POST");
+    const session = await checkSession(authorization, "MENU_USER", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

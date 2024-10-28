@@ -46,12 +46,33 @@ export const checkSession = async (
   const role_name = decoded.data.role.name;
 
   switch (module) {
-    // cabang
+    // CABANG
     case "MENU_CABANG":
       if (role_name === "ADMINISTRATOR") {
         return [true, decoded.data, null];
       }
 
+      return [false, null, "unauthorized"];
+
+    // USER
+    case "MENU_USER":
+      if (
+        (method === "GET" ||
+          method === "POST" ||
+          method === "DELETE" ||
+          method === "PUT") &&
+        (role_name === "ADMINISTRATOR" || role_name === "SUPERVISOR")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+    case "MENU_USER_RESET_PASSWORD":
+      if (
+        method === "GET" &&
+        (role_name === "ADMINISTRATOR" || role_name === "SUPERVISOR")
+      ) {
+        return [true, decoded.data, null];
+      }
       return [false, null, "unauthorized"];
 
     case "category":
@@ -82,27 +103,6 @@ export const checkSession = async (
         method === "POST" ||
         method === "DELETE" ||
         method === "PUT"
-      ) {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
-
-    case "user":
-      if (
-        (method === "GET" ||
-          method === "POST" ||
-          method === "DELETE" ||
-          method === "PUT") &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
-      ) {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
-
-    case "user_resetpassword":
-      if (
-        method === "GET" &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
       ) {
         return [true, decoded.data, null];
       }

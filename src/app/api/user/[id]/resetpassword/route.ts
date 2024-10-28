@@ -13,7 +13,7 @@ export const GET = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "user_resetpassword",
+      "MENU_USER_RESET_PASSWORD",
       "GET"
     );
     if (!session[0]) {

@@ -8,7 +8,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  dataCabang: UserBranch[];
+  dataCabang: Branch[];
   editData: Users;
 };
 
@@ -33,13 +33,6 @@ type Users = {
 type Role = {
   id: number;
   name: string;
-};
-
-type UserBranch = {
-  branch: {
-    id: number;
-    name: string;
-  };
 };
 
 type Branch = {
@@ -80,15 +73,15 @@ const EditUser = (props: Props) => {
   });
 
   const optionsRole = [
-    { value: "1", label: "ADMINISTRATOR" },
     { value: "2", label: "ADMIN CABANG" },
     { value: "3", label: "KASIR CABANG" },
     { value: "4", label: "TEKNISI CABANG" },
+    { value: "5", label: "SUPERVISOR" },
   ];
 
   const optionsBranch = dataCabang?.map((item) => ({
-    value: item.branch.id,
-    label: item.branch.name?.toUpperCase(),
+    value: item.id,
+    label: item.name?.toUpperCase(),
   }));
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -130,93 +123,91 @@ const EditUser = (props: Props) => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <Modal
-        modalTitle="Edit Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-      >
-        <div className="form-group">
-          <label htmlFor="name">Nama</label>
-          <input
-            type="text"
-            id="name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            autoComplete="off"
-            required
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            value={formData.name}
-          />
-        </div>
+    <Modal
+      modalTitle="Edit Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+    >
+      <div className="form-group">
+        <label htmlFor="user_name">Nama</label>
+        <input
+          type="text"
+          id="user_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.name}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            className="form-control"
-            autoComplete="off"
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            value={formData.username}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="user_username">Username</label>
+        <input
+          type="text"
+          id="user_username"
+          className="form-control"
+          autoComplete="off"
+          required
+          onChange={(e) =>
+            setFormData({ ...formData, username: e.target.value })
+          }
+          value={formData.username}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="telp">Telp</label>
-          <input
-            type="number"
-            id="telp"
-            className="form-control"
-            autoComplete="off"
-            required
-            onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
-            value={formData.telp}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="user_telp">Telp</label>
+        <input
+          type="number"
+          id="user_telp"
+          className="form-control"
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
+          value={formData.telp}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="role">Role</label>
-          <Select
-            id="role"
-            placeholder="Pilih Role"
-            isClearable
-            options={optionsRole}
-            required
-            onChange={(e) =>
-              setFormData({ ...formData, role: e ? e.value : "" })
-            }
-            value={
-              formData.role
-                ? optionsRole.find(
-                    (option: any) => option.value === formData.role
-                  )
-                : null
-            }
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="user_role">Role</label>
+        <Select
+          instanceId="user_role"
+          placeholder="Pilih Role"
+          isClearable
+          options={optionsRole}
+          required
+          onChange={(e) => setFormData({ ...formData, role: e ? e.value : "" })}
+          value={
+            formData.role
+              ? optionsRole.find(
+                  (option: any) => option.value === formData.role
+                )
+              : null
+          }
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="cabang">Manage Cabang</label>
-          <Select
-            id="cabang"
-            placeholder="Pilih Cabang"
-            isClearable
-            isMulti
-            options={optionsBranch}
-            onChange={(e: any) => setFormData({ ...formData, manageBranch: e })}
-            value={formData.manageBranch}
-            required
-          />
-        </div>
-      </Modal>
-    )
+      <div className="form-group">
+        <label htmlFor="user_branch">Manage Cabang</label>
+        <Select
+          instanceId="user_branch"
+          placeholder="Pilih Cabang"
+          isClearable
+          isMulti
+          options={optionsBranch}
+          onChange={(e: any) => setFormData({ ...formData, manageBranch: e })}
+          value={formData.manageBranch}
+          required
+        />
+      </div>
+    </Modal>
   );
 };
 

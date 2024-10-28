@@ -57,19 +57,22 @@ const CabangPage = ({ session }: { session: Session | null }) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await cabangServices.deleteCabang(accessToken!, id);
+        const resultDelete = await cabangServices.deleteCabang(
+          accessToken!,
+          id
+        );
 
-        if (!result.status) {
+        if (!resultDelete.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultDelete.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultDelete.message,
           });
           setCurrentPage(1);
           mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/cabang?page=1`);
@@ -89,16 +92,16 @@ const CabangPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await cabangServices.getCabangById(accessToken!, id);
-      if (!result.status) {
+      const resultEdit = await cabangServices.getCabangById(accessToken!, id);
+      if (!resultEdit.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: resultEdit.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
+        setEditData(resultEdit.data);
       }
     } catch (error) {
       setAlert({

@@ -74,12 +74,17 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
                 </a>
               </li>
             )}
-            <li>
-              <a href="/dashboard/user" className="waves-effect">
-                <i className="mdi mdi-account-multiple-outline" />
-                <span>Data User</span>
-              </a>
-            </li>
+
+            {session.user.role_name === "ADMINISTRATOR" ||
+              (session.user.role_name === "SUPERVISOR" && (
+                <li>
+                  <a href="/dashboard/user" className="waves-effect">
+                    <i className="mdi mdi-account-multiple-outline" />
+                    <span>Data User</span>
+                  </a>
+                </li>
+              ))}
+
             <li>
               <a href="/dashboard/device" className="waves-effect">
                 <i className="mdi mdi-cellphone-android" />

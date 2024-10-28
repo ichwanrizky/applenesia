@@ -31,23 +31,23 @@ const CreateCabang = (props: Props) => {
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const result = await cabangServices.createCabang(
+        const resultCreate = await cabangServices.createCabang(
           accessToken,
           JSON.stringify(formData)
         );
 
-        if (!result.status) {
+        if (!resultCreate.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultCreate.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultCreate.message,
           });
           setTimeout(() => {
             onClose();
@@ -109,8 +109,10 @@ const CreateCabang = (props: Props) => {
           className="form-control"
           autoComplete="off"
           required
-          onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
-          value={formData.telp}
+          onChange={(e) =>
+            setFormData({ ...formData, address: e.target.value })
+          }
+          value={formData.address}
         />
       </div>
     </Modal>
