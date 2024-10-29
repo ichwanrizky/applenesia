@@ -1,18 +1,3 @@
-type DataProduct = {
-  name: string;
-  sub_name: string;
-  sell_price: number;
-  purchase_price: number;
-  warranty: number;
-  is_pos: string;
-  is_invent: string;
-  product_type: string;
-  category: any;
-  device: any;
-  branch: number;
-  qty?: number;
-};
-
 type ProductInventory = {
   qty: number;
   desc: string;
@@ -33,7 +18,7 @@ const getProductById = async (accessToken: string, id: number) => {
   }
 };
 
-const createProduct = async (accessToken: string, data: DataProduct) => {
+const createProduct = async (accessToken: string, data: string) => {
   try {
     const response = await fetch("/api/product", {
       method: "POST",
@@ -41,7 +26,7 @@ const createProduct = async (accessToken: string, data: DataProduct) => {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: data,
     });
 
     const res = await response.json();
@@ -67,11 +52,7 @@ const deleteProduct = async (accessToken: string, id: number) => {
   }
 };
 
-const editProduct = async (
-  accessToken: string,
-  id: number,
-  data: DataProduct
-) => {
+const editProduct = async (accessToken: string, id: number, data: string) => {
   try {
     const response = await fetch(`/api/product/${id}`, {
       method: "PUT",
@@ -79,7 +60,7 @@ const editProduct = async (
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: data,
     });
 
     const res = await response.json();

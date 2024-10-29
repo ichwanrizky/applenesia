@@ -13,6 +13,7 @@ type UserSession = {
 };
 
 const SidebarAdmin = ({ session }: { session: Session }) => {
+  const role_name = session.user.role_name;
   return (
     <div className="vertical-menu">
       <div data-simplebar="" className="h-100">
@@ -36,12 +37,16 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
 
             {/*  */}
             <li className="menu-title">INVENTORY & PRODUCT</li>
-            <li>
-              <a href="/dashboard/product" className="waves-effect">
-                <i className="mdi mdi-file-document-box" />
-                <span>Data Product</span>
-              </a>
-            </li>
+            {(role_name === "ADMINISTRATOR" ||
+              role_name === "SUPERVISOR" ||
+              role_name === "ADMINCABANG") && (
+              <li>
+                <a href="/dashboard/product" className="waves-effect">
+                  <i className="mdi mdi-file-document-box" />
+                  <span>Data Product</span>
+                </a>
+              </li>
+            )}
 
             <li>
               <a href="/dashboard/productinventory" className="waves-effect">

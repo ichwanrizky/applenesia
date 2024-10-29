@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 type CustomAlertProps = {
   color: string;
   message: string;
-  isModal?: boolean;
+  isDismissable?: boolean;
 };
 
 const CustomAlert = (props: CustomAlertProps) => {
-  const { color, message, isModal = false } = props;
+  const { color, message, isDismissable = false } = props;
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    if (!isModal) {
+    if (!isDismissable) {
       const timer = setTimeout(() => {
         setIsVisible(false); // Hide the alert after 5 seconds
       }, 3000);

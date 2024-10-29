@@ -85,72 +85,52 @@ const EditProduct = (props: Props) => {
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [dataDevice, setDataDevice] = useState([] as Device[]);
-
-  const [productName, setProductName] = useState(editData?.name || "");
-  const [subProductName, setSubProductName] = useState(
-    editData?.sub_name || ""
-  );
-  const [productType, setProductType] = useState(editData?.product_type || "");
-  const [category, setCategory] = useState(
-    editData?.product_category.map((e) => ({
-      value: e.category.id,
-      label: e.category.name?.toUpperCase(),
-    }))
-  );
   const [deviceType, setDeviceType] = useState(
     editData?.product_device[0].device.device_type.id || ""
   );
-  const [device, setDevice] = useState(
-    editData?.product_device.map((e) => ({
+
+  const [formData, setFormData] = useState({
+    name: editData?.name || "",
+    sub_name: editData?.sub_name || "",
+    sell_price: editData?.sell_price || 0,
+    purchase_price: editData?.purchase_price || 0,
+    warranty: editData?.warranty || 0,
+    is_pos: editData?.is_pos ? "1" : "0",
+    is_invent: editData?.is_inventory ? "1" : "0",
+    product_type: editData?.product_type || "",
+    category: editData?.product_category.map((e) => ({
+      value: e.category.id,
+      label: e.category.name?.toUpperCase(),
+    })),
+    device: editData?.product_device.map((e) => ({
       value: e.device.id,
       label: e.device.name?.toUpperCase(),
-    }))
-  );
-  const [purchasePrice, setPurchasePrice] = useState(
-    editData?.purchase_price || ""
-  );
-  const [sellPrice, setSellPrice] = useState(editData?.sell_price || "");
-  const [warranty, setWarranty] = useState(editData?.warranty || "");
-  const [isPos, setIsPos] = useState(editData?.is_pos ? "1" : "0");
-  const [isInvent, setIsInvent] = useState(editData?.is_inventory ? "1" : "0");
+    })),
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name: productName,
-          sub_name: subProductName,
-          sell_price: Number(sellPrice),
-          purchase_price: Number(purchasePrice),
-          warranty: Number(warranty),
-          is_pos: isPos,
-          is_invent: isInvent,
-          product_type: productType,
-          category: category,
-          device: device,
-          branch: editData.branch_id,
-        };
-
-        const result = await productServices.editProduct(
+        const resultEdit = await productServices.editProduct(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
-        if (!result.status) {
+        if (!resultEdit.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultEdit.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultEdit.message,
           });
           setTimeout(() => {
             onClose();
@@ -170,20 +150,20 @@ const EditProduct = (props: Props) => {
   const handleGetDevice = async (deviceType: string) => {
     setIsLoadingHeader(true);
     try {
-      const result = await deviceServices.getDeviceByType(
+      const resultGetDevice = await deviceServices.getDeviceByType(
         accessToken!,
         Number(deviceType)
       );
 
-      if (!result.status) {
+      if (!resultGetDevice.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: resultGetDevice.message,
         });
       }
 
-      setDataDevice(result.data);
+      setDataDevice(resultGetDevice.data);
     } catch (error) {
       setAlert({
         status: true,
@@ -217,183 +197,201 @@ const EditProduct = (props: Props) => {
     label: e.name?.toUpperCase(),
   }));
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <Modal
-        modalTitle="Edit Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-        isLoadingHeader={isLoadingHeader}
-      >
-        <div className="form-group">
-          <label htmlFor="product_name">Nama Product</label>
-          <input
-            type="text"
-            id="product_name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            required
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_sub_name">Sub Nama Product</label>
-          <input
-            type="text"
-            id="product_sub_name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            value={subProductName}
-            onChange={(e) => setSubProductName(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_type">Tipe Produk</label>
-          <Select
-            placeholder="Pilih Tipe Product"
-            isClearable
-            options={optionsProductType}
-            required
-            onChange={(e: any) => setProductType(e ? e.value : "")}
-            value={
-              productType
-                ? optionsProductType.find(
-                    (option: any) => option.value === productType
-                  )
-                : null
+    <Modal
+      modalTitle="Edit Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+      isLoadingHeader={isLoadingHeader}
+    >
+      <div className="form-group">
+        <label htmlFor="product_name">Nama Product</label>
+        <input
+          type="text"
+          id="product_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          required
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.name}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_sub_name">Sub Nama Product</label>
+        <input
+          type="text"
+          id="product_sub_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          value={formData.sub_name}
+          onChange={(e) =>
+            setFormData({ ...formData, sub_name: e.target.value })
+          }
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_type">Tipe Produk</label>
+        <Select
+          instanceId={"product_type"}
+          placeholder="Pilih Tipe Product"
+          isClearable
+          options={optionsProductType}
+          required
+          onChange={(e: any) =>
+            setFormData({ ...formData, product_type: e ? e.value : "" })
+          }
+          value={
+            formData.product_type
+              ? optionsProductType.find(
+                  (option: any) => option.value === formData.product_type
+                )
+              : null
+          }
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_category">Kategori</label>
+        <Select
+          instanceId={"product_category"}
+          placeholder="Pilih Kategori"
+          isClearable
+          options={optionsCategory}
+          required
+          isMulti
+          value={formData.category}
+          onChange={(e: any) => setFormData({ ...formData, category: e })}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_device_type">Tipe Device</label>
+        <Select
+          instanceId={"product_device_type"}
+          placeholder="Pilih Tipe Device"
+          isClearable
+          options={optionsDeviceType}
+          required
+          onChange={(e: any) => {
+            setDeviceType(e.value);
+            setFormData({ ...formData, device: [] });
+            if (e) {
+              handleGetDevice(e.value);
             }
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_type">Kategori</label>
-          <Select
-            placeholder="Pilih Kategori"
-            isClearable
-            options={optionsCategory}
-            required
-            isMulti
-            onChange={(e: any) => setCategory(e)}
-            value={category}
-          />
-        </div>
+          }}
+          value={
+            deviceType
+              ? optionsDeviceType.find(
+                  (option: any) => option.value === deviceType
+                )
+              : null
+          }
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="product_device_type">Tipe Device</label>
-          <Select
-            placeholder="Pilih Tipe Device"
-            isClearable
-            options={optionsDeviceType}
-            required
-            onChange={(e: any) => {
-              setDeviceType(e ? e.value : "");
-              setDevice([]);
-              if (e) {
-                handleGetDevice(e.value);
-              }
-            }}
-            value={
-              deviceType
-                ? optionsDeviceType.find(
-                    (option: any) => option.value === deviceType
-                  )
-                : null
-            }
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_device">Device</label>
+        <Select
+          instanceId={"product_device"}
+          placeholder="Pilih Device"
+          isClearable
+          options={optionsDevice}
+          required
+          isMulti
+          onChange={(e: any) => setFormData({ ...formData, device: e })}
+          value={formData.device}
+          closeMenuOnSelect={false}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="product_device_type">Device</label>
-          <Select
-            placeholder="Pilih Device"
-            isClearable
-            options={optionsDevice}
-            required
-            isMulti
-            onChange={(e: any) => setDevice(e)}
-            value={device}
-            closeMenuOnSelect={false}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_purchase_price">Harga Beli</label>
+        <NumericFormat
+          id="product_purchase_price"
+          className="form-control"
+          defaultValue={
+            formData.purchase_price === 0 ? "" : formData.purchase_price
+          }
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, purchase_price: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="purchase_price">Harga Beli</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={purchasePrice}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setPurchasePrice(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_sell_price">Harga Jual</label>
+        <NumericFormat
+          id="product_sell_price"
+          className="form-control"
+          defaultValue={formData.sell_price === 0 ? "" : formData.sell_price}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, sell_price: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="sell_price">Harga Jual</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={sellPrice}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setSellPrice(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_warranty">Garansi</label>
+        <NumericFormat
+          id="product_warranty"
+          className="form-control"
+          defaultValue={formData.warranty === 0 ? "" : formData.warranty}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, warranty: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
+      <hr />
 
-        <div className="form-group">
-          <label htmlFor="product_warranty">Garansi</label>
-          <input
-            type="number"
-            id="product_warranty"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            required
-            value={warranty}
-            onChange={(e) => setWarranty(Number(e.target.value))}
-          />
-        </div>
-        <hr />
+      <div className="form-group">
+        <label htmlFor="product_is_pos">Tampilkan Di POS?</label>
+        <select
+          id="product_is_pos"
+          className="custom-select"
+          required
+          onChange={(e) => setFormData({ ...formData, is_pos: e.target.value })}
+          value={formData.is_pos}
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="isPos">Tampilkan Di POS?</label>
-          <select
-            className="custom-select"
-            id="isPos"
-            required
-            value={isPos}
-            onChange={(e) => setIsPos(e.target.value)}
-          >
-            <option value="">--PILIH--</option>
-            <option value="1">YA</option>
-            <option value="0">TIDAK</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="isInvent">Produk Inventaris?</label>
-          <select
-            className="custom-select"
-            id="isInvent"
-            required
-            value={isInvent}
-            onChange={(e) => setIsInvent(e.target.value)}
-          >
-            <option value="">--PILIH--</option>
-            <option value="1">YA</option>
-            <option value="0">TIDAK</option>
-          </select>
-        </div>
-      </Modal>
-    )
+      <div className="form-group">
+        <label htmlFor="product_is_invent">Produk Inventaris?</label>
+        <select
+          id="product_is_invent"
+          className="custom-select"
+          required
+          onChange={(e) =>
+            setFormData({ ...formData, is_invent: e.target.value })
+          }
+          value={formData.is_invent}
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
+    </Modal>
   );
 };
 

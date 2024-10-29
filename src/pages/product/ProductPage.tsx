@@ -112,19 +112,21 @@ const ProductPage = ({ session }: { session: Session | null }) => {
 
     setIsLoadingAction({ ...isLoadingAction, [0]: true });
     try {
-      const result = await libServices.getCategory(accessToken!);
-      const result2 = await libServices.getDeviceType(accessToken!);
+      const resultGetCategory = await libServices.getCategory(accessToken!);
+      const resultGetDeviceType = await libServices.getDeviceType(accessToken!);
 
-      if (!result.status || !result2.status) {
+      if (!resultGetCategory.status || !resultGetDeviceType.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.status ? result.message : result2.message,
+          message: resultGetCategory.status
+            ? resultGetCategory.message
+            : resultGetDeviceType.message,
         });
       } else {
         setIsCreateOpen(true);
-        setCategoryData(result.data);
-        setDeviceTypeData(result2.data);
+        setCategoryData(resultGetCategory.data);
+        setDeviceTypeData(resultGetDeviceType.data);
       }
     } catch (error) {
       setAlert({
@@ -141,19 +143,22 @@ const ProductPage = ({ session }: { session: Session | null }) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await productServices.deleteProduct(accessToken!, id);
+        const resultDelete = await productServices.deleteProduct(
+          accessToken!,
+          id
+        );
 
-        if (!result.status) {
+        if (!resultDelete.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultDelete.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultDelete.message,
           });
           setCurrentPage(1);
           mutate(
@@ -175,26 +180,33 @@ const ProductPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await productServices.getProductById(accessToken!, id);
+      const resultGetById = await productServices.getProductById(
+        accessToken!,
+        id
+      );
 
-      const result2 = await libServices.getCategory(accessToken!);
-      const result3 = await libServices.getDeviceType(accessToken!);
+      const resultGetCategory = await libServices.getCategory(accessToken!);
+      const resultGetDeviceType = await libServices.getDeviceType(accessToken!);
 
-      if (!result.status || !result2.status || !result3.status) {
+      if (
+        !resultGetById.status ||
+        !resultGetCategory.status ||
+        !resultGetDeviceType.status
+      ) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.status
-            ? result.message
-            : result2.message
-            ? result2.message
-            : result3.message,
+          message: resultGetById.status
+            ? resultGetById.message
+            : resultGetCategory.message
+            ? resultGetCategory.message
+            : resultGetDeviceType.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
-        setCategoryData(result2.data);
-        setDeviceTypeData(result3.data);
+        setEditData(resultGetById.data);
+        setCategoryData(resultGetCategory.data);
+        setDeviceTypeData(resultGetDeviceType.data);
       }
     } catch (error) {
       setAlert({
@@ -283,6 +295,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
+                    isDismissable={true}
                   />
                 </div>
               ) : (

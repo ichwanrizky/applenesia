@@ -99,24 +99,27 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    // PRODUCT
+    case "MENU_PRODUCT":
+      if (
+        (method === "GET" ||
+          method === "POST" ||
+          method === "DELETE" ||
+          method === "PUT") &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "SUPERVISOR" ||
+          role_name === "ADMINCABANG")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "form_checking":
       if (
         method === "GET" ||
         method === "POST" ||
         method === "DELETE" ||
         method === "PUT"
-      ) {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
-
-    case "product":
-      if (
-        (method === "GET" ||
-          method === "POST" ||
-          method === "DELETE" ||
-          method === "PUT") &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
       ) {
         return [true, decoded.data, null];
       }

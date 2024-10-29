@@ -44,53 +44,43 @@ const CreateProduct = (props: Props) => {
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [dataDevice, setDataDevice] = useState([] as Device[]);
 
-  const [productName, setProductName] = useState("");
-  const [subProductName, setSubProductName] = useState("");
-  const [productType, setProductType] = useState("");
-  const [category, setCategory] = useState([]);
-  const [deviceType, setDeviceType] = useState("");
-  const [device, setDevice] = useState([]);
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [sellPrice, setSellPrice] = useState("");
-  const [warranty, setWarranty] = useState("");
-  const [isPos, setIsPos] = useState("");
-  const [isInvent, setIsInvent] = useState("");
-  const [qty, setQty] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    sub_name: "",
+    sell_price: 0,
+    purchase_price: 0,
+    warranty: 0,
+    is_pos: "",
+    is_invent: "",
+    product_type: "",
+    category: [],
+    device: [],
+    branch: branch,
+    qty: 0,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name: productName,
-          sub_name: subProductName,
-          sell_price: Number(sellPrice),
-          purchase_price: Number(purchasePrice),
-          warranty: Number(warranty),
-          is_pos: isPos,
-          is_invent: isInvent,
-          product_type: productType,
-          category: category,
-          device: device,
-          branch: Number(branch),
-          qty: qty === "" ? 0 : Number(qty),
-        };
+        const resultCreate = await productServices.createProduct(
+          accessToken,
+          JSON.stringify(formData)
+        );
 
-        const result = await productServices.createProduct(accessToken, data);
-
-        if (!result.status) {
+        if (!resultCreate.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultCreate.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultCreate.message,
           });
           setTimeout(() => {
             onClose();
@@ -110,20 +100,20 @@ const CreateProduct = (props: Props) => {
   const handleGetDevice = async (deviceType: string) => {
     setIsLoadingHeader(true);
     try {
-      const result = await deviceServices.getDeviceByType(
+      const resultGetDevice = await deviceServices.getDeviceByType(
         accessToken!,
         Number(deviceType)
       );
 
-      if (!result.status) {
+      if (!resultGetDevice.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: resultGetDevice.message,
         });
       }
 
-      setDataDevice(result.data);
+      setDataDevice(resultGetDevice.data);
     } catch (error) {
       setAlert({
         status: true,
@@ -157,204 +147,212 @@ const CreateProduct = (props: Props) => {
     label: e.name?.toUpperCase(),
   }));
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <Modal
-        modalTitle="Tambah Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-        isLoadingHeader={isLoadingHeader}
-      >
-        <div className="form-group">
-          <label htmlFor="product_name">Nama Product</label>
-          <input
-            type="text"
-            id="product_name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            required
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_sub_name">Sub Nama Product</label>
-          <input
-            type="text"
-            id="product_sub_name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            value={subProductName}
-            onChange={(e) => setSubProductName(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_type">Tipe Produk</label>
-          <Select
-            placeholder="Pilih Tipe Product"
-            isClearable
-            options={optionsProductType}
-            required
-            onChange={(e: any) => setProductType(e ? e.value : "")}
-            value={
-              productType
-                ? optionsProductType.find(
-                    (option: any) => option.value === productType
-                  )
-                : null
+    <Modal
+      modalTitle="Tambah Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+      isLoadingHeader={isLoadingHeader}
+    >
+      <div className="form-group">
+        <label htmlFor="product_name">Nama Product</label>
+        <input
+          type="text"
+          id="product_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          required
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.name}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_sub_name">Sub Nama Product</label>
+        <input
+          type="text"
+          id="product_sub_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          onChange={(e) =>
+            setFormData({ ...formData, sub_name: e.target.value })
+          }
+          value={formData.sub_name}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_type">Tipe Produk</label>
+        <Select
+          instanceId={"product_type"}
+          placeholder="Pilih Tipe Product"
+          isClearable
+          options={optionsProductType}
+          required
+          onChange={(e: any) =>
+            setFormData({ ...formData, product_type: e ? e.value : "" })
+          }
+          value={
+            formData.product_type
+              ? optionsProductType.find(
+                  (option: any) => option.value === formData.product_type
+                )
+              : null
+          }
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_category">Kategori</label>
+        <Select
+          instanceId={"product_category"}
+          placeholder="Pilih Kategori"
+          isClearable
+          options={optionsCategory}
+          required
+          isMulti
+          onChange={(e: any) => setFormData({ ...formData, category: e })}
+          value={formData.category}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_device_type">Tipe Device</label>
+        <Select
+          instanceId={"product_device_type"}
+          placeholder="Pilih Tipe Device"
+          isClearable
+          options={optionsDeviceType}
+          required
+          onChange={(e: any) => {
+            setFormData({ ...formData, device: [] });
+            if (e) {
+              handleGetDevice(e.value);
             }
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="product_type">Kategori</label>
-          <Select
-            placeholder="Pilih Kategori"
-            isClearable
-            options={optionsCategory}
-            required
-            isMulti
-            onChange={(e: any) => setCategory(e)}
-            value={category}
-          />
-        </div>
+          }}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="product_device_type">Tipe Device</label>
-          <Select
-            placeholder="Pilih Tipe Device"
-            isClearable
-            options={optionsDeviceType}
-            required
-            onChange={(e: any) => {
-              setDeviceType(e ? e.value : "");
-              setDevice([]);
-              if (e) {
-                handleGetDevice(e.value);
-              }
-            }}
-            value={
-              deviceType
-                ? optionsDeviceType.find(
-                    (option: any) => option.value === deviceType
-                  )
-                : null
-            }
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_device">Device</label>
+        <Select
+          instanceId={"product_device"}
+          placeholder="Pilih Device"
+          isClearable
+          options={optionsDevice}
+          required
+          isMulti
+          onChange={(e: any) => setFormData({ ...formData, device: e })}
+          value={formData.device}
+          closeMenuOnSelect={false}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="product_device_type">Device</label>
-          <Select
-            placeholder="Pilih Device"
-            isClearable
-            options={optionsDevice}
-            required
-            isMulti
-            onChange={(e: any) => setDevice(e)}
-            value={device}
-            closeMenuOnSelect={false}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_purchase_price">Harga Beli</label>
+        <NumericFormat
+          id="product_purchase_price"
+          className="form-control"
+          defaultValue={
+            formData.purchase_price === 0 ? "" : formData.purchase_price
+          }
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, purchase_price: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+        />
+      </div>
 
+      <div className="form-group">
+        <label htmlFor="product_sell_price">Harga Jual</label>
+        <NumericFormat
+          id="product_sell_price"
+          className="form-control"
+          defaultValue={formData.sell_price === 0 ? "" : formData.sell_price}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, sell_price: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_warranty">Garansi</label>
+        <NumericFormat
+          id="product_warranty"
+          className="form-control"
+          defaultValue={formData.warranty === 0 ? "" : formData.warranty}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, warranty: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
+      <hr />
+
+      <div className="form-group">
+        <label htmlFor="product_is_pos">Tampilkan Di POS?</label>
+        <select
+          id="product_is_pos"
+          className="custom-select"
+          required
+          value={formData.is_pos}
+          onChange={(e) => setFormData({ ...formData, is_pos: e.target.value })}
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_is_invent">Produk Inventaris?</label>
+        <select
+          id="product_is_invent"
+          className="custom-select"
+          required
+          value={formData.is_invent}
+          onChange={(e) =>
+            setFormData({ ...formData, is_invent: e.target.value })
+          }
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
+
+      {formData.is_invent === "1" && (
         <div className="form-group">
-          <label htmlFor="purchase_price">Harga Beli</label>
+          <label htmlFor="product_qty">QTY Awal Produk</label>
           <NumericFormat
+            id="product_qty"
             className="form-control"
-            defaultValue={purchasePrice}
+            defaultValue={formData.qty === 0 ? "" : formData.qty}
             thousandSeparator=","
             displayType="input"
             onValueChange={(values: any) => {
-              setPurchasePrice(values.floatValue);
+              setFormData({ ...formData, qty: values.floatValue });
             }}
             allowLeadingZeros={false}
             allowNegative={false}
+            required={formData.is_invent === "1" ? true : false}
           />
         </div>
-
-        <div className="form-group">
-          <label htmlFor="sell_price">Harga Jual</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={sellPrice}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setSellPrice(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="product_warranty">Garansi</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={warranty}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setWarranty(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required
-          />
-        </div>
-        <hr />
-
-        <div className="form-group">
-          <label htmlFor="isPos">Tampilkan Di POS?</label>
-          <select
-            className="custom-select"
-            id="isPos"
-            required
-            value={isPos}
-            onChange={(e) => setIsPos(e.target.value)}
-          >
-            <option value="">--PILIH--</option>
-            <option value="1">YA</option>
-            <option value="0">TIDAK</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="isInvent">Produk Inventaris?</label>
-          <select
-            className="custom-select"
-            id="isInvent"
-            required
-            value={isInvent}
-            onChange={(e) => setIsInvent(e.target.value)}
-          >
-            <option value="">--PILIH--</option>
-            <option value="1">YA</option>
-            <option value="0">TIDAK</option>
-          </select>
-        </div>
-
-        {isInvent === "1" && (
-          <div className="form-group">
-            <label htmlFor="qty">QTY Awal Produk</label>
-            <NumericFormat
-              className="form-control"
-              defaultValue={qty}
-              thousandSeparator=","
-              displayType="input"
-              onValueChange={(values: any) => {
-                setQty(values.floatValue);
-              }}
-              allowLeadingZeros={false}
-              allowNegative={false}
-              required={isInvent === "1" ? true : false}
-            />
-          </div>
-        )}
-      </Modal>
-    )
+      )}
+    </Modal>
   );
 };
 

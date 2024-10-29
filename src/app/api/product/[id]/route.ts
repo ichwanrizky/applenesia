@@ -11,7 +11,7 @@ export const GET = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product", "GET");
+    const session = await checkSession(authorization, "MENU_PRODUCT", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -117,7 +117,7 @@ export const PUT = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product", "PUT");
+    const session = await checkSession(authorization, "MENU_PRODUCT", "PUT");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -268,7 +268,7 @@ export const DELETE = async (
 ) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product", "DELETE");
+    const session = await checkSession(authorization, "MENU_PRODUCT", "DELETE");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

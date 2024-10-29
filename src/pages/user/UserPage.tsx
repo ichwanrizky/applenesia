@@ -289,6 +289,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
+                    isDismissable={true}
                   />
                 </div>
               ) : (
