@@ -8,7 +8,7 @@ export const GET = async (request: Request) => {
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_inventory",
+      "MENU_PRODUCT_INVENTORY",
       "GET"
     );
     if (!session[0]) {

@@ -61,19 +61,19 @@ const ProductInventoryPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number, type: string) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await productServices.getProductInventoryById(
+      const resultGetById = await productServices.getProductInventoryById(
         accessToken!,
         id
       );
-      if (!result.status) {
+      if (!resultGetById.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: resultGetById.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
+        setEditData(resultGetById.data);
         setEditType(type);
       }
     } catch (error) {
@@ -154,6 +154,7 @@ const ProductInventoryPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
+                    isDismissable={false}
                   />
                 </div>
               ) : (

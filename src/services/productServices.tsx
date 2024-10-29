@@ -1,9 +1,3 @@
-type ProductInventory = {
-  qty: number;
-  desc: string;
-  type: string;
-};
-
 const getProductById = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/product/${id}`, {
@@ -87,7 +81,7 @@ const getProductInventoryById = async (accessToken: string, id: number) => {
 const editProductInventory = async (
   accessToken: string,
   id: number,
-  data: ProductInventory
+  data: string
 ) => {
   try {
     const response = await fetch(`/api/product_inventory/${id}`, {
@@ -96,7 +90,7 @@ const editProductInventory = async (
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: data,
     });
 
     const res = await response.json();

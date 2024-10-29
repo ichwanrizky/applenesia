@@ -38,41 +38,37 @@ const CreateProductPurchase = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [product, setProduct] = useState("");
-  const [qty, setQty] = useState("");
-  const [price, setPrice] = useState("");
-  const [payment, setPayment] = useState("");
+  const [formData, setFormData] = useState({
+    product_id: "",
+    qty: 0,
+    price: 0,
+    payment_id: "",
+    branch: branch,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          product_id: Number(product),
-          qty: Number(qty),
-          price: Number(price),
-          payment_id: Number(payment),
-          branch: Number(branch),
-        };
+        const resultCreate =
+          await productPurchaseServices.createProductPurchase(
+            accessToken,
+            JSON.stringify(formData)
+          );
 
-        const result = await productPurchaseServices.createProductPurchase(
-          accessToken,
-          data
-        );
-
-        if (!result.status) {
+        if (!resultCreate.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultCreate.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultCreate.message,
           });
           setTimeout(() => {
             onClose();
@@ -101,80 +97,92 @@ const CreateProductPurchase = (props: Props) => {
     label: e.name?.toUpperCase(),
   }));
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <Modal
-        modalTitle="Tambah Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-      >
-        <div className="form-group">
-          <label htmlFor="product">Produk</label>
-          <Select
-            placeholder="Pilih Product"
-            isClearable
-            options={optionsProduct}
-            required
-            onChange={(e: any) => setProduct(e ? e.value : "")}
-            value={
-              product
-                ? optionsProduct.find((option: any) => option.value === product)
-                : null
-            }
-          />
-        </div>
+    <Modal
+      modalTitle="Tambah Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+    >
+      <div className="form-group">
+        <label htmlFor="product_purchase_product">Produk</label>
+        <Select
+          instanceId={"product_purchase_product"}
+          placeholder="Pilih Product"
+          isClearable
+          options={optionsProduct}
+          required
+          onChange={(e: any) =>
+            setFormData({ ...formData, product_id: e ? e.value : "" })
+          }
+          value={
+            formData.product_id
+              ? optionsProduct.find(
+                  (option: any) => option.value === formData.product_id
+                )
+              : null
+          }
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="qty">QTY Pembelian</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={qty}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setQty(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_purchase_qty">QTY Pembelian</label>
+        <NumericFormat
+          id="product_purchase_qty"
+          className="form-control"
+          defaultValue={formData.qty === 0 ? "" : formData.qty}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, qty: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="price">Total Harga</label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={price}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setPrice(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="product_purchase_price">Total Harga</label>
+        <NumericFormat
+          id="product_purchase_price"
+          className="form-control"
+          defaultValue={formData.price === 0 ? "" : formData.price}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, price: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="payment">Jenis Payment</label>
-          <Select
-            placeholder="Pilih Payment"
-            isClearable
-            options={optionsPayment}
-            required
-            onChange={(e: any) => setPayment(e ? e.value : "")}
-            value={
-              payment
-                ? optionsPayment.find((option: any) => option.value === payment)
-                : null
-            }
-          />
-        </div>
-      </Modal>
-    )
+      <div className="form-group">
+        <label htmlFor="product_purchase_payment">Jenis Payment</label>
+        <Select
+          instanceId={"product_purchase_payment"}
+          placeholder="Pilih Payment"
+          isClearable
+          options={optionsPayment}
+          required
+          onChange={(e: any) =>
+            setFormData({ ...formData, payment_id: e ? e.value : "" })
+          }
+          value={
+            formData.payment_id
+              ? optionsPayment.find(
+                  (option: any) => option.value === formData.payment_id
+                )
+              : null
+          }
+        />
+      </div>
+    </Modal>
   );
 };
 

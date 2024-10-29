@@ -13,7 +13,7 @@ export const GET = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_inventory",
+      "MENU_PRODUCT_INVENTORY",
       "GET"
     );
     if (!session[0]) {
@@ -119,7 +119,7 @@ export const PUT = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_inventory",
+      "MENU_PRODUCT_INVENTORY",
       "PUT"
     );
 

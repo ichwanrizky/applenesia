@@ -14,7 +14,7 @@ export const GET = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_purchase",
+      "MENU_PRODUCT_PURCHASE",
       "GET"
     );
     if (!session[0]) {
@@ -110,7 +110,7 @@ export const PUT = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_purchase",
+      "MENU_PRODUCT_PURCHASE",
       "PUT"
     );
     if (!session[0]) {
@@ -290,7 +290,7 @@ export const DELETE = async (
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_purchase",
+      "MENU_PRODUCT_PURCHASE",
       "DELETE"
     );
     if (!session[0]) {

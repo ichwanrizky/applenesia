@@ -11,7 +11,7 @@ export const GET = async (request: Request) => {
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_purchase",
+      "MENU_PRODUCT_PURCHASE",
       "GET"
     );
     if (!session[0]) {
@@ -181,7 +181,7 @@ export const POST = async (request: Request) => {
     const authorization = request.headers.get("Authorization");
     const session = await checkSession(
       authorization,
-      "product_purchase",
+      "MENU_PRODUCT_PURCHASE",
       "POST"
     );
     if (!session[0]) {
@@ -297,7 +297,7 @@ export const POST = async (request: Request) => {
           payment_id,
           created_at: formattedDateNow(),
           created_by: session[1].id,
-          branch_id: branch,
+          branch_id: Number(branch),
           product_purchase_id: createProductPurchase.id,
         },
       });

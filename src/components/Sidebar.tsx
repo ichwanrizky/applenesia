@@ -48,19 +48,27 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               </li>
             )}
 
-            <li>
-              <a href="/dashboard/productinventory" className="waves-effect">
-                <i className="mdi mdi-package" />
-                <span>Product Inventory</span>
-              </a>
-            </li>
+            {(role_name === "ADMINISTRATOR" ||
+              role_name === "SUPERVISOR" ||
+              role_name === "ADMINCABANG") && (
+              <li>
+                <a href="/dashboard/productinventory" className="waves-effect">
+                  <i className="mdi mdi-package" />
+                  <span>Product Inventory</span>
+                </a>
+              </li>
+            )}
 
-            <li>
-              <a href="/dashboard/productpurchase" className="waves-effect">
-                <i className="mdi mdi-cart" />
-                <span>Product Pembelian</span>
-              </a>
-            </li>
+            {(role_name === "ADMINISTRATOR" ||
+              role_name === "SUPERVISOR" ||
+              role_name === "ADMINCABANG") && (
+              <li>
+                <a href="/dashboard/productpurchase" className="waves-effect">
+                  <i className="mdi mdi-cart" />
+                  <span>Product Pembelian</span>
+                </a>
+              </li>
+            )}
 
             <li>
               <a href="/dashboard/productlog" className="waves-effect">

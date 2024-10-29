@@ -102,21 +102,25 @@ const ProductPurchasePage = ({ session }: { session: Session | null }) => {
     }
     setIsLoadingAction({ ...isLoadingAction, [0]: true });
     try {
-      const result = await libServices.getProductInventory(
+      const resultGetProduct = await libServices.getProductInventory(
         accessToken!,
         branchAccess
       );
-      const result2 = await libServices.getPaymentMethod(accessToken!);
-      if (!result.status || !result2.status) {
+      const resultGetPaymentMethod = await libServices.getPaymentMethod(
+        accessToken!
+      );
+      if (!resultGetProduct.status || !resultGetPaymentMethod.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.status ? result.message : result2.message,
+          message: resultGetProduct.status
+            ? resultGetProduct.message
+            : resultGetPaymentMethod.message,
         });
       } else {
         setIsCreateOpen(true);
-        setProductData(result.data);
-        setPaymentData(result2.data);
+        setProductData(resultGetProduct.data);
+        setPaymentData(resultGetPaymentMethod.data);
       }
     } catch (error) {
       setAlert({
@@ -133,21 +137,19 @@ const ProductPurchasePage = ({ session }: { session: Session | null }) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await productPurchaseServices.deleteProductPurchase(
-          accessToken!,
-          id
-        );
-        if (!result.status) {
+        const resultDelete =
+          await productPurchaseServices.deleteProductPurchase(accessToken!, id);
+        if (!resultDelete.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultDelete.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultDelete.message,
           });
           setCurrentPage(1);
           mutate(
@@ -169,22 +171,24 @@ const ProductPurchasePage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await productPurchaseServices.getProductPurchaseById(
-        accessToken!,
-        id
+      const resultGetById =
+        await productPurchaseServices.getProductPurchaseById(accessToken!, id);
+      const resultGetPaymentMethod = await libServices.getPaymentMethod(
+        accessToken!
       );
-      const result2 = await libServices.getPaymentMethod(accessToken!);
 
-      if (!result.status || !result2.status) {
+      if (!resultGetById.status || !resultGetPaymentMethod.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.status ? result.message : result2.message,
+          message: resultGetById.status
+            ? resultGetById.message
+            : resultGetPaymentMethod.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
-        setPaymentData(result2.data);
+        setEditData(resultGetById.data);
+        setPaymentData(resultGetPaymentMethod.data);
       }
     } catch (error) {
       setAlert({

@@ -31,38 +31,35 @@ const EditProductInventory = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [qty, setQty] = useState("");
-  const [desc, setDesc] = useState("");
+  const [formData, setFormData] = useState({
+    qty: 0,
+    desc: "",
+    type: editType,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Edit this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          qty: Number(qty),
-          desc,
-          type: editType,
-        };
-
-        const result = await productServices.editProductInventory(
+        const resultEdit = await productServices.editProductInventory(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
-        if (!result.status) {
+        if (!resultEdit.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultEdit.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultEdit.message,
           });
           setTimeout(() => {
             onClose();
@@ -79,73 +76,74 @@ const EditProductInventory = (props: Props) => {
     }
   };
 
-  return (
-    isOpen && (
-      <Modal
-        modalTitle={
-          editType === "IN" ? "Tambah Stock Produk" : "Kurang Stock Produk"
-        }
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-      >
-        <div className="form-group">
-          <label htmlFor="product_name">Produk</label>
-          <input
-            type="text"
-            id="product_name"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            value={`${editData.name?.toUpperCase()}${
-              editData.sub_name && ` - ${editData.sub_name?.toUpperCase()}`
-            }`}
-            disabled
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="stock">JUMLAH STOCK</label>
-          <input
-            type="text"
-            id="stock"
-            className="form-control"
-            value={editData.stock}
-            disabled
-          />
-        </div>
+  if (!isOpen) return null;
 
-        <hr />
-        <div className="form-group">
-          <label htmlFor="qty">
-            JUMLAH {editType === "IN" ? "TAMBAH" : "KURANG"}
-          </label>
-          <NumericFormat
-            className="form-control"
-            defaultValue={qty}
-            thousandSeparator=","
-            displayType="input"
-            onValueChange={(values: any) => {
-              setQty(values.floatValue);
-            }}
-            allowLeadingZeros={false}
-            allowNegative={false}
-            required={true}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="desc">KETERANGAN</label>
-          <textarea
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            id="desc"
-            required
-            rows={3}
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-          ></textarea>
-        </div>
-      </Modal>
-    )
+  return (
+    <Modal
+      modalTitle={
+        editType === "IN" ? "Tambah Stock Produk" : "Kurang Stock Produk"
+      }
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+    >
+      <div className="form-group">
+        <label htmlFor="product_inventroy_product_name">Produk</label>
+        <input
+          type="text"
+          id="product_inventroy_product_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          value={`${editData.name?.toUpperCase()}${
+            editData.sub_name && ` - ${editData.sub_name?.toUpperCase()}`
+          }`}
+          disabled
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_inventroy_stock">JUMLAH STOCK</label>
+        <input
+          id="product_inventroy_stock"
+          type="text"
+          className="form-control"
+          value={editData.stock}
+          disabled
+        />
+      </div>
+
+      <hr />
+      <div className="form-group">
+        <label htmlFor="product_inventroy_qty">
+          JUMLAH {editType === "IN" ? "TAMBAH" : "KURANG"}
+        </label>
+        <NumericFormat
+          id="product_inventroy_qty"
+          className="form-control"
+          defaultValue={formData.qty == 0 ? "" : formData.qty}
+          thousandSeparator=","
+          displayType="input"
+          onValueChange={(values: any) => {
+            setFormData({ ...formData, qty: values.floatValue });
+          }}
+          allowLeadingZeros={false}
+          allowNegative={false}
+          required={true}
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="product_inventroy_desc">KETERANGAN</label>
+        <textarea
+          id="product_inventroy_desc"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          required
+          rows={3}
+          value={formData.desc}
+          onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
+        ></textarea>
+      </div>
+    </Modal>
   );
 };
 
