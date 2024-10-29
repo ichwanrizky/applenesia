@@ -70,12 +70,16 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               </li>
             )}
 
-            <li>
-              <a href="/dashboard/productlog" className="waves-effect">
-                <i className="mdi mdi-history" />
-                <span>Product LOG</span>
-              </a>
-            </li>
+            {(role_name === "ADMINISTRATOR" ||
+              role_name === "SUPERVISOR" ||
+              role_name === "ADMINCABANG") && (
+              <li>
+                <a href="/dashboard/productlog" className="waves-effect">
+                  <i className="mdi mdi-history" />
+                  <span>Product LOG</span>
+                </a>
+              </li>
+            )}
 
             {/*  */}
             <li className="menu-title">CONFIGURATION</li>

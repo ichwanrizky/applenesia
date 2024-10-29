@@ -57,7 +57,7 @@ const ServiceProductList = (props: Props) => {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(productList as any);
   const [isSelected, setIsSelected] = useState<SelectedProps>(
-    productList.reduce((acc: any, item: any) => {
+    productList?.reduce((acc: any, item: any) => {
       return { ...acc, [item.id]: true };
     }, {})
   );
