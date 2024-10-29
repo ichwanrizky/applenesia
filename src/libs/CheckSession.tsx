@@ -87,7 +87,8 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "category":
+    // CATEGORY
+    case "MENU_CATEGORY":
       if (
         method === "GET" ||
         method === "POST" ||

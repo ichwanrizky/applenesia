@@ -1,7 +1,3 @@
-type DataCategory = {
-  name: string;
-};
-
 const getCategoryById = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/category/${id}`, {
@@ -16,19 +12,15 @@ const getCategoryById = async (accessToken: string, id: number) => {
   }
 };
 
-const createCategory = async (accessToken: string, data: DataCategory) => {
+const createCategory = async (accessToken: string, data: string) => {
   try {
-    const name = data.name;
-
     const response = await fetch("/api/category", {
       method: "POST",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-      }),
+      body: data,
     });
 
     const res = await response.json();
@@ -54,23 +46,15 @@ const deleteCategory = async (accessToken: string, id: number) => {
   }
 };
 
-const editCategory = async (
-  accessToken: string,
-  id: number,
-  data: DataCategory
-) => {
+const editCategory = async (accessToken: string, id: number, data: string) => {
   try {
-    const name = data.name;
-
     const response = await fetch(`/api/category/${id}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-      }),
+      body: data,
     });
 
     const res = await response.json();

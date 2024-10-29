@@ -28,35 +28,31 @@ const EditKategori = (props: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState(editData?.name || "");
+  const [formData, setFormData] = useState({ name: editData?.name || "" });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name,
-        };
-
-        const result = await categoryServices.editCategory(
+        const resultEdit = await categoryServices.editCategory(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
-        if (!result.status) {
+        if (!resultEdit.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultEdit.message,
           });
           setIsLoading(false);
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultEdit.message,
           });
           setTimeout(() => {
             onClose();
@@ -72,6 +68,8 @@ const EditKategori = (props: Props) => {
       }
     }
   };
+
+  if (!editData) return null;
 
   return (
     isOpen && (
@@ -90,8 +88,8 @@ const EditKategori = (props: Props) => {
             className="form-control"
             style={{ textTransform: "uppercase" }}
             required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            onChange={(e) => setFormData({ name: e.target.value })}
+            value={formData.name}
           />
         </div>
       </Modal>
