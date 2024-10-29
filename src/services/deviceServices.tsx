@@ -1,8 +1,3 @@
-type DataDevice = {
-  name: string;
-  type: number;
-};
-
 const getDeviceById = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/device/${id}`, {
@@ -17,21 +12,15 @@ const getDeviceById = async (accessToken: string, id: number) => {
   }
 };
 
-const createDevice = async (accessToken: string, data: DataDevice) => {
+const createDevice = async (accessToken: string, data: string) => {
   try {
-    const name = data.name;
-    const type = data.type;
-
     const response = await fetch("/api/device", {
       method: "POST",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        type,
-      }),
+      body: data,
     });
 
     const res = await response.json();
@@ -57,25 +46,15 @@ const deleteDevice = async (accessToken: string, id: number) => {
   }
 };
 
-const editDevice = async (
-  accessToken: string,
-  id: number,
-  data: DataDevice
-) => {
+const editDevice = async (accessToken: string, id: number, data: string) => {
   try {
-    const name = data.name;
-    const type = data.type;
-
     const response = await fetch(`/api/device/${id}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        type,
-      }),
+      body: data,
     });
 
     const res = await response.json();

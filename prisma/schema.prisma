@@ -49,7 +49,7 @@ model user {
 
 model branch {
   id          Int           @id @unique @default(autoincrement())
-  uuid        String        @unique @default(dbgenerated("uuid()"))
+  uuid        String        @unique @default(uuid())
   name        String
   address     String?
   alias       String?       @unique
@@ -83,7 +83,7 @@ model token {
   user         user     @relation(fields: [user_id], references: [id])
   is_expired   Boolean  @default(false)
 
-  @@index([access_token], map: "token_access_token")
+  // @@index([access_token], map: "token_access_token")
 }
 
 model access_log {
@@ -250,7 +250,7 @@ model customer {
 
 model service {
   id                    Int                     @id @unique @default(autoincrement())
-  uuid                  String                  @unique @default(dbgenerated("uuid()"))
+  uuid                  String                  @unique @default(uuid())
   service_number        String                  @unique
   unique_code           String
   customer_id           Int

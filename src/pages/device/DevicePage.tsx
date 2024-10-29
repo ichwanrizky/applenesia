@@ -66,19 +66,22 @@ const DevicePage = ({
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await deviceServices.deleteDevice(accessToken!, id);
+        const resultDelete = await deviceServices.deleteDevice(
+          accessToken!,
+          id
+        );
 
-        if (!result.status) {
+        if (!resultDelete.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: result.message,
+            message: resultDelete.message,
           });
         } else {
           setAlert({
             status: true,
             color: "success",
-            message: result.message,
+            message: resultDelete.message,
           });
           setCurrentPage(1);
           mutate(
@@ -100,16 +103,19 @@ const DevicePage = ({
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await deviceServices.getDeviceById(accessToken!, id);
-      if (!result.status) {
+      const resultGetById = await deviceServices.getDeviceById(
+        accessToken!,
+        id
+      );
+      if (!resultGetById.status) {
         setAlert({
           status: true,
           color: "danger",
-          message: result.message,
+          message: resultGetById.message,
         });
       } else {
         setIsEditOpen(true);
-        setEditData(result.data);
+        setEditData(resultGetById.data);
       }
     } catch (error) {
       setAlert({

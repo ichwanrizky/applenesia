@@ -75,7 +75,8 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "category":
+    // DEVICE
+    case "MENU_DEVICE":
       if (
         method === "GET" ||
         method === "POST" ||
@@ -86,7 +87,7 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "device":
+    case "category":
       if (
         method === "GET" ||
         method === "POST" ||
