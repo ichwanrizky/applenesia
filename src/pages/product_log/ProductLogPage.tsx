@@ -44,7 +44,6 @@ type AlertProps = {
 const ProductLogPage = ({ session }: { session: Session | null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [alert, setAlert] = useState<AlertProps | null>(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [branchAccess, setBranchAccess] = useState(
@@ -120,6 +119,7 @@ const ProductLogPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
+                    isDismissable={false}
                   />
                 </div>
               ) : (

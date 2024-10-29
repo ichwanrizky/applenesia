@@ -6,7 +6,11 @@ import { checkSession } from "@/libs/CheckSession";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "product_log", "GET");
+    const session = await checkSession(
+      authorization,
+      "MENU_PRODUCT_LOG",
+      "GET"
+    );
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({

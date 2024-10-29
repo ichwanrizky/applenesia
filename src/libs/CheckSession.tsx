@@ -127,12 +127,24 @@ export const checkSession = async (
       return [false, null, "unauthorized"];
 
     // PRODUCT PURCHASE
-    case "product_purchase":
+    case "MENU_PRODUCT_PURCHASE":
       if (
         (method === "GET" ||
           method === "POST" ||
           method === "PUT" ||
           method === "DELETE") &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "ADMINCABANG" ||
+          role_name === "SUPERVISOR")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    // PRODUCT LOG
+    case "MENU_PRODUCT_LOG":
+      if (
+        method === "GET" &&
         (role_name === "ADMINISTRATOR" ||
           role_name === "ADMINCABANG" ||
           role_name === "SUPERVISOR")
@@ -147,15 +159,6 @@ export const checkSession = async (
         method === "POST" ||
         method === "DELETE" ||
         method === "PUT"
-      ) {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
-
-    case "product_log":
-      if (
-        method === "GET" &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
       ) {
         return [true, decoded.data, null];
       }
