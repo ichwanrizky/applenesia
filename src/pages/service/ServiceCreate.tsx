@@ -213,6 +213,7 @@ const CreateServicePage = ({
             handleFormChange={handleFormChange}
             parentFormData={formData}
             branchData={branchData}
+            deviceTypeData={deviceTypeData}
           />
         );
     }

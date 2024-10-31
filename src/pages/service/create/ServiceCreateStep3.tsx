@@ -2,6 +2,8 @@
 import libServices from "@/services/libServices";
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import ServiceProductList from "../ServiceProductList";
+import { NumericFormat } from "react-number-format";
 
 type ServiceCreateStep3Props = {
   accessToken: string;
@@ -10,6 +12,7 @@ type ServiceCreateStep3Props = {
   handleFormChange: (updatedFormData: any) => void;
   parentFormData: any;
   branchData: Branch[];
+  deviceTypeData: DeviceType[];
 };
 
 type FormChecking = {
@@ -30,6 +33,21 @@ type Technician = {
   name: string;
 };
 
+type SelectedProduct = {
+  id: number;
+  name: string;
+  sub_name?: string;
+  price: number;
+  qty: number;
+  warranty: number;
+  is_product: boolean;
+};
+
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
 const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
   const {
     accessToken,
@@ -38,13 +56,21 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
     handleFormChange,
     parentFormData,
     branchData,
+    deviceTypeData,
   } = props;
 
   const [techncianData, setTechncianData] = useState([] as Technician[]);
+  const [serviceFinish, setServiceFinish] = useState(false);
+  const [isProductOpen, setIsProductOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(
+    [] as SelectedProduct[]
+  );
+
   const [formData, setFormData] = useState({
     branch: "",
     technician: "",
     service_status: "1",
+    products: [],
   });
 
   useEffect(() => {
@@ -69,6 +95,12 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
     } finally {
       handleLoadingHeader(false);
     }
+  };
+
+  const closeProductList = (selectedProduct: any) => {
+    setIsProductOpen(false);
+    setSelectedProduct(selectedProduct);
+    setFormData({ ...formData, products: selectedProduct });
   };
 
   const optionsBranch = branchData?.map((e) => ({
@@ -323,17 +355,119 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
           />
         </div>
 
-        {/* <div className="form-group">
+        <div className="form-group">
           <input
             type="checkbox"
+            id="service_finish"
             checked={serviceFinish}
             onChange={() => setServiceFinish(!serviceFinish)}
           />
           <span className="ml-2 text-danger">
-            Tandai Service Ini Sebagai Selesai dan Tampilkan Form Sparepart /
-            Product / Jasa
+            <label htmlFor="service_finish">
+              Tandai Service Ini Sebagai Selesai dan Tampilkan (Sparepart /
+              Product / Jasa)
+            </label>
           </span>
-        </div> */}
+        </div>
+
+        {serviceFinish && (
+          <>
+            <hr />
+
+            <div className="card p-3 shadow-lg mt-3">
+              <div className="table-responsive mt-2">
+                <button
+                  type="button"
+                  className="btn btn-outline-primary btn-sm mb-2"
+                  onClick={() => {
+                    if (formData.branch !== "" && serviceFinish) {
+                      setIsProductOpen(true);
+                    } else {
+                      handleAlert(
+                        true,
+                        "danger",
+                        "Pilih cabang terlebih dahulu"
+                      );
+                    }
+                  }}
+                >
+                  Tambah Produk
+                </button>
+                <table className="table table-sm table-striped table-bordered nowrap mb-5">
+                  <thead>
+                    <tr>
+                      <th style={{ width: "1%", textAlign: "center" }}> NO </th>
+                      <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
+                      <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
+                      <th style={{ width: "20%", textAlign: "center" }}>
+                        PRICE
+                      </th>
+                      <th style={{ width: "25%", textAlign: "center" }}>
+                        AMOUNT
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedProduct.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center">
+                          Tidak Ada Data
+                        </td>
+                      </tr>
+                    ) : (
+                      selectedProduct?.map(
+                        (item: SelectedProduct, index: number) => (
+                          <tr key={index}>
+                            <td className="align-middle">{index + 1}</td>
+                            <td className="align-middle">
+                              {item.name?.toUpperCase()}
+                            </td>
+                            <td className="align-middle">
+                              <NumericFormat
+                                className="form-control"
+                                value={item.qty}
+                                thousandSeparator=","
+                                displayType="input"
+                                // onValueChange={(values: any) => {
+                                //   setFormData({
+                                //     ...formData,
+                                //     sell_price: values.floatValue,
+                                //   });
+                                // }}
+                                allowLeadingZeros={false}
+                                allowNegative={false}
+                                required
+                              />
+                            </td>
+                            <td className="align-middle" align="right">
+                              {`Rp. ${item.price?.toLocaleString("id-ID")}`}
+                            </td>
+                            <td className="align-middle" align="right">
+                              {`Rp. ${(item.price * item.qty)?.toLocaleString(
+                                "id-ID"
+                              )}`}
+                            </td>
+                          </tr>
+                        )
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {isProductOpen && (
+              <ServiceProductList
+                isOpen={isProductOpen}
+                onClose={closeProductList}
+                accessToken={accessToken}
+                branch={formData.branch}
+                productList={selectedProduct}
+                deviceTypeData={deviceTypeData}
+              />
+            )}
+          </>
+        )}
       </div>
     </form>
   );

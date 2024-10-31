@@ -766,6 +766,7 @@ const CreateServicePage = ({
                     >
                       Tambah Produk
                     </button>
+
                     <table className="table table-sm table-striped table-bordered nowrap mb-5">
                       <thead>
                         <tr>
