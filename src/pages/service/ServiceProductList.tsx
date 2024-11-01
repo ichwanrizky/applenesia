@@ -132,7 +132,6 @@ const ServiceProductList = (props: Props) => {
           tabIndex={-1}
           role="dialog"
           aria-labelledby="exampleModalScrollableTitle"
-          aria-hidden="true"
           style={{ display: "block" }}
         >
           <div className="modal-dialog modal-xl" role="document">
@@ -178,8 +177,10 @@ const ServiceProductList = (props: Props) => {
                   onChange={(e) => setDeviceType(e.target.value)}
                 >
                   <option value="all">SEMUA TIPE DEVICE</option>
-                  {deviceTypeData?.map((e) => (
-                    <option value={e.id}>{e.name?.toUpperCase()}</option>
+                  {deviceTypeData?.map((e, index: number) => (
+                    <option value={e.id} key={index}>
+                      {e.name?.toUpperCase()}
+                    </option>
                   ))}
                 </select>
 

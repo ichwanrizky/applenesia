@@ -79,7 +79,10 @@ const CreateServicePage = ({
     branch: "",
     technician: "",
     service_status: "1",
+    products: [],
   });
+
+  console.log(formData);
 
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;

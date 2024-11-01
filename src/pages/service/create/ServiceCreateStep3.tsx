@@ -103,6 +103,30 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
     setFormData({ ...formData, products: selectedProduct });
   };
 
+  const handleRemoveSelectedProduct = (id: number) => {
+    setSelectedProduct(
+      selectedProduct.filter((product: SelectedProduct) => product.id !== id)
+    );
+
+    setFormData({
+      ...formData,
+      products: selectedProduct.filter(
+        (product: SelectedProduct) => product.id !== id
+      ) as any,
+    });
+  };
+
+  const handleUpdateQtySelectedProduct = (id: number, qty: number) => {
+    setSelectedProduct(
+      selectedProduct.map((product: SelectedProduct) => {
+        if (product.id === id) {
+          return { ...product, qty: qty };
+        }
+        return product;
+      })
+    );
+  };
+
   const optionsBranch = branchData?.map((e) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
@@ -396,6 +420,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 <table className="table table-sm table-striped table-bordered nowrap mb-5">
                   <thead>
                     <tr>
+                      <th style={{ width: "1%", textAlign: "center" }}></th>
                       <th style={{ width: "1%", textAlign: "center" }}> NO </th>
                       <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
                       <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
@@ -410,7 +435,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                   <tbody>
                     {selectedProduct.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center">
+                        <td colSpan={6} className="text-center">
                           Tidak Ada Data
                         </td>
                       </tr>
@@ -418,26 +443,45 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                       selectedProduct?.map(
                         (item: SelectedProduct, index: number) => (
                           <tr key={index}>
-                            <td className="align-middle">{index + 1}</td>
+                            <td className="align-middle text-center">
+                              <button
+                                type="button"
+                                className="btn btn-danger btn-sm"
+                                onClick={() =>
+                                  handleRemoveSelectedProduct(item.id)
+                                }
+                              >
+                                <i className="fa fa-trash"></i>
+                              </button>
+                            </td>
+                            <td className="align-middle text-center">
+                              {index + 1}
+                            </td>
                             <td className="align-middle">
                               {item.name?.toUpperCase()}
                             </td>
-                            <td className="align-middle">
-                              <NumericFormat
-                                className="form-control"
-                                value={item.qty}
-                                thousandSeparator=","
-                                displayType="input"
-                                // onValueChange={(values: any) => {
-                                //   setFormData({
-                                //     ...formData,
-                                //     sell_price: values.floatValue,
-                                //   });
-                                // }}
-                                allowLeadingZeros={false}
-                                allowNegative={false}
-                                required
-                              />
+                            <td className="align-middle text-center">
+                              {item.is_product ? (
+                                <NumericFormat
+                                  className="form-control form-control-sm text-center"
+                                  value={item.qty}
+                                  thousandSeparator=","
+                                  displayType="input"
+                                  onValueChange={(values: any) => {
+                                    if (values.floatValue !== undefined) {
+                                      handleUpdateQtySelectedProduct(
+                                        item.id,
+                                        values.floatValue
+                                      );
+                                    }
+                                  }}
+                                  allowLeadingZeros={false}
+                                  allowNegative={false}
+                                  required
+                                />
+                              ) : (
+                                item.qty
+                              )}
                             </td>
                             <td className="align-middle" align="right">
                               {`Rp. ${item.price?.toLocaleString("id-ID")}`}

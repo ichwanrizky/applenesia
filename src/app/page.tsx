@@ -2,6 +2,7 @@
 import CustomAlert from "@/components/CustomAlert";
 import CustomButton from "@/components/CustomButton";
 import authServices from "@/services/authServices";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function Home({ searchParams }: { searchParams: any }) {
@@ -56,7 +57,16 @@ export default function Home({ searchParams }: { searchParams: any }) {
             <div className="d-flex align-items-center min-vh-100">
               <div className="w-100 d-block bg-white shadow-lg rounded my-5">
                 <div className="row">
-                  <div className="col-lg-5 d-none d-lg-block bg-login rounded-left" />
+                  <div className="col-lg-5 d-none bg-login d-lg-block rounded-left">
+                    {/* <Image
+                      src={"/img/landing.jpg"}
+                      alt={"login"}
+                      width="0"
+                      height="0"
+                      sizes="100vw"
+                      style={{ width: "100%", height: "auto" }}
+                    /> */}
+                  </div>
                   <div className="col-lg-7">
                     <div className="p-5">
                       <div className="text-center mb-5">
