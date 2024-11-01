@@ -148,6 +148,7 @@ model product {
   product_category product_category[]
   product_log      product_log[]
   product_purchase product_purchase[]
+  service_product  service_product[]
 
   @@index([branch_id], map: "product_branch_id")
 }
@@ -272,6 +273,7 @@ model service {
   service_status_id     Int
   service_status        service_status          @relation(fields: [service_status_id], references: [id])
   service_form_checking service_form_checking[]
+  service_product       service_product[]
 
   @@index([uuid], map: "service_uuid")
   @@index([service_number], map: "service_service_number")
@@ -298,4 +300,21 @@ model service_status {
   name        String
   label_color String
   service     service[]
+}
+
+model service_product {
+  id         Int     @id @default(autoincrement())
+  product_id Int
+  product    product @relation(fields: [product_id], references: [id])
+  name       String
+  sub_name   String?
+  price      Int
+  qty        Int
+  warranty   Int
+  is_product Boolean
+  service_id Int
+  service    service @relation(fields: [service_id], references: [id])
+
+  @@index([service_id], map: "service_product_service_id")
+  @@index([product_id], map: "service_product_product_id")
 }

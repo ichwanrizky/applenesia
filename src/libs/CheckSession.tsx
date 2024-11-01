@@ -153,7 +153,8 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "form_checking":
+    // SERVICE
+    case "MENU_SERVICE":
       if (
         method === "GET" ||
         method === "POST" ||
@@ -164,13 +165,12 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "service":
+    case "form_checking":
       if (
-        (method === "GET" ||
-          method === "POST" ||
-          method === "DELETE" ||
-          method === "PUT") &&
-        (role_name === "ADMINISTRATOR" || role_name === "ADMINCABANG")
+        method === "GET" ||
+        method === "POST" ||
+        method === "DELETE" ||
+        method === "PUT"
       ) {
         return [true, decoded.data, null];
       }

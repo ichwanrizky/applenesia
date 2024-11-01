@@ -8,7 +8,7 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "service", "GET");
+    const session = await checkSession(authorization, "MENU_SERVICE", "GET");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -188,7 +188,7 @@ export const GET = async (request: Request) => {
 export const POST = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "service", "POST");
+    const session = await checkSession(authorization, "MENU_SERVICE", "POST");
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -220,6 +220,9 @@ export const POST = async (request: Request) => {
     const branch = body.branch;
     const techncian = body.techncian;
     const service_status = body.service_status;
+    const products = body.products;
+
+    console.log(body);
 
     if (
       !customer_name ||
@@ -228,7 +231,7 @@ export const POST = async (request: Request) => {
       !device ||
       !imei ||
       !service_desc ||
-      !service_form_checking ||
+      // !service_form_checking ||
       !branch ||
       !techncian ||
       !service_status
@@ -331,7 +334,7 @@ export const POST = async (request: Request) => {
         created_by: session[1].id,
         month: month,
         year: year,
-        service_status_id: Number(service_status),
+        service_status_id: products.length > 0 ? 3 : Number(service_status),
         service_form_checking: {
           create: service_form_checking?.map((e: any) => ({
             name: e.name?.toUpperCase(),
@@ -340,6 +343,19 @@ export const POST = async (request: Request) => {
             notes: e.notes?.toUpperCase(),
           })),
         },
+        ...(products.length > 0 && {
+          service_product: {
+            create: products?.map((e: any) => ({
+              product_id: e.id,
+              name: e.name,
+              sub_name: e.sub_name,
+              price: e.price,
+              qty: e.qty,
+              warranty: e.warranty,
+              is_product: e.is_product,
+            })),
+          },
+        }),
       },
     });
 
