@@ -247,6 +247,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
           className="form-control"
           rows={4}
           id="service_description"
+          style={{ textTransform: "uppercase" }}
           required
           value={formData.service_desc}
           onChange={(e) =>

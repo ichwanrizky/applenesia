@@ -10,17 +10,17 @@ const CustomAlert = (props: CustomAlertProps) => {
   const { color, message, isDismissable = false } = props;
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    if (!isDismissable) {
-      const timer = setTimeout(() => {
-        setIsVisible(false); // Hide the alert after 5 seconds
-      }, 3000);
+  // useEffect(() => {
+  //   if (!isDismissable) {
+  //     const timer = setTimeout(() => {
+  //       setIsVisible(false); // Hide the alert after 5 seconds
+  //     }, 3000);
 
-      return () => clearTimeout(timer); // Cleanup the timer when the component unmounts
-    }
-  }, []);
+  //     return () => clearTimeout(timer); // Cleanup the timer when the component unmounts
+  //   }
+  // }, []);
 
-  if (!isVisible) return null;
+  // if (!isVisible) return null;
 
   return (
     <div

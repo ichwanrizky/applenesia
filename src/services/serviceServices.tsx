@@ -6,7 +6,7 @@ const createService = async (accessToken: string, data: any) => {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: data,
     });
 
     const res = await response.json();

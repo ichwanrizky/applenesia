@@ -6,6 +6,8 @@ import CustomAlert from "@/components/CustomAlert";
 import libServices from "@/services/libServices";
 import ServiceCreateStep2 from "./create/ServiceCreateStep2";
 import ServiceCreateStep3 from "./create/ServiceCreateStep3";
+import serviceServices from "@/services/serviceServices";
+import { useRouter } from "next/navigation";
 
 type Session = {
   name: string;
@@ -57,6 +59,8 @@ const CreateServicePage = ({
   deviceTypeData: DeviceType[];
   customerData: Customer[];
 }) => {
+  const { push } = useRouter();
+
   const [step, setStep] = useState(1);
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
@@ -81,8 +85,6 @@ const CreateServicePage = ({
     service_status: "1",
     products: [],
   });
-
-  console.log(formData);
 
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;
@@ -180,6 +182,43 @@ const CreateServicePage = ({
 
   const handleAlert = (status: boolean, color: string, message: string) => {
     setAlert({ status, color, message });
+  };
+
+  const handleSubmit = async () => {
+    if (confirm("Submit this data?")) {
+      setIsLoadingSubmit(true);
+      try {
+        const resultCreate = await serviceServices.createService(
+          session!.accessToken,
+          JSON.stringify(formData)
+        );
+
+        if (!resultCreate.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: resultCreate.message,
+          });
+          setIsLoadingSubmit(false);
+        } else {
+          setAlert({
+            status: true,
+            color: "success",
+            message: resultCreate.message,
+          });
+          setTimeout(() => {
+            push("/dashboard/service");
+          }, 1000);
+        }
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Something went wrong, please refresh and try again",
+        });
+        setIsLoadingSubmit(false);
+      }
+    }
   };
 
   const renderStepContent = () => {
@@ -281,13 +320,14 @@ const CreateServicePage = ({
             </button>
             <button
               className="btn btn-primary"
-              onClick={step === 3 ? () => nextStep() : nextStep}
-              // onClick={step === 3 ? () => handleSubmit() : nextStep}
-              // disabled={
-              //   step === 3
-              //     ? technician === "" || branch === "" || isLoadingSubmit
-              //     : false
-              // }
+              onClick={step === 3 ? () => handleSubmit() : nextStep}
+              disabled={
+                step === 3
+                  ? formData.technician === "" ||
+                    formData.branch === "" ||
+                    isLoadingSubmit
+                  : false
+              }
             >
               {step === 3 ? (
                 isLoadingSubmit ? (

@@ -218,28 +218,56 @@ export const POST = async (request: Request) => {
     const service_desc = body.service_desc;
     const service_form_checking = body.service_form_checking;
     const branch = body.branch;
-    const techncian = body.techncian;
+    const technician = body.technician;
     const service_status = body.service_status;
     const products = body.products;
 
-    console.log(body);
+    const missingFields = [
+      {
+        name: "customer name",
+        value: customer_name,
+      },
+      {
+        name: "customer telp",
+        value: customer_telp,
+      },
+      {
+        name: "device type",
+        value: device_type,
+      },
+      {
+        name: "device",
+        value: device,
+      },
+      {
+        name: "imei",
+        value: imei,
+      },
+      {
+        name: "service desc",
+        value: service_desc,
+      },
+      {
+        name: "branch",
+        value: branch,
+      },
+      {
+        name: "technician",
+        value: technician,
+      },
+      {
+        name: "service status",
+        value: service_status,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
 
-    if (
-      !customer_name ||
-      !customer_telp ||
-      !device_type ||
-      !device ||
-      !imei ||
-      !service_desc ||
-      // !service_form_checking ||
-      !branch ||
-      !techncian ||
-      !service_status
-    ) {
+    if (missingFields.length > 0) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Missing fields",
+          message: "Missing fields: " + missingFields.join(", "),
         }),
         {
           status: 400,
@@ -326,15 +354,15 @@ export const POST = async (request: Request) => {
         unique_code: randomNumber?.toString(),
         customer_id: customer_id ? Number(customer_id) : newCustomer!.id,
         device_id: Number(device),
-        imei: imei,
-        service_desc: service_desc,
-        technician_id: Number(techncian),
+        imei: imei?.toUpperCase(),
+        service_desc: service_desc?.toUpperCase(),
+        technician_id: Number(technician),
         branch_id: Number(branch),
         created_at: formattedDateNow(),
         created_by: session[1].id,
         month: month,
         year: year,
-        service_status_id: products.length > 0 ? 3 : Number(service_status),
+        service_status_id: Number(service_status),
         service_form_checking: {
           create: service_form_checking?.map((e: any) => ({
             name: e.name?.toUpperCase(),
@@ -346,12 +374,12 @@ export const POST = async (request: Request) => {
         ...(products.length > 0 && {
           service_product: {
             create: products?.map((e: any) => ({
-              product_id: e.id,
+              product_id: Number(e.id),
               name: e.name,
               sub_name: e.sub_name,
-              price: e.price,
-              qty: e.qty,
-              warranty: e.warranty,
+              price: Number(e.price),
+              qty: Number(e.qty),
+              warranty: Number(e.warranty),
               is_product: e.is_product,
             })),
           },
@@ -387,6 +415,7 @@ export const POST = async (request: Request) => {
       }
     );
   } catch (error) {
+    console.log(error);
     return handleError(error);
   }
 };
