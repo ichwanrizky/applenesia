@@ -8,6 +8,7 @@ type ServiceCreateStep2Props = {
   handleAlert: (status: boolean, color: string, message: string) => void;
   handleFormChange: (updatedFormData: any) => void;
   listFormCheckData: FormChecking[];
+  defaultFormData: any;
 };
 
 type FormChecking = {
@@ -24,10 +25,13 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
     handleAlert,
     handleFormChange,
     listFormCheckData,
+    defaultFormData,
   } = props;
 
   const [listFormCheck, setListFormCheck] = useState(
-    listFormCheckData as FormChecking[]
+    (defaultFormData.service_form_checking.length > 0
+      ? defaultFormData.service_form_checking
+      : listFormCheckData) as any[]
   );
 
   const formData = {
@@ -91,6 +95,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
                 <input
                   type="checkbox"
                   onChange={() => handleCheckAll("in_check")}
+                  checked={listFormCheck.every((e) => e.in_check)}
                 />
               </th>
               <th style={{ width: "8%", textAlign: "center" }}>
@@ -98,6 +103,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
                 <input
                   type="checkbox"
                   onChange={() => handleCheckAll("out_check")}
+                  checked={listFormCheck.every((e) => e.out_check)}
                 />
               </th>
               <th

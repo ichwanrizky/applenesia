@@ -81,7 +81,7 @@ export const GET = async (
           message: "Failed to get data",
         }),
         {
-          status: 500,
+          status: 404,
           headers: {
             "Content-Type": "application/json",
           },
@@ -94,6 +94,86 @@ export const GET = async (
         status: true,
         message: "Success to get data",
         data: data,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const DELETE = async (
+  request: Request,
+  { params }: { params: { id: string } }
+) => {
+  try {
+    const authorization = request.headers.get("Authorization");
+    const session = await checkSession(authorization, "MENU_SERVICE", "DELETE");
+    if (!session[0]) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const role = session[1].role.name;
+    const user_branch = session[1].user_branch;
+
+    const deleteData = await prisma.service.update({
+      data: {
+        is_deleted: true,
+      },
+      where: {
+        is_deleted: false,
+        id: Number(params.id),
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              branch_id: {
+                in: user_branch.map((item: any) => item.branch.id),
+              },
+            }),
+        service_status_id: {
+          notIn: [3, 4],
+        },
+      },
+    });
+
+    if (!deleteData) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Failed to delete service",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    accessLog(`delete service id: ${deleteData.id}`, session[1].id);
+
+    return new NextResponse(
+      JSON.stringify({
+        status: true,
+        message: "Success to delete service",
+        data: deleteData,
       }),
       {
         status: 200,

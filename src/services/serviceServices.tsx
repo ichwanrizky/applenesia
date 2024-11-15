@@ -17,4 +17,22 @@ const createService = async (accessToken: string, data: any) => {
   }
 };
 
-export default { createService };
+const deleteService = async (accessToken: string, id: any) => {
+  try {
+    const response = await fetch(`/api/service/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await response.json();
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { createService, deleteService };

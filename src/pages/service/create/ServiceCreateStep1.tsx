@@ -10,6 +10,7 @@ type ServiceCreateStep1Props = {
   handleFormChange: (updatedFormData: any) => void;
   deviceTypeData: DeviceType[];
   customerData: Customer[];
+  defaultFormData: any;
 };
 
 type Customer = {
@@ -37,35 +38,65 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
     handleFormChange,
     deviceTypeData,
     customerData,
+    defaultFormData,
   } = props;
 
-  const [deviceData, setDeviceData] = useState([] as Device[]);
-
-  const [formData, setFormData] = useState({
-    customer_id: "",
-    customer_name: "",
-    customer_telp: "",
-    customer_email: "",
-    device_type: "",
-    device_type_label: "",
-    device: "",
-    device_label: "",
-    imei: "",
-    service_desc: "",
-  });
+  const [formData, setFormData] = useState(defaultFormData);
 
   useEffect(() => {
     handleFormChange(formData);
   }, [formData]);
 
-  const handleGetDevice = async (deviceType: string) => {
+  const handleCustomer = (customerId: string) => {
+    setFormData({
+      ...formData,
+      customer_id: customerId,
+      customer_name: "",
+      customer_telp: "",
+      customer_email: "",
+    });
+    if (customerId !== "") {
+      const customer = customerData?.find((e) => e.id === Number(customerId));
+      setFormData({
+        ...formData,
+        customer_id: customerId,
+        customer_name: customer?.name || "",
+        customer_telp: customer?.telp || "",
+        customer_email: customer?.email || "",
+      });
+    }
+  };
+
+  const handleGetDevice = async (deviceType: {
+    value: number;
+    label: string;
+  }) => {
+    if (!deviceType) {
+      setFormData({
+        ...formData,
+        device_type_id: "",
+        device_type_label: "",
+        device_data: [],
+        device_id: "",
+        device_label: "",
+      });
+
+      return;
+    }
+    setFormData({
+      ...formData,
+      device_type_id: deviceType.value,
+      device_type_label: deviceType.label,
+      device_data: [],
+      device_id: "",
+      device_label: "",
+    });
     handleLoadingHeader(true);
     try {
       const result = await deviceServices.getDeviceByType(
         accessToken,
-        Number(deviceType)
+        Number(deviceType.value)
       );
-
       if (!result.status) {
         handleAlert(
           true,
@@ -73,8 +104,14 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
           result.message ? result.message : "Something went wrong"
         );
       }
-
-      setDeviceData(result.data);
+      setFormData({
+        ...formData,
+        device_type_id: deviceType.value,
+        device_type_label: deviceType.label,
+        device_data: result.data,
+        device_id: "",
+        device_label: "",
+      });
     } catch (error) {
       handleAlert(
         true,
@@ -96,10 +133,11 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
     value: e.id,
   }));
 
-  const optionsDevice = deviceData?.map((e) => ({
+  const optionsDevice = formData.device_data?.map((e: Device) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
   }));
+
   return (
     <form id="step1Form">
       <h5>Step 1: Informasi Customer</h5>
@@ -112,9 +150,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
           isClearable
           required={formData.customer_name !== "" ? false : true}
           options={optionsCustomer}
-          onChange={(e: any) =>
-            setFormData({ ...formData, customer_id: e ? e.value : "" })
-          }
+          onChange={(e: any) => handleCustomer(e ? e.value : "")}
           value={
             formData.customer_id
               ? optionsCustomer.find(
@@ -179,22 +215,12 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               required
               options={optionsDeviceType}
               onChange={(e: any) => {
-                setFormData({
-                  ...formData,
-                  device_type: e ? e.value : "",
-                  device_type_label: e ? e.label : "",
-                  device: "",
-                  device_label: "",
-                });
-
-                if (e) {
-                  handleGetDevice(e.value);
-                }
+                handleGetDevice(e);
               }}
               value={
-                formData.device_type
+                formData.device_type_id
                   ? optionsDeviceType.find(
-                      (option: any) => option.value === formData.device_type
+                      (option: any) => option.value === formData.device_type_id
                     )
                   : null
               }
@@ -211,14 +237,14 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               onChange={(e: any) =>
                 setFormData({
                   ...formData,
-                  device: e ? e.value : "",
+                  device_id: e ? e.value : "",
                   device_label: e ? e.label : "",
                 })
               }
               value={
-                formData.device
+                formData.device_id
                   ? optionsDevice.find(
-                      (option: any) => option.value === formData.device
+                      (option: any) => option.value === formData.device_id
                     )
                   : null
               }

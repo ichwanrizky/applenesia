@@ -184,6 +184,24 @@ const CustomButton = (props: CustomButtonProps) => {
           {children}
         </button>
       );
+    case "delete":
+      return isLoading ? (
+        <button className="btn btn-outline-danger" type="button" disabled>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </button>
+      ) : (
+        <button
+          className="btn btn-outline-danger"
+          type="button"
+          onClick={onDelete}
+        >
+          {children}
+        </button>
+      );
   }
 };
 

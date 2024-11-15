@@ -212,8 +212,8 @@ export const POST = async (request: Request) => {
     const customer_name = body.customer_name;
     const customer_telp = body.customer_telp;
     const customer_email = body.customer_email;
-    const device_type = body.device_type;
-    const device = body.device;
+    const device_type = body.device_type_id;
+    const device = body.device_id;
     const imei = body.imei;
     const service_desc = body.service_desc;
     const service_form_checking = body.service_form_checking;
@@ -415,7 +415,6 @@ export const POST = async (request: Request) => {
       }
     );
   } catch (error) {
-    console.log(error);
     return handleError(error);
   }
 };

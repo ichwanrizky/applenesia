@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ServiceCreateStep1 from "./create/ServiceCreateStep1";
 import CustomAlert from "@/components/CustomAlert";
 import libServices from "@/services/libServices";
@@ -60,31 +60,38 @@ const CreateServicePage = ({
   customerData: Customer[];
 }) => {
   const { push } = useRouter();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const [step, setStep] = useState(1);
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isLoadingHeader, setIsLoadingHeader] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-  const [listFormCheck, setListFormCheck] = useState([] as FormChecking[]);
   const [branchData, setBranchData] = useState([] as Branch[]);
-
-  const [formData, setFormData] = useState({
+  const [defaultFormData, setDefaultFormData] = useState({
     customer_id: "",
     customer_name: "",
     customer_telp: "",
     customer_email: "",
-    device_type: "",
+    device_type_id: "",
     device_type_label: "",
-    device: "",
+    device_data: [],
+    device_id: "",
     device_label: "",
     imei: "",
     service_desc: "",
+    list_form_check: [],
     service_form_checking: [],
     branch: "",
     technician: "",
     service_status: "1",
     products: [],
   });
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
+    }
+  }, [step]);
 
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;
@@ -93,12 +100,12 @@ const CreateServicePage = ({
         return;
       }
 
-      if (listFormCheck.length === 0) {
+      if (defaultFormData.list_form_check.length === 0) {
         setIsLoadingHeader(true);
         try {
           const result = await libServices.getFormCheck(
             session!.accessToken,
-            Number(formData.device_type)
+            Number(defaultFormData.device_type_id)
           );
 
           if (!result.status) {
@@ -110,15 +117,16 @@ const CreateServicePage = ({
             return;
           }
 
-          setListFormCheck(
-            result.data?.map((e: FormChecking) => ({
+          setDefaultFormData({
+            ...defaultFormData,
+            list_form_check: result.data?.map((e: FormChecking) => ({
               id: e.id,
               name: e.name?.toUpperCase(),
               in_check: false,
               out_check: false,
               notes: "",
-            }))
-          );
+            })),
+          });
         } catch (error) {
           setAlert({
             status: true,
@@ -173,7 +181,7 @@ const CreateServicePage = ({
   };
 
   const handleFormChange = (updatedFormData: any) => {
-    setFormData({ ...formData, ...updatedFormData });
+    setDefaultFormData({ ...defaultFormData, ...updatedFormData });
   };
 
   const handleLoadingHeader = (status: boolean) => {
@@ -190,7 +198,21 @@ const CreateServicePage = ({
       try {
         const resultCreate = await serviceServices.createService(
           session!.accessToken,
-          JSON.stringify(formData)
+          JSON.stringify({
+            customer_id: defaultFormData.customer_id,
+            customer_name: defaultFormData.customer_name,
+            customer_telp: defaultFormData.customer_telp,
+            customer_email: defaultFormData.customer_email,
+            device_type_id: defaultFormData.device_type_id,
+            device_id: defaultFormData.device_id,
+            imei: defaultFormData.imei,
+            service_desc: defaultFormData.service_desc,
+            service_form_checking: defaultFormData.service_form_checking,
+            branch: defaultFormData.branch,
+            technician: defaultFormData.technician,
+            service_status: defaultFormData.service_status,
+            products: defaultFormData.products,
+          })
         );
 
         if (!resultCreate.status) {
@@ -232,6 +254,7 @@ const CreateServicePage = ({
             handleFormChange={handleFormChange}
             deviceTypeData={deviceTypeData}
             customerData={customerData}
+            defaultFormData={defaultFormData}
           />
         );
 
@@ -242,7 +265,8 @@ const CreateServicePage = ({
             handleLoadingHeader={handleLoadingHeader}
             handleAlert={handleAlert}
             handleFormChange={handleFormChange}
-            listFormCheckData={listFormCheck}
+            listFormCheckData={defaultFormData.list_form_check}
+            defaultFormData={defaultFormData}
           />
         );
 
@@ -253,7 +277,7 @@ const CreateServicePage = ({
             handleLoadingHeader={handleLoadingHeader}
             handleAlert={handleAlert}
             handleFormChange={handleFormChange}
-            parentFormData={formData}
+            parentFormData={defaultFormData}
             branchData={branchData}
             deviceTypeData={deviceTypeData}
           />
@@ -306,6 +330,7 @@ const CreateServicePage = ({
             <div
               className="tab-content p-2"
               style={{ maxHeight: "500px", overflow: "auto" }}
+              ref={contentRef}
             >
               {renderStepContent()}
             </div>
@@ -323,8 +348,8 @@ const CreateServicePage = ({
               onClick={step === 3 ? () => handleSubmit() : nextStep}
               disabled={
                 step === 3
-                  ? formData.technician === "" ||
-                    formData.branch === "" ||
+                  ? defaultFormData.technician === "" ||
+                    defaultFormData.branch === "" ||
                     isLoadingSubmit
                   : false
               }

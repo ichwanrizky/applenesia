@@ -8,6 +8,7 @@ import React from "react";
 import SearchInput from "@/components/SearchInput";
 import BranchOptions from "@/components/BranchOptions";
 import { useRouter } from "next/navigation";
+import serviceServices from "@/services/serviceServices";
 
 type Session = {
   name: string;
@@ -94,60 +95,37 @@ const ServicePage = ({ session }: { session: Session | null }) => {
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
-    // if (confirm("Delete this data?")) {
-    //   setIsLoadingAction({ ...isLoadingAction, [id]: true });
-    //   try {
-    //     const result = await categoryServices.deleteCategory(accessToken!, id);
-    //     if (!result.status) {
-    //       setAlert({
-    //         status: true,
-    //         color: "danger",
-    //         message: result.message,
-    //       });
-    //     } else {
-    //       setAlert({
-    //         status: true,
-    //         color: "success",
-    //         message: result.message,
-    //       });
-    //       setCurrentPage(1);
-    //       mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`);
-    //     }
-    //   } catch (error) {
-    //     setAlert({
-    //       status: true,
-    //       color: "danger",
-    //       message: "Something went wrong, please refresh and try again",
-    //     });
-    //   } finally {
-    //     setIsLoadingAction({ ...isLoadingAction, [id]: false });
-    //   }
-    // }
-  };
-
-  const handleEdit = async (id: number) => {
-    // setIsLoadingAction({ ...isLoadingAction, [id]: true });
-    // try {
-    //   const result = await categoryServices.getCategoryById(accessToken!, id);
-    //   if (!result.status) {
-    //     setAlert({
-    //       status: true,
-    //       color: "danger",
-    //       message: result.message,
-    //     });
-    //   } else {
-    //     setIsEditOpen(true);
-    //     setEditData(result.data);
-    //   }
-    // } catch (error) {
-    //   setAlert({
-    //     status: true,
-    //     color: "danger",
-    //     message: "Something went wrong, please refresh and try again",
-    //   });
-    // } finally {
-    //   setIsLoadingAction({ ...isLoadingAction, [id]: false });
-    // }
+    if (confirm("Delete this data?")) {
+      setIsLoadingAction({ ...isLoadingAction, [id]: true });
+      try {
+        const result = await serviceServices.deleteService(accessToken!, id);
+        if (!result.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: result.message,
+          });
+        } else {
+          setAlert({
+            status: true,
+            color: "success",
+            message: result.message,
+          });
+          setCurrentPage(1);
+          mutate(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/service?branchaccess=${branchAccess}&page=1`
+          );
+        }
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Something went wrong, please refresh and try again",
+        });
+      } finally {
+        setIsLoadingAction({ ...isLoadingAction, [id]: false });
+      }
+    }
   };
 
   const fetcher = (url: RequestInfo) => {
@@ -286,13 +264,12 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                 <tr key={index}>
                                   <td align="center" className="align-middle">
                                     <CustomButton
-                                      buttonType="action"
+                                      buttonType="delete"
                                       indexData={index}
                                       isLoading={isLoadingAction[item.id]}
                                       onDelete={() => handleDelete(item.id)}
-                                      onEdit={() => handleEdit(item.id)}
                                     >
-                                      <i className="mdi mdi-chevron-down" />
+                                      <i className="mdi mdi-trash-can-outline" />
                                     </CustomButton>
                                   </td>
                                   <td align="center" className="align-middle">
