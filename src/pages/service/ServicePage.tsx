@@ -282,7 +282,9 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                   >
                                     <span
                                       role="button"
-                                      onClick={() => {}}
+                                      onClick={() => {
+                                        push(`service/${item.service_number}`);
+                                      }}
                                       style={{
                                         cursor: "pointer",
                                         color: "#007bff",
@@ -333,12 +335,18 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                     </span>
                                     <br />
                                     <span style={{ whiteSpace: "nowrap" }}>
-                                      {new Date(item.created_at).toLocaleString(
-                                        "id-ID",
-                                        {
+                                      {new Date(item.created_at)
+                                        .toLocaleString("id-ID", {
                                           timeZone: "UTC",
-                                        }
-                                      )}
+                                          day: "numeric",
+                                          month: "numeric",
+                                          year: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                          second: "2-digit",
+                                          hour12: false,
+                                        })
+                                        .replace(/\./g, ":")}
                                     </span>
                                   </td>
                                 </tr>

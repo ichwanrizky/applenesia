@@ -125,6 +125,23 @@ const CreateProduct = (props: Props) => {
     }
   };
 
+  const handleCheckAllDevice = (isChecked: any) => {
+    if (isChecked) {
+      setFormData({
+        ...formData,
+        device: dataDevice?.map((e) => ({
+          value: e.id,
+          label: e.name?.toUpperCase(),
+        })) as [],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        device: [],
+      });
+    }
+  };
+
   const optionsProductType = [
     { value: "INTERFACE", label: "INTERFACE" },
     { value: "MACHINE", label: "MACHINE" },
@@ -227,6 +244,7 @@ const CreateProduct = (props: Props) => {
           required
           onChange={(e: any) => {
             setFormData({ ...formData, device: [] });
+            setDataDevice([]);
             if (e) {
               handleGetDevice(e.value);
             }
@@ -247,6 +265,16 @@ const CreateProduct = (props: Props) => {
           value={formData.device}
           closeMenuOnSelect={false}
         />
+        {dataDevice.length > 0 && (
+          <div className="mt-2">
+            <input
+              type="checkbox"
+              className="mr-1"
+              onClick={(e: any) => handleCheckAllDevice(e.target.checked)}
+            />
+            Check All
+          </div>
+        )}
       </div>
 
       <div className="form-group">

@@ -35,12 +35,12 @@ async function main() {
           {
             id: 1,
             name: "service masuk - barang ditinggal",
-            label_color: "warning",
+            label_color: "info",
           },
           {
             id: 2,
             name: "service masuk - langsung",
-            label_color: "warning",
+            label_color: "info",
           },
           {
             id: 3,
@@ -49,6 +49,16 @@ async function main() {
           },
           {
             id: 4,
+            name: "service selesai - barang belum diambil",
+            label_color: "warning",
+          },
+          {
+            id: 5,
+            name: "service selesai - barang sudah diambil",
+            label_color: "success",
+          },
+          {
+            id: 6,
             name: "service batal",
             label_color: "danger",
           },

@@ -60,10 +60,16 @@ export const GET = async (
         },
         service_product: true,
         service_form_checking: true,
+        branch: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
       where: {
         is_deleted: false,
-        id: Number(params.id),
+        service_number: params.id,
         ...(role === "ADMINISTRATOR"
           ? {}
           : {

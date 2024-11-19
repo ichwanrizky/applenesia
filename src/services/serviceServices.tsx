@@ -1,3 +1,17 @@
+const getServiceById = async (accessToken: string, service_id: string) => {
+  try {
+    const response = await fetch(`/api/service/${service_id}`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createService = async (accessToken: string, data: any) => {
   try {
     const response = await fetch("/api/service", {
@@ -35,4 +49,4 @@ const deleteService = async (accessToken: string, id: any) => {
   }
 };
 
-export default { createService, deleteService };
+export default { createService, deleteService, getServiceById };

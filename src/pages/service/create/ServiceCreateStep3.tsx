@@ -361,6 +361,15 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
             options={[
               { value: "1", label: "SERVICE MASUK - BARANG DITINGGAL" },
               { value: "2", label: "SERVICE MASUK - LANGSUNG" },
+              { value: "3", label: "SERVICE SELESAI" },
+              {
+                value: "4",
+                label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
+              },
+              {
+                value: "5",
+                label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+              },
             ]}
             onChange={(e: any) =>
               setFormData({ ...formData, service_status: e ? e.value : "" })
@@ -368,11 +377,17 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
             value={
               formData.service_status
                 ? [
-                    {
-                      value: "1",
-                      label: "SERVICE MASUK - BARANG DITINGGAL",
-                    },
+                    { value: "1", label: "SERVICE MASUK - BARANG DITINGGAL" },
                     { value: "2", label: "SERVICE MASUK - LANGSUNG" },
+                    { value: "3", label: "SERVICE SELESAI" },
+                    {
+                      value: "4",
+                      label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
+                    },
+                    {
+                      value: "5",
+                      label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+                    },
                   ].find((option) => option.value === formData.service_status)
                 : null
             }
