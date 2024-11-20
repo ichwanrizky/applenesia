@@ -300,6 +300,28 @@ const DetailServicePage = ({
     setFormData({ ...formData, products: selectedProduct });
   };
 
+  const handleUpdateQtySelectedProduct = (id: number, qty: number) => {
+    setFormData({
+      ...formData,
+      products: formData.products?.map((item: any) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            qty: qty,
+          };
+        }
+        return item;
+      }) as any,
+    });
+  };
+
+  const handleRemoveSelectedProduct = (id: number) => {
+    setFormData({
+      ...formData,
+      products: formData.products?.filter((item: any) => item.id !== id) as any,
+    });
+  };
+
   if (isLoadingPage) {
     return (
       <div className="text-center">
@@ -644,16 +666,15 @@ const DetailServicePage = ({
                           label: "SERVICE MASUK - BARANG DITINGGAL",
                         },
                         { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-                        { value: "3", label: "SERVICE SELESAI" },
+                        {
+                          value: "3",
+                          label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+                        },
                         {
                           value: "4",
                           label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
                         },
-                        {
-                          value: "5",
-                          label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
-                        },
-                        { value: "6", label: "SERVICE BATAL/CANCEL" },
+                        { value: "5", label: "SERVICE BATAL/CANCEL" },
                       ]}
                       onChange={(e: any) =>
                         setFormData({
@@ -669,8 +690,15 @@ const DetailServicePage = ({
                                 label: "SERVICE MASUK - BARANG DITINGGAL",
                               },
                               { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-                              { value: "3", label: "SERVICE SELESAI" },
-                              { value: "4", label: "SERVICE BATAL/CANCEL" },
+                              {
+                                value: "3",
+                                label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+                              },
+                              {
+                                value: "4",
+                                label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
+                              },
+                              { value: "5", label: "SERVICE BATAL/CANCEL" },
                             ].find(
                               (option) =>
                                 option.value === formData.service_status
@@ -733,9 +761,9 @@ const DetailServicePage = ({
                                     <button
                                       type="button"
                                       className="btn btn-danger btn-sm"
-                                      // onClick={() =>
-                                      //   handleRemoveSelectedProduct(item.id)
-                                      // }
+                                      onClick={() =>
+                                        handleRemoveSelectedProduct(item.id)
+                                      }
                                     >
                                       <i className="fa fa-trash"></i>
                                     </button>
@@ -753,14 +781,14 @@ const DetailServicePage = ({
                                         value={item.qty}
                                         thousandSeparator=","
                                         displayType="input"
-                                        // onValueChange={(values: any) => {
-                                        //   if (values.floatValue !== undefined) {
-                                        //     handleUpdateQtySelectedProduct(
-                                        //       item.id,
-                                        //       values.floatValue
-                                        //     );
-                                        //   }
-                                        // }}
+                                        onValueChange={(values: any) => {
+                                          if (values.floatValue !== undefined) {
+                                            handleUpdateQtySelectedProduct(
+                                              item.id,
+                                              values.floatValue
+                                            );
+                                          }
+                                        }}
                                         allowLeadingZeros={false}
                                         allowNegative={false}
                                         required
@@ -802,7 +830,15 @@ const DetailServicePage = ({
               </form>
             </div>
           </div>
-          <div className="card-footer text-end"></div>
+          <div className="card-footer text-end">
+            <button className="btn btn-primary" type="button">
+              Save Changes
+            </button>
+
+            <button className="btn btn-success ml-2" type="button">
+              Create Invoice
+            </button>
+          </div>
         </div>
       </div>
     </div>

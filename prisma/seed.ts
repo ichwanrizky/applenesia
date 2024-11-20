@@ -44,7 +44,7 @@ async function main() {
           },
           {
             id: 3,
-            name: "service selesai",
+            name: "service selesai - barang sudah diambil",
             label_color: "success",
           },
           {
@@ -54,11 +54,6 @@ async function main() {
           },
           {
             id: 5,
-            name: "service selesai - barang sudah diambil",
-            label_color: "success",
-          },
-          {
-            id: 6,
             name: "service batal",
             label_color: "danger",
           },

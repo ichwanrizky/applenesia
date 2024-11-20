@@ -241,7 +241,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "10%", textAlign: "center" }}>
                                 DEVICE
                               </th>
-                              <th style={{ width: "12%", textAlign: "center" }}>
+                              <th style={{ width: "10%", textAlign: "center" }}>
                                 STATUS
                               </th>
                               <th style={{ width: "5%", textAlign: "center" }}>
@@ -322,9 +322,17 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                   <td align="center" className="align-middle">
                                     <span
                                       className={`badge badge-${item.service_status.label_color}`}
-                                    >
-                                      {item.service_status.name?.toUpperCase()}
-                                    </span>
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.service_status.name
+                                          ?.toUpperCase()
+                                          .split(" - ")
+                                          .map(
+                                            (line) =>
+                                              `<div style="line-height: 2;">${line}</div>`
+                                          )
+                                          .join(""),
+                                      }}
+                                    />
                                   </td>
                                   <td align="center" className="align-middle">
                                     {item.user_technician.name?.toUpperCase()}

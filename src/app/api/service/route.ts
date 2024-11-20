@@ -318,6 +318,7 @@ export const POST = async (request: Request) => {
     const countServiceExist = await prisma.service.count({
       where: {
         year,
+        branch_id: branch,
       },
     });
 

@@ -104,7 +104,7 @@ const CreateServicePage = ({
         setIsLoadingHeader(true);
         try {
           const result = await libServices.getFormCheck(
-            session!.accessToken,
+            session?.accessToken,
             Number(defaultFormData.device_type_id)
           );
 
@@ -144,7 +144,7 @@ const CreateServicePage = ({
       if (branchData.length === 0) {
         setIsLoadingHeader(true);
         try {
-          const result = await libServices.getCabang(session!.accessToken);
+          const result = await libServices.getCabang(session?.accessToken);
 
           if (!result.status) {
             setAlert({
@@ -197,7 +197,7 @@ const CreateServicePage = ({
       setIsLoadingSubmit(true);
       try {
         const resultCreate = await serviceServices.createService(
-          session!.accessToken,
+          session?.accessToken,
           JSON.stringify({
             customer_id: defaultFormData.customer_id,
             customer_name: defaultFormData.customer_name,
@@ -248,7 +248,7 @@ const CreateServicePage = ({
       case 1:
         return (
           <ServiceCreateStep1
-            accessToken={session!.accessToken}
+            accessToken={session?.accessToken}
             handleLoadingHeader={handleLoadingHeader}
             handleAlert={handleAlert}
             handleFormChange={handleFormChange}
@@ -261,7 +261,7 @@ const CreateServicePage = ({
       case 2:
         return (
           <ServiceCreateStep2
-            accessToken={session!.accessToken}
+            accessToken={session?.accessToken}
             handleLoadingHeader={handleLoadingHeader}
             handleAlert={handleAlert}
             handleFormChange={handleFormChange}
@@ -273,7 +273,7 @@ const CreateServicePage = ({
       case 3:
         return (
           <ServiceCreateStep3
-            accessToken={session!.accessToken}
+            accessToken={session?.accessToken}
             handleLoadingHeader={handleLoadingHeader}
             handleAlert={handleAlert}
             handleFormChange={handleFormChange}

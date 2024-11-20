@@ -151,7 +151,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 className="form-control"
                 style={{ textTransform: "uppercase" }}
                 id="service_customer_name"
-                value={parentFormData.customer_name}
+                value={parentFormData?.customer_name}
                 disabled
               />
             </div>
@@ -161,7 +161,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 type="number"
                 className="form-control"
                 id="service_customer_telp"
-                value={parentFormData.customer_telp}
+                value={parentFormData?.customer_telp}
                 disabled
               />
             </div>
@@ -171,7 +171,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 type="email"
                 className="form-control"
                 id="service_customer_email"
-                value={parentFormData.customer_email}
+                value={parentFormData?.customer_email}
                 disabled
               />
             </div>
@@ -187,7 +187,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 className="form-control"
                 style={{ textTransform: "uppercase" }}
                 id="service_device_type"
-                value={parentFormData.device_type_label}
+                value={parentFormData?.device_type_label}
                 disabled
               />
             </div>
@@ -198,7 +198,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 className="form-control"
                 style={{ textTransform: "uppercase" }}
                 id="service_device"
-                value={parentFormData.device_label}
+                value={parentFormData?.device_label}
                 disabled
               />
             </div>
@@ -209,7 +209,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 className="form-control"
                 id="service_imei"
                 style={{ textTransform: "uppercase" }}
-                value={parentFormData.imei}
+                value={parentFormData?.imei}
                 disabled
               />
             </div>
@@ -222,7 +222,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
             className="form-control"
             rows={4}
             id="service_desc"
-            value={parentFormData.service_desc}
+            value={parentFormData?.service_desc}
             disabled
           />
         </div>
@@ -260,14 +260,14 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
               </tr>
             </thead>
             <tbody>
-              {parentFormData.service_form_checking.length === 0 ? (
+              {parentFormData?.service_form_checking.length === 0 ? (
                 <tr>
                   <td colSpan={5} align="center">
                     Tidak ada data
                   </td>
                 </tr>
               ) : (
-                parentFormData.service_form_checking?.map(
+                parentFormData?.service_form_checking?.map(
                   (item: FormChecking, index: number) => (
                     <tr key={index}>
                       <td align="center">{index + 1}</td>
@@ -361,14 +361,13 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
             options={[
               { value: "1", label: "SERVICE MASUK - BARANG DITINGGAL" },
               { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-              { value: "3", label: "SERVICE SELESAI" },
+              {
+                value: "3",
+                label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+              },
               {
                 value: "4",
                 label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
-              },
-              {
-                value: "5",
-                label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
               },
             ]}
             onChange={(e: any) =>
@@ -379,14 +378,13 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                 ? [
                     { value: "1", label: "SERVICE MASUK - BARANG DITINGGAL" },
                     { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-                    { value: "3", label: "SERVICE SELESAI" },
+                    {
+                      value: "3",
+                      label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+                    },
                     {
                       value: "4",
                       label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
-                    },
-                    {
-                      value: "5",
-                      label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
                     },
                   ].find((option) => option.value === formData.service_status)
                 : null
@@ -403,8 +401,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
           />
           <span className="ml-2 text-danger">
             <label htmlFor="service_finish">
-              Tandai Service Ini Sebagai Selesai dan Tampilkan (Sparepart /
-              Product / Jasa)
+              Tampilkan (Sparepart / Product / Jasa)
             </label>
           </span>
         </div>

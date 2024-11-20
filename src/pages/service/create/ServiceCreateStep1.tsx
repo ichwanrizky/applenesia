@@ -133,7 +133,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
     value: e.id,
   }));
 
-  const optionsDevice = formData.device_data?.map((e: Device) => ({
+  const optionsDevice = formData?.device_data?.map((e: Device) => ({
     value: e.id,
     label: e.name?.toUpperCase(),
   }));
@@ -148,11 +148,11 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
           instanceId="service_customer_id"
           placeholder="Pilih Customer"
           isClearable
-          required={formData.customer_name !== "" ? false : true}
+          required={formData?.customer_name !== "" ? false : true}
           options={optionsCustomer}
           onChange={(e: any) => handleCustomer(e ? e.value : "")}
           value={
-            formData.customer_id
+            formData?.customer_id
               ? optionsCustomer.find(
                   (option: any) => option.value === formData.customer_id
                 )
@@ -169,7 +169,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               type="text"
               className="form-control"
               id="service_customer_name"
-              value={formData.customer_name}
+              value={formData?.customer_name}
               style={{ textTransform: "uppercase" }}
               onChange={(e) =>
                 setFormData({ ...formData, customer_name: e.target.value })
@@ -183,7 +183,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               type="number"
               className="form-control"
               id="service_customer_telp"
-              value={formData.customer_telp}
+              value={formData?.customer_telp}
               onChange={(e) =>
                 setFormData({ ...formData, customer_telp: e.target.value })
               }
@@ -195,7 +195,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               type="email"
               className="form-control"
               id="service_customer_email"
-              value={formData.customer_email}
+              value={formData?.customer_email}
               onChange={(e) =>
                 setFormData({ ...formData, customer_email: e.target.value })
               }
@@ -218,7 +218,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
                 handleGetDevice(e);
               }}
               value={
-                formData.device_type_id
+                formData?.device_type_id
                   ? optionsDeviceType.find(
                       (option: any) => option.value === formData.device_type_id
                     )
@@ -242,7 +242,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
                 })
               }
               value={
-                formData.device_id
+                formData?.device_id
                   ? optionsDevice.find(
                       (option: any) => option.value === formData.device_id
                     )
@@ -261,7 +261,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               onChange={(e) =>
                 setFormData({ ...formData, imei: e.target.value })
               }
-              value={formData.imei}
+              value={formData?.imei}
             />
           </div>
         </div>
@@ -275,7 +275,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
           id="service_description"
           style={{ textTransform: "uppercase" }}
           required
-          value={formData.service_desc}
+          value={formData?.service_desc}
           onChange={(e) =>
             setFormData({ ...formData, service_desc: e.target.value })
           }

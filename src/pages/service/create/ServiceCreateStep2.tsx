@@ -29,7 +29,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
   } = props;
 
   const [listFormCheck, setListFormCheck] = useState(
-    (defaultFormData.service_form_checking.length > 0
+    (defaultFormData?.service_form_checking.length > 0
       ? defaultFormData.service_form_checking
       : listFormCheckData) as any[]
   );
@@ -62,7 +62,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
   };
 
   const handleCheckAll = (field: "in_check" | "out_check") => {
-    const checking = listFormCheck.every((e) => e[field]);
+    const checking = listFormCheck?.every((e) => e[field]);
     setListFormCheck(
       listFormCheck?.map((e) => ({
         ...e,
@@ -95,7 +95,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
                 <input
                   type="checkbox"
                   onChange={() => handleCheckAll("in_check")}
-                  checked={listFormCheck.every((e) => e.in_check)}
+                  checked={listFormCheck?.every((e) => e.in_check)}
                 />
               </th>
               <th style={{ width: "8%", textAlign: "center" }}>
@@ -103,7 +103,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
                 <input
                   type="checkbox"
                   onChange={() => handleCheckAll("out_check")}
-                  checked={listFormCheck.every((e) => e.out_check)}
+                  checked={listFormCheck?.every((e) => e.out_check)}
                 />
               </th>
               <th
@@ -118,7 +118,7 @@ const ServiceCreateStep2 = (props: ServiceCreateStep2Props) => {
             </tr>
           </thead>
           <tbody>
-            {listFormCheck.length === 0 ? (
+            {listFormCheck?.length === 0 ? (
               <tr>
                 <td colSpan={5} align="center">
                   Tidak ada data

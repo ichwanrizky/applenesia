@@ -45,6 +45,8 @@ model user {
   cash_flow            cash_flow[]
   service_technician   service[]          @relation("service_technician")
   service_user_created service[]          @relation("service_user_created")
+  invoice              invoice[]          @relation("invoice_user_created")
+  invoice_payment      invoice_payment[]
 }
 
 model branch {
@@ -61,6 +63,7 @@ model branch {
   product     product[]
   cash_flow   cash_flow[]
   service     service[]
+  invoice     invoice[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -128,6 +131,7 @@ model payment_method {
   name             String
   product_purchase product_purchase[]
   cash_flow        cash_flow[]
+  invoice_payment  invoice_payment[]
 }
 
 model product {
@@ -247,6 +251,7 @@ model customer {
   telp    String?
   email   String?
   service service[]
+  invoice invoice[]
 }
 
 model service {
@@ -260,6 +265,7 @@ model service {
   device                device                  @relation(fields: [device_id], references: [id])
   imei                  String?
   service_desc          String?
+  repair_desc           String?
   technician_id         Int
   user_technician       user                    @relation("service_technician", fields: [technician_id], references: [id])
   branch_id             Int
@@ -274,6 +280,7 @@ model service {
   service_status        service_status          @relation(fields: [service_status_id], references: [id])
   service_form_checking service_form_checking[]
   service_product       service_product[]
+  invoice_service       invoice_service[]
 
   @@index([uuid], map: "service_uuid")
   @@index([service_number], map: "service_service_number")
@@ -317,4 +324,73 @@ model service_product {
 
   @@index([service_id], map: "service_product_service_id")
   @@index([product_id], map: "service_product_product_id")
+}
+
+model invoice {
+  id              Int               @id @default(autoincrement())
+  uuid            String            @unique @default(uuid())
+  invoice_number  String            @unique
+  year            Int
+  month           Int
+  created_at      DateTime          @db.DateTime(0)
+  created_by      Int
+  user_created    user              @relation("invoice_user_created", fields: [created_by], references: [id])
+  notes           String?
+  amount          Int               @default(0)
+  payment_status  payment_status
+  branch_id       Int
+  branch          branch            @relation(fields: [branch_id], references: [id])
+  is_deleted      Boolean           @default(false)
+  customer_id     Int
+  customer        customer          @relation(fields: [customer_id], references: [id])
+  invoice_service invoice_service[]
+  invoice_item    invoice_item[]
+  invoice_payment invoice_payment[]
+
+  @@index([uuid], map: "invoice_uuid")
+  @@index([invoice_number], map: "invoice_invoice_number")
+}
+
+model invoice_service {
+  id         Int     @id @default(autoincrement())
+  service_id Int
+  service    service @relation(fields: [service_id], references: [id])
+  invoice_id Int
+  invoice    invoice @relation(fields: [invoice_id], references: [id])
+
+  @@index([service_id], map: "invoice_service_service_id")
+  @@index([invoice_id], map: "invoice_service_invoice_id")
+}
+
+model invoice_item {
+  id         Int     @id @default(autoincrement())
+  name       String
+  sub_name   String?
+  qty        Int     @default(0)
+  price      Int     @default(0)
+  warranty   Int     @default(0)
+  invoice_id Int
+  invoice    invoice @relation(fields: [invoice_id], references: [id])
+
+  @@index([invoice_id], map: "invoice_item_invoice_id")
+}
+
+model invoice_payment {
+  id           Int            @id @default(autoincrement())
+  invoice_id   Int
+  invoice      invoice        @relation(fields: [invoice_id], references: [id])
+  payment_id   Int
+  payment      payment_method @relation(fields: [payment_id], references: [id])
+  nominal      Int            @default(0)
+  created_at   DateTime       @db.DateTime(0)
+  created_by   Int
+  user_created user           @relation(fields: [created_by], references: [id])
+
+  @@index([invoice_id], map: "invoice_payment_invoice_id")
+}
+
+enum payment_status {
+  UNPAID
+  PARTIAL
+  PAID
 }
