@@ -173,7 +173,6 @@ const CreateServicePage = ({
       setStep(step + 1);
     }
   };
-
   const prevStep = () => {
     if (step > 1) {
       setStep(step - 1);
@@ -242,7 +241,6 @@ const CreateServicePage = ({
       }
     }
   };
-
   const renderStepContent = () => {
     switch (step) {
       case 1:

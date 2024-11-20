@@ -145,7 +145,6 @@ export const PUT = async (
     const device_type = body.device_type_id;
     const device = body.device_id;
     const imei = body.imei;
-    const service_id = body.service_id;
     const service_desc = body.service_desc;
     const repair_desc = body.repair_desc;
     const service_form_checking = body.service_form_checking;
@@ -154,7 +153,6 @@ export const PUT = async (
     const service_status = body.service_status;
     const products = body.products;
     const create_invoice = body.create_invoice;
-
     const missingFields = [
       {
         name: "customer name",
@@ -243,7 +241,15 @@ export const PUT = async (
           email: customer_email,
         },
         where: {
-          id: customer_id,
+          id: Number(customer_id),
+        },
+      });
+
+      await prisma.service_product.deleteMany({
+        where: {
+          service: {
+            service_number: params.id,
+          },
         },
       });
 
@@ -264,23 +270,21 @@ export const PUT = async (
               notes: e.notes?.toUpperCase(),
             })),
           },
-          ...(products.length > 0 && {
-            service_product: {
-              deleteMany: {},
-              create: products?.map((e: any) => ({
-                product_id: Number(e.id),
-                name: e.name,
-                sub_name: e.sub_name,
-                price: Number(e.price),
-                qty: Number(e.qty),
-                warranty: Number(e.warranty),
-                is_product: e.is_product,
-              })),
-            },
-          }),
+          service_product: {
+            deleteMany: {},
+            create: products?.map((e: any) => ({
+              product_id: Number(e.id),
+              name: e.name,
+              sub_name: e.sub_name,
+              price: Number(e.price),
+              qty: Number(e.qty),
+              warranty: Number(e.warranty),
+              is_product: e.is_product,
+            })),
+          },
         },
         where: {
-          service_number: service_id,
+          service_number: params.id,
           is_deleted: false,
         },
       });
@@ -292,7 +296,7 @@ export const PUT = async (
         const countInvoiceExist = await prisma.invoice.count({
           where: {
             year,
-            branch_id: branch,
+            branch_id: Number(branch),
           },
         });
 
@@ -303,7 +307,7 @@ export const PUT = async (
           .toString()
           .slice(-2)}${randomNumber}${padId}`;
 
-        const invoice = await prisma.invoice.create({
+        await prisma.invoice.create({
           data: {
             invoice_number: invoiceNumber,
             year,
@@ -311,8 +315,29 @@ export const PUT = async (
             created_at: formattedDateNow(),
             created_by: session[1].id,
             payment_status: "UNPAID",
-            branch_id: branch,
-            customer_id: customer_id,
+            branch_id: Number(branch),
+            customer_id: Number(customer_id),
+            ...(products.length > 0 && {
+              amount: products?.reduce(
+                (total: number, item: any) =>
+                  total + Number(item.price) * Number(item.qty),
+                0
+              ),
+              invoice_item: {
+                create: products?.map((e: any) => ({
+                  name: e.name,
+                  sub_name: e.sub_name,
+                  price: Number(e.price),
+                  qty: Number(e.qty),
+                  warranty: Number(e.warranty),
+                })),
+              },
+            }),
+            invoice_service: {
+              create: {
+                service_id: updateService.id,
+              },
+            },
           },
         });
       }
@@ -351,6 +376,7 @@ export const PUT = async (
       }
     );
   } catch (error) {
+    console.log(error);
     return handleError(error);
   }
 };

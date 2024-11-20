@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import Select from "react-select";
 import ServiceProductList from "./ServiceProductList";
+import { useRouter } from "next/navigation";
+import CustomAlert from "@/components/CustomAlert";
 
 type Session = {
   name: string;
@@ -113,7 +115,12 @@ const DetailServicePage = ({
   service_id: string;
   deviceTypeData: DeviceType[];
 }) => {
+  const { push } = useRouter();
+
   const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [alertPage, setAlertPage] = useState<AlertProps | null>(null);
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -146,7 +153,7 @@ const DetailServicePage = ({
         );
 
         if (!response.status) {
-          setAlert({
+          setAlertPage({
             status: true,
             color: "danger",
             message: response.message,
@@ -183,7 +190,7 @@ const DetailServicePage = ({
           }));
         }
       } catch (error) {
-        setAlert({
+        setAlertPage({
           status: true,
           color: "danger",
           message: "Something went wrong, please refresh and try again",
@@ -220,36 +227,68 @@ const DetailServicePage = ({
       device_id: "",
       device_label: "",
     }));
+
+    setIsloading(true);
     try {
       const result = await deviceServices.getDeviceByType(
         session.accessToken!,
         Number(deviceType.value)
       );
       if (!result.status) {
-      } else {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          device_type_id: deviceType.value?.toString(),
-          device_type_label: deviceType.label,
-          device_data: result.data,
-          device_id: "",
-          device_label: "",
-        }));
+        setAlert({
+          status: true,
+          color: "danger",
+          message: result.message,
+        });
+        return;
       }
-    } catch (error) {}
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        device_type_id: deviceType.value?.toString(),
+        device_type_label: deviceType.label,
+        device_data: result.data,
+        device_id: "",
+        device_label: "",
+      }));
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsloading(false);
+    }
   };
 
   const handleGetTechnician = async (branch: number) => {
-    const result = await libServices.getTechnician(
-      session.accessToken!,
-      Number(branch)
-    );
+    setIsloading(true);
+    try {
+      const result = await libServices.getTechnician(
+        session.accessToken!,
+        Number(branch)
+      );
 
-    if (result.status) {
+      if (!result.status) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: result.message,
+        });
+        return;
+      }
       setFormData((prevFormData) => ({
         ...prevFormData,
         technician_data: result.data,
       }));
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsloading(false);
     }
   };
 
@@ -322,6 +361,59 @@ const DetailServicePage = ({
     });
   };
 
+  const handleSubmit = async (isCreateInvoice: Boolean) => {
+    if (confirm("Submit this data?")) {
+      setIsLoadingSubmit(true);
+      try {
+        const resultUpdate = await serviceServices.updateService(
+          session?.accessToken,
+          JSON.stringify({
+            customer_id: formData.customer_id,
+            customer_name: formData.customer_name,
+            customer_telp: formData.customer_telp,
+            customer_email: formData.customer_email,
+            device_type_id: formData.device_type_id,
+            device_id: formData.device_id,
+            imei: formData.imei,
+            service_desc: formData.service_desc,
+            service_form_checking: formData.service_form_checking,
+            branch: formData.branch,
+            technician: formData.technician,
+            service_status: formData.service_status,
+            products: formData.products,
+            create_invoice: isCreateInvoice,
+          }),
+          service_id
+        );
+
+        if (!resultUpdate.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: resultUpdate.message,
+          });
+          setIsLoadingSubmit(false);
+          return;
+        }
+        setAlert({
+          status: true,
+          color: "success",
+          message: resultUpdate.message,
+        });
+        setTimeout(() => {
+          push("/dashboard/service");
+        }, 1000);
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "something went wrong, please refresh and try again",
+        });
+        setIsLoadingSubmit(false);
+      }
+    }
+  };
+
   if (isLoadingPage) {
     return (
       <div className="text-center">
@@ -335,12 +427,8 @@ const DetailServicePage = ({
     );
   }
 
-  if (alert?.status) {
-    return (
-      <div className={`alert alert-${alert.color}`} role="alert">
-        {alert.message}
-      </div>
-    );
+  if (alertPage?.status) {
+    return <CustomAlert message={alertPage.message} color={alertPage.color} />;
   }
 
   const optionsDeviceType = deviceTypeData?.map((e) => ({
@@ -366,9 +454,28 @@ const DetailServicePage = ({
             <h3>
               ID: <span className="text-primary fw-bold">{service_id}</span>
             </h3>
+            {isLoading && (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm mr-2"
+                  role="status"
+                  aria-hidden="true"
+                />
+                Loading...
+              </>
+            )}
             <hr />
-
-            <div className="tab-content p-2">
+            {alert?.status && (
+              <CustomAlert message={alert.message} color={alert.color} />
+            )}
+            <div
+              className="tab-content p-2"
+              style={{
+                maxHeight: "60vh",
+                overflowY: "scroll",
+                border: "1px solid #ccc",
+              }}
+            >
               <form id="step3Form">
                 <div className="card p-3 shadow-lg mt-3">
                   <div className="form-group">
@@ -831,13 +938,34 @@ const DetailServicePage = ({
             </div>
           </div>
           <div className="card-footer text-end">
-            <button className="btn btn-primary" type="button">
-              Save Changes
-            </button>
+            {isLoadingSubmit ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm mr-2"
+                  role="status"
+                  aria-hidden="true"
+                />
+                Loading...
+              </>
+            ) : (
+              <>
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={() => handleSubmit(false)}
+                >
+                  Save Changes
+                </button>
 
-            <button className="btn btn-success ml-2" type="button">
-              Create Invoice
-            </button>
+                <button
+                  className="btn btn-success ml-2"
+                  type="button"
+                  onClick={() => handleSubmit(true)}
+                >
+                  Create Invoice
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ const createService = async (accessToken: string, data: any) => {
   }
 };
 
-const deleteService = async (accessToken: string, id: any) => {
+const deleteService = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/service/${id}`, {
       method: "DELETE",
@@ -49,4 +49,27 @@ const deleteService = async (accessToken: string, id: any) => {
   }
 };
 
-export default { createService, deleteService, getServiceById };
+const updateService = async (
+  accessToken: string,
+  data: any,
+  service_id: string
+) => {
+  try {
+    const response = await fetch(`/api/service/${service_id}`, {
+      method: "PUT",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: data,
+    });
+
+    const res = await response.json();
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { createService, deleteService, getServiceById, updateService };
