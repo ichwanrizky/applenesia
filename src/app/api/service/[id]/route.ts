@@ -152,6 +152,7 @@ export const PUT = async (
     const technician = body.technician;
     const service_status = body.service_status;
     const products = body.products;
+    console.log("🚀 ~ products:", products);
     const create_invoice = body.create_invoice;
     const missingFields = [
       {
@@ -245,14 +246,6 @@ export const PUT = async (
         },
       });
 
-      await prisma.service_product.deleteMany({
-        where: {
-          service: {
-            service_number: params.id,
-          },
-        },
-      });
-
       const updateService = await prisma.service.update({
         data: {
           device_id: Number(device),
@@ -273,7 +266,7 @@ export const PUT = async (
           service_product: {
             deleteMany: {},
             create: products?.map((e: any) => ({
-              product_id: Number(e.id),
+              product_id: Number(e.product_id),
               name: e.name,
               sub_name: e.sub_name,
               price: Number(e.price),
@@ -376,7 +369,6 @@ export const PUT = async (
       }
     );
   } catch (error) {
-    console.log(error);
     return handleError(error);
   }
 };

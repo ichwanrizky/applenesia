@@ -66,6 +66,11 @@ type Service = {
   user_technician: {
     name: string;
   };
+  invoice_service: {
+    invoice: {
+      invoice_number: string;
+    };
+  }[];
 };
 type AlertProps = {
   status: boolean;
@@ -79,9 +84,6 @@ const ServicePage = ({ session }: { session: Session | null }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editData, setEditData] = useState({} as Service);
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -92,6 +94,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
       ? session?.userBranch[0].branch.id?.toString()
       : ""
   );
+  const [listCreateInvoice, setListCreateInvoice] = useState([] as number[]);
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
@@ -125,6 +128,14 @@ const ServicePage = ({ session }: { session: Session | null }) => {
       } finally {
         setIsLoadingAction({ ...isLoadingAction, [id]: false });
       }
+    }
+  };
+
+  const handleCreateInvoice = (id: number) => {
+    if (listCreateInvoice.includes(id)) {
+      setListCreateInvoice(listCreateInvoice.filter((item) => item !== id));
+    } else {
+      setListCreateInvoice([...listCreateInvoice, id]);
     }
   };
 
@@ -175,6 +186,14 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                     <SearchInput search={search} setSearch={setSearch} />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
+                    {listCreateInvoice.length > 0 && (
+                      <>
+                        <button type="button" className="btn btn-success">
+                          Create Invoice
+                        </button>
+                        <span className="ml-2" />
+                      </>
+                    )}
                     <CustomButton
                       buttonType="add"
                       isLoading={false}
@@ -299,12 +318,33 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                     className="align-middle"
                                     style={{ whiteSpace: "nowrap" }}
                                   >
-                                    <button
-                                      type="button"
-                                      className="btn btn-link"
-                                    >
-                                      INV1234
-                                    </button>
+                                    {item.invoice_service.length > 0 ? (
+                                      <span
+                                        role="button"
+                                        onClick={() => {
+                                          push(
+                                            `invoice/${item.invoice_service[0].invoice.invoice_number}`
+                                          );
+                                        }}
+                                        style={{
+                                          cursor: "pointer",
+                                          color: "#007bff",
+                                          textDecoration: "underline",
+                                        }}
+                                      >
+                                        {item.invoice_service[0].invoice.invoice_number?.toUpperCase()}
+                                      </span>
+                                    ) : (
+                                      item.service_status_id === 3 ||
+                                      (item.service_status_id === 4 && (
+                                        <input
+                                          type="checkbox"
+                                          onChange={() =>
+                                            handleCreateInvoice(item.id)
+                                          }
+                                        />
+                                      ))
+                                    )}
                                   </td>
                                   <td align="left" className="align-middle">
                                     {item.customer.name?.toUpperCase()} <br />
@@ -375,32 +415,6 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                           />
                         </div>
                       )}
-
-                      {/* {isCreateOpen && (
-                        <CreateKategori
-                          isOpen={isCreateOpen}
-                          onClose={() => {
-                            setIsCreateOpen(false);
-                            mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
-                            );
-                          }}
-                          accessToken={accessToken!}
-                        />
-                      )} */}
-                      {/* {isEditOpen && (
-                        <EditKategori
-                          isOpen={isEditOpen}
-                          onClose={() => {
-                            setIsEditOpen(false);
-                            mutate(
-                              `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
-                            );
-                          }}
-                          accessToken={accessToken!}
-                          editData={editData}
-                        />
-                      )} */}
                     </>
                   );
                 })()

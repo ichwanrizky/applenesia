@@ -363,6 +363,19 @@ const DetailServicePage = ({
 
   const handleSubmit = async (isCreateInvoice: Boolean) => {
     if (confirm("Submit this data?")) {
+      if (
+        isCreateInvoice &&
+        formData.service_status !== "3" &&
+        formData.service_status !== "4"
+      ) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "service status belum selesai",
+        });
+        return;
+      }
+
       setIsLoadingSubmit(true);
       try {
         const resultUpdate = await serviceServices.updateService(

@@ -138,6 +138,15 @@ export const GET = async (request: Request) => {
             name: true,
           },
         },
+        invoice_service: {
+          select: {
+            invoice: {
+              select: {
+                invoice_number: true,
+              },
+            },
+          },
+        },
       },
       ...condition,
       orderBy: { id: "desc" },
