@@ -63,16 +63,16 @@ const ServiceProductList = (props: Props) => {
   );
 
   const handleAddProduct = (product: ProductList) => {
-    if (product.product_log.length > 0) {
-      if (product.stock <= 0) {
-        setAlert({
-          status: true,
-          color: "danger",
-          message: "Stock tidak mencukupi",
-        });
-        return;
-      }
-    }
+    // if (product.product_log.length > 0) {
+    //   if (product.stock <= 0) {
+    //     setAlert({
+    //       status: true,
+    //       color: "danger",
+    //       message: "Stock tidak mencukupi",
+    //     });
+    //     return;
+    //   }
+    // }
 
     setIsSelected({ ...isSelected, [product.id]: true });
     setSelectedProduct([

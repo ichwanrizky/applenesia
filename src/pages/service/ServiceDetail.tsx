@@ -980,32 +980,28 @@ const DetailServicePage = ({
                                     {item.name?.toUpperCase()}
                                   </td>
                                   <td className="align-middle text-center">
-                                    {item.is_product ? (
-                                      <NumericFormat
-                                        className="form-control form-control-sm text-center"
-                                        value={item.qty}
-                                        thousandSeparator=","
-                                        displayType="input"
-                                        onValueChange={(values: any) => {
-                                          if (values.floatValue !== undefined) {
-                                            handleUpdateQtySelectedProduct(
-                                              item.product_id,
-                                              values.floatValue
-                                            );
-                                          }
-                                        }}
-                                        allowLeadingZeros={false}
-                                        allowNegative={false}
-                                        required
-                                        disabled={
-                                          formData.invoice_number !== ""
-                                            ? true
-                                            : false
+                                    <NumericFormat
+                                      className="form-control form-control-sm text-center"
+                                      value={item.qty}
+                                      thousandSeparator=","
+                                      displayType="input"
+                                      onValueChange={(values: any) => {
+                                        if (values.floatValue !== undefined) {
+                                          handleUpdateQtySelectedProduct(
+                                            item.product_id,
+                                            values.floatValue
+                                          );
                                         }
-                                      />
-                                    ) : (
-                                      item.qty
-                                    )}
+                                      }}
+                                      allowLeadingZeros={false}
+                                      allowNegative={false}
+                                      required
+                                      disabled={
+                                        formData.invoice_number !== ""
+                                          ? true
+                                          : false
+                                      }
+                                    />
                                   </td>
                                   <td className="align-middle" align="right">
                                     {`Rp. ${item.price?.toLocaleString(

@@ -364,16 +364,18 @@ model invoice_service {
 }
 
 model invoice_item {
-  id         Int      @id @default(autoincrement())
-  product_id Int?
-  product    product? @relation(fields: [product_id], references: [id])
-  name       String
-  sub_name   String?
-  qty        Int      @default(0)
-  price      Int      @default(0)
-  warranty   Int      @default(0)
-  invoice_id Int
-  invoice    invoice  @relation(fields: [invoice_id], references: [id])
+  id               Int      @id @default(autoincrement())
+  product_id       Int?
+  product          product? @relation(fields: [product_id], references: [id])
+  name             String
+  sub_name         String?
+  qty              Int      @default(0)
+  price            Int      @default(0)
+  warranty         Int      @default(0)
+  invoice_id       Int
+  invoice          invoice  @relation(fields: [invoice_id], references: [id])
+  discount_percent Int      @default(0)
+  discount_price   Int      @default(0)
 
   @@index([invoice_id], map: "invoice_item_invoice_id")
 }

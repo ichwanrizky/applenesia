@@ -475,27 +475,23 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                               {item.name?.toUpperCase()}
                             </td>
                             <td className="align-middle text-center">
-                              {item.is_product ? (
-                                <NumericFormat
-                                  className="form-control form-control-sm text-center"
-                                  value={item.qty}
-                                  thousandSeparator=","
-                                  displayType="input"
-                                  onValueChange={(values: any) => {
-                                    if (values.floatValue !== undefined) {
-                                      handleUpdateQtySelectedProduct(
-                                        item.product_id,
-                                        values.floatValue
-                                      );
-                                    }
-                                  }}
-                                  allowLeadingZeros={false}
-                                  allowNegative={false}
-                                  required
-                                />
-                              ) : (
-                                item.qty
-                              )}
+                              <NumericFormat
+                                className="form-control form-control-sm text-center"
+                                value={item.qty}
+                                thousandSeparator=","
+                                displayType="input"
+                                onValueChange={(values: any) => {
+                                  if (values.floatValue !== undefined) {
+                                    handleUpdateQtySelectedProduct(
+                                      item.product_id,
+                                      values.floatValue
+                                    );
+                                  }
+                                }}
+                                allowLeadingZeros={false}
+                                allowNegative={false}
+                                required
+                              />
                             </td>
                             <td className="align-middle" align="right">
                               {`Rp. ${item.price?.toLocaleString("id-ID")}`}

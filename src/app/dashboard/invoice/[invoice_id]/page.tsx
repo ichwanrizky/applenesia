@@ -41,6 +41,7 @@ export default async function ServiceDetail({
   }
 
   const { invoice_id } = params;
+  const deviceType = await getDeviceType(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -61,7 +62,11 @@ export default async function ServiceDetail({
           </div>
         </div>
 
-        <DetailInvoicePage session={session.user} invoice_id={invoice_id} />
+        <DetailInvoicePage
+          session={session.user}
+          invoice_id={invoice_id}
+          deviceTypeData={deviceType}
+        />
       </div>
     </div>
   );

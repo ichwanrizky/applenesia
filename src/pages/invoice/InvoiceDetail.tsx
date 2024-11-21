@@ -3,6 +3,8 @@
 import CustomAlert from "@/components/CustomAlert";
 import invoiceService from "@/services/invoiceService";
 import { Fragment, useEffect, useState } from "react";
+import { NumericFormat } from "react-number-format";
+import ServiceProductList from "../service/ServiceProductList";
 
 type Session = {
   name: string;
@@ -37,6 +39,9 @@ type InvoiceDetail = {
     price: number;
     warranty: number;
     invoice_id: number;
+    discount_percent: number;
+    discount_price: number;
+    product_id: number;
   }[];
   invoice_service: {
     service: {
@@ -62,14 +67,22 @@ type AlertProps = {
   message: string;
 };
 
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
 const DetailInvoicePage = ({
   session,
   invoice_id,
+  deviceTypeData,
 }: {
   session: Session;
   invoice_id: string;
+  deviceTypeData: DeviceType[];
 }) => {
   const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const [isProductOpen, setIsProductOpen] = useState(false);
   const [alertPage, setAlertPage] = useState<AlertProps | null>(null);
   const [invoicData, setInvoiceData] = useState({} as InvoiceDetail);
 
@@ -104,6 +117,69 @@ const DetailInvoicePage = ({
     getDetailInvoice();
   }, []);
 
+  const handleRemoveSelectedProduct = (id: number) => {
+    setInvoiceData({
+      ...invoicData,
+      invoice_item: invoicData.invoice_item.filter(
+        (_: any, index: number) => index !== id
+      ),
+    });
+  };
+
+  const handleUpdateQtySelectedProduct = (id: number, qty: number) => {
+    setInvoiceData({
+      ...invoicData,
+      invoice_item: invoicData.invoice_item.map((item: any, index: number) => {
+        if (index === id) {
+          return {
+            ...item,
+            qty: qty,
+          };
+        }
+        return item;
+      }),
+    });
+  };
+
+  const closeProductList = (selectedProduct: any) => {
+    setIsProductOpen(false);
+    setInvoiceData({
+      ...invoicData,
+      invoice_item: [
+        ...invoicData.invoice_item,
+        ...selectedProduct.flatMap((e: any) => ({
+          id: new Date().getTime(),
+          name: e.name,
+          sub_name: e.sub_name,
+          qty: e.qty,
+          price: e.price,
+          warranty: e.price,
+          invoice_id: invoicData.id,
+          discount_percent: 0,
+          discount_price: 0,
+          product_id: e.product_id,
+        })),
+      ],
+    });
+  };
+
+  const handleDiscount = (discountType: string, id: number, value: number) => {
+    setInvoiceData({
+      ...invoicData,
+      invoice_item: invoicData.invoice_item.map((item: any, index: number) => {
+        if (index === id) {
+          return {
+            ...item,
+            ...(discountType === "%"
+              ? { discount_percent: value }
+              : { discount_price: value }),
+          };
+        }
+        return item;
+      }),
+    });
+  };
+
   if (isLoadingPage) {
     return (
       <div className="text-center">
@@ -120,6 +196,9 @@ const DetailInvoicePage = ({
   if (alertPage?.status) {
     return <CustomAlert message={alertPage.message} color={alertPage.color} />;
   }
+
+  let subTotal = 0;
+  let subTotalDiscount = 0;
 
   return (
     <div className="row">
@@ -207,13 +286,30 @@ const DetailInvoicePage = ({
             {/* end row */}
             <div className="row">
               <div className="col-md-12">
-                <div className="table-responsive">
-                  <table className="table table-bordered mt-4" width="100%">
+                <div className="table-responsive mt-4">
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary btn-sm mb-2"
+                    onClick={() => {
+                      setIsProductOpen(true);
+                    }}
+                  >
+                    Tambah Produk
+                  </button>
+
+                  <table className="table table-bordered" width="100%">
                     <thead>
                       <tr>
+                        <th style={{ width: "1%", textAlign: "center" }}></th>
                         <th style={{ width: "1%" }}>#</th>
                         <th>Item</th>
-                        <th style={{ width: "5%", textAlign: "center" }}>
+                        <th style={{ width: "8%", textAlign: "center" }}>
+                          Disc (%)
+                        </th>
+                        <th style={{ width: "8%", textAlign: "center" }}>
+                          Disc (Rp)
+                        </th>
+                        <th style={{ width: "8%", textAlign: "center" }}>
                           QTY
                         </th>
                         <th style={{ width: "15%", textAlign: "right" }}>
@@ -227,29 +323,151 @@ const DetailInvoicePage = ({
                     <tbody>
                       {invoicData.invoice_item.length === 0 ? (
                         <tr>
-                          <td colSpan={5} align="center">
+                          <td colSpan={6} align="center">
                             Tidak ada item
                           </td>
                         </tr>
                       ) : (
-                        invoicData.invoice_item?.map((item, index: number) => (
-                          <tr key={index}>
-                            <td align="center">{index + 1}</td>
-                            <td>{item.name?.toUpperCase()}</td>
-                            <td align="center">{item.qty}</td>
-                            <td align="right">
-                              {`Rp. ${item.price?.toLocaleString("id-ID")}`}
-                            </td>
-                            <td align="right">
-                              {`Rp. ${(item.qty * item.price)?.toLocaleString(
-                                "id-ID"
-                              )}`}
-                            </td>
-                          </tr>
-                        ))
+                        invoicData.invoice_item?.map((item, index: number) => {
+                          const totalPrice = item.price * item.qty;
+                          const totalDiscountPrice =
+                            item.price *
+                              item.qty *
+                              (1 - item.discount_percent / 100) -
+                            item.discount_price;
+
+                          subTotal += totalPrice;
+                          subTotalDiscount += totalPrice - totalDiscountPrice;
+
+                          return (
+                            <tr key={index}>
+                              <td className="align-middle text-center">
+                                <button
+                                  type="button"
+                                  className="btn btn-danger btn-sm"
+                                  onClick={() =>
+                                    handleRemoveSelectedProduct(index)
+                                  }
+                                >
+                                  <i className="fa fa-trash"></i>
+                                </button>
+                              </td>
+                              <td align="center">{index + 1}</td>
+                              <td>{item.name?.toUpperCase()}</td>
+                              <td>
+                                <NumericFormat
+                                  className="form-control form-control-sm text-center"
+                                  value={item.discount_percent || 0}
+                                  thousandSeparator=","
+                                  displayType="input"
+                                  onValueChange={(values: any) => {
+                                    if (
+                                      values.floatValue !== undefined &&
+                                      values.floatValue >= 0 &&
+                                      values.floatValue <= 100
+                                    ) {
+                                      handleDiscount(
+                                        "%",
+                                        index,
+                                        values.floatValue
+                                      );
+                                    }
+                                  }}
+                                  allowLeadingZeros={false}
+                                  allowNegative={false}
+                                  required
+                                  isAllowed={(values) =>
+                                    values.floatValue === undefined ||
+                                    (values.floatValue <= 100 &&
+                                      values.floatValue >= 0)
+                                  }
+                                />
+                              </td>
+                              <td>
+                                <NumericFormat
+                                  className="form-control form-control-sm text-center"
+                                  value={item.discount_price || 0}
+                                  thousandSeparator=","
+                                  displayType="input"
+                                  onValueChange={(values: any) => {
+                                    if (
+                                      values.floatValue !== undefined &&
+                                      values.floatValue >= 0 &&
+                                      values.floatValue <= item.price
+                                    ) {
+                                      handleDiscount(
+                                        "rp",
+                                        index,
+                                        values.floatValue
+                                      );
+                                    }
+                                  }}
+                                  allowLeadingZeros={false}
+                                  allowNegative={false}
+                                  required
+                                  isAllowed={(values) =>
+                                    values.floatValue === undefined ||
+                                    (values.floatValue <= item.price &&
+                                      values.floatValue >= 0)
+                                  }
+                                />
+                              </td>
+                              <td align="center">
+                                {
+                                  <NumericFormat
+                                    className="form-control form-control-sm text-center"
+                                    value={item.qty}
+                                    thousandSeparator=","
+                                    displayType="input"
+                                    onValueChange={(values: any) => {
+                                      if (
+                                        values.floatValue !== undefined &&
+                                        values.floatValue > 0
+                                      ) {
+                                        handleUpdateQtySelectedProduct(
+                                          index,
+                                          values.floatValue
+                                        );
+                                      }
+                                    }}
+                                    allowLeadingZeros={false}
+                                    allowNegative={false}
+                                    required
+                                    isAllowed={(values) =>
+                                      values.floatValue === undefined ||
+                                      values.floatValue > 0
+                                    }
+                                    // disabled={
+                                    //   formData.invoice_number !== ""
+                                    //     ? true
+                                    //     : false
+                                    // }
+                                  />
+                                }
+                              </td>
+                              <td align="right">
+                                {`Rp. ${item.price?.toLocaleString("id-ID")}`}
+                              </td>
+                              <td align="right">
+                                {`Rp. ${totalPrice.toLocaleString("id-ID")}`}
+                              </td>
+                            </tr>
+                          );
+                        })
                       )}
                     </tbody>
                   </table>
+
+                  {isProductOpen && (
+                    <ServiceProductList
+                      isOpen={isProductOpen}
+                      onClose={closeProductList}
+                      accessToken={session.accessToken!}
+                      branch={invoicData.branch_id?.toString() || ""}
+                      productList={[]}
+                      deviceTypeData={deviceTypeData}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -268,13 +486,38 @@ const DetailInvoicePage = ({
               </div>
               <div className="col-6">
                 <div className="float-right">
-                  <p>
-                    <b>Sub-total:</b> $4120.00
-                  </p>
-                  <p>
-                    <b>VAT (12.5):</b> $515
-                  </p>
-                  <h3>$4635.00 USD</h3>
+                  <table width="100%" border={0}>
+                    <tbody>
+                      <tr>
+                        <td width="100px">
+                          <b>Sub-total</b>
+                        </td>
+                        <td width="10%">:</td>
+                        <td
+                          align="right"
+                          style={{ whiteSpace: "nowrap" }}
+                        >{`Rp. ${subTotal.toLocaleString("id-ID")}`}</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <b>Discount</b>
+                        </td>
+                        <td>:</td>
+                        <td
+                          align="right"
+                          style={{ whiteSpace: "nowrap" }}
+                        >{`- Rp. ${subTotalDiscount.toLocaleString(
+                          "id-ID"
+                        )}`}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <hr />
+                  <h3 className="text-right">
+                    {`Rp. ${(subTotal - subTotalDiscount).toLocaleString(
+                      "id-ID"
+                    )}`}
+                  </h3>
                 </div>
                 <div className="clearfix" />
               </div>
@@ -282,7 +525,7 @@ const DetailInvoicePage = ({
             <div className="d-print-none my-4">
               <div className="text-right">
                 <a
-                  href="javascript:window.print()"
+                  href="#"
                   className="btn btn-primary waves-effect waves-light"
                 >
                   <i className="fa fa-print m-r-5" /> Print

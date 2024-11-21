@@ -384,7 +384,7 @@ export const POST = async (request: Request) => {
         ...(products.length > 0 && {
           service_product: {
             create: products?.map((e: any) => ({
-              product_id: Number(e.id),
+              product_id: Number(e.product_id),
               name: e.name,
               sub_name: e.sub_name,
               price: Number(e.price),
