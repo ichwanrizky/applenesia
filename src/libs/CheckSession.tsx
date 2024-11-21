@@ -165,6 +165,19 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    // INVOICE
+    case "MENU_INVOICE":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+    case "MENU_INVOICE_BULK":
+      if (method === "POST") {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     case "form_checking":
       if (
         method === "GET" ||

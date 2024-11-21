@@ -9,6 +9,7 @@ import SearchInput from "@/components/SearchInput";
 import BranchOptions from "@/components/BranchOptions";
 import { useRouter } from "next/navigation";
 import serviceServices from "@/services/serviceServices";
+import invoiceService from "@/services/invoiceService";
 
 type Session = {
   name: string;
@@ -94,7 +95,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
       ? session?.userBranch[0].branch.id?.toString()
       : ""
   );
-  const [listCreateInvoice, setListCreateInvoice] = useState([] as number[]);
+  const [listCreateInvoice, setListCreateInvoice] = useState([] as string[]);
   const accessToken = session?.accessToken;
 
   const handleDelete = async (id: number) => {
@@ -131,11 +132,62 @@ const ServicePage = ({ session }: { session: Session | null }) => {
     }
   };
 
-  const handleCreateInvoice = (id: number) => {
+  const handleCreateInvoice = (id: string) => {
     if (listCreateInvoice.includes(id)) {
       setListCreateInvoice(listCreateInvoice.filter((item) => item !== id));
     } else {
       setListCreateInvoice([...listCreateInvoice, id]);
+    }
+  };
+
+  const handleSubmitInvoice = async () => {
+    if (branchAccess === "all") {
+      setAlert({
+        status: true,
+        color: "warning",
+        message: "Please select cabang",
+      });
+      return;
+    }
+
+    if (confirm("Create invoice?")) {
+      setIsLoadingAction({ ...isLoadingAction, [0]: true });
+      try {
+        const response = await invoiceService.createInvoiceBulk(
+          accessToken!,
+          JSON.stringify({
+            branch: branchAccess,
+            list_service_id: listCreateInvoice,
+          })
+        );
+
+        if (!response.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: response.message,
+          });
+
+          return;
+        }
+        setAlert({
+          status: true,
+          color: "success",
+          message: response.message,
+        });
+        setCurrentPage(1);
+        mutate(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/service?branchaccess=${branchAccess}&page=1`
+        );
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "something went wrong, please refresh and try again",
+        });
+      } finally {
+        setIsLoadingAction({ ...isLoadingAction, [0]: false });
+      }
     }
   };
 
@@ -165,6 +217,11 @@ const ServicePage = ({ session }: { session: Session | null }) => {
       clearTimeout(handler);
     };
   }, [search]);
+
+  useEffect(() => {
+    setListCreateInvoice([]);
+  }, [branchAccess]);
+
   return (
     <>
       <div className="row">
@@ -188,7 +245,11 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     {listCreateInvoice.length > 0 && (
                       <>
-                        <button type="button" className="btn btn-success">
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          onClick={handleSubmitInvoice}
+                        >
                           Create Invoice
                         </button>
                         <span className="ml-2" />
@@ -335,15 +396,17 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                         {item.invoice_service[0].invoice.invoice_number?.toUpperCase()}
                                       </span>
                                     ) : (
-                                      item.service_status_id === 3 ||
-                                      (item.service_status_id === 4 && (
+                                      (item.service_status_id === 3 ||
+                                        item.service_status_id === 4) && (
                                         <input
                                           type="checkbox"
                                           onChange={() =>
-                                            handleCreateInvoice(item.id)
+                                            handleCreateInvoice(
+                                              item.service_number
+                                            )
                                           }
                                         />
-                                      ))
+                                      )
                                     )}
                                   </td>
                                   <td align="left" className="align-middle">

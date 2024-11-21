@@ -43,6 +43,7 @@ type ServiceDetail = {
   customer_id: number;
   device_id: number;
   imei: string;
+  repair_desc: string;
   service_desc: string;
   technician_id: number;
   branch_id: number;
@@ -92,6 +93,11 @@ type ServiceDetail = {
     notes?: string;
     service_id: number;
   }[];
+  invoice_service: {
+    invoice: {
+      invoice_number: string;
+    };
+  }[];
 };
 
 type FormChecking = {
@@ -134,6 +140,7 @@ const DetailServicePage = ({
     device_id: "",
     device_label: "",
     imei: "",
+    repair_desc: "",
     service_desc: "",
     service_form_checking: [],
     branch: "",
@@ -142,6 +149,7 @@ const DetailServicePage = ({
     technician: "",
     service_status: "",
     products: [],
+    invoice_number: "",
   });
 
   useEffect(() => {
@@ -180,6 +188,7 @@ const DetailServicePage = ({
             device_id: data.device.id.toString() || "",
             device_label: data.device.name?.toUpperCase() || "",
             imei: data.imei || "",
+            repair_desc: data.repair_desc || "",
             service_desc: data.service_desc || "",
             service_form_checking: (data.service_form_checking as any) || [],
             branch: data.branch_id.toString() || "",
@@ -187,6 +196,8 @@ const DetailServicePage = ({
             technician: data.technician_id.toString() || "",
             service_status: data.service_status.id.toString() || "",
             products: (data.service_product as any) || [],
+            invoice_number:
+              data.invoice_service[0]?.invoice.invoice_number || "",
           }));
         }
       } catch (error) {
@@ -343,7 +354,7 @@ const DetailServicePage = ({
     setFormData({
       ...formData,
       products: formData.products?.map((item: any) => {
-        if (item.id === id) {
+        if (item.product_id === id) {
           return {
             ...item,
             qty: qty,
@@ -357,7 +368,9 @@ const DetailServicePage = ({
   const handleRemoveSelectedProduct = (id: number) => {
     setFormData({
       ...formData,
-      products: formData.products?.filter((item: any) => item.id !== id) as any,
+      products: formData.products?.filter(
+        (item: any) => item.product_id !== id
+      ) as any,
     });
   };
 
@@ -388,6 +401,7 @@ const DetailServicePage = ({
             device_type_id: formData.device_type_id,
             device_id: formData.device_id,
             imei: formData.imei,
+            repair_desc: formData.repair_desc,
             service_desc: formData.service_desc,
             service_form_checking: formData.service_form_checking,
             branch: formData.branch,
@@ -459,6 +473,36 @@ const DetailServicePage = ({
     label: e.name?.toUpperCase(),
   }));
 
+  const optionsStatus = [
+    ...(formData.invoice_number !== ""
+      ? [
+          {
+            value: "3",
+            label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+          },
+          {
+            value: "4",
+            label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
+          },
+        ]
+      : [
+          {
+            value: "1",
+            label: "SERVICE MASUK - BARANG DITINGGAL",
+          },
+          { value: "2", label: "SERVICE MASUK - LANGSUNG" },
+          {
+            value: "3",
+            label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
+          },
+          {
+            value: "4",
+            label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
+          },
+          { value: "5", label: "SERVICE BATAL/CANCEL" },
+        ]),
+  ];
+
   return (
     <div className="row">
       <div className="col-md-10 offset-md-1">
@@ -507,6 +551,9 @@ const DetailServicePage = ({
                               customer_name: e.target.value,
                             })
                           }
+                          disabled={
+                            formData.invoice_number !== "" ? true : false
+                          }
                         />
                       </div>
                       <div className="col-sm-3">
@@ -522,6 +569,9 @@ const DetailServicePage = ({
                               customer_telp: e.target.value,
                             })
                           }
+                          disabled={
+                            formData.invoice_number !== "" ? true : false
+                          }
                         />
                       </div>
                       <div className="col-sm-3">
@@ -536,6 +586,9 @@ const DetailServicePage = ({
                               ...formData,
                               customer_email: e.target.value,
                             })
+                          }
+                          disabled={
+                            formData.invoice_number !== "" ? true : false
                           }
                         />
                       </div>
@@ -564,6 +617,9 @@ const DetailServicePage = ({
                                 )
                               : null
                           }
+                          isDisabled={
+                            formData.invoice_number !== "" ? true : false
+                          }
                         />
                       </div>
                       <div className="col-sm-3">
@@ -589,6 +645,9 @@ const DetailServicePage = ({
                                 )
                               : null
                           }
+                          isDisabled={
+                            formData.invoice_number !== "" ? true : false
+                          }
                         />
                       </div>
                       <div className="col-sm-6">
@@ -604,6 +663,9 @@ const DetailServicePage = ({
                               ...formData,
                               imei: e.target.value,
                             })
+                          }
+                          disabled={
+                            formData.invoice_number !== "" ? true : false
                           }
                         />
                       </div>
@@ -624,6 +686,7 @@ const DetailServicePage = ({
                           service_desc: e.target.value,
                         })
                       }
+                      disabled={formData.invoice_number !== "" ? true : false}
                     />
                   </div>
                 </div>
@@ -653,24 +716,33 @@ const DetailServicePage = ({
                           </th>
                           <th style={{ width: "8%", textAlign: "center" }}>
                             IN
-                            <br />
-                            <input
-                              type="checkbox"
-                              onChange={() => handleCheckAll("in_check")}
-                              checked={formData.service_form_checking.every(
-                                (e: FormChecking) => e.in_check
-                              )}
-                            />
+                            {formData.invoice_number === "" && (
+                              <>
+                                <br />
+                                <input
+                                  type="checkbox"
+                                  onChange={() => handleCheckAll("in_check")}
+                                  checked={formData.service_form_checking.every(
+                                    (e: FormChecking) => e.in_check
+                                  )}
+                                />
+                              </>
+                            )}
                           </th>
                           <th style={{ width: "8%", textAlign: "center" }}>
-                            OUT <br />
-                            <input
-                              type="checkbox"
-                              onChange={() => handleCheckAll("out_check")}
-                              checked={formData.service_form_checking.every(
-                                (e: FormChecking) => e.out_check
-                              )}
-                            />
+                            OUT
+                            {formData.invoice_number === "" && (
+                              <>
+                                <br />
+                                <input
+                                  type="checkbox"
+                                  onChange={() => handleCheckAll("out_check")}
+                                  checked={formData.service_form_checking.every(
+                                    (e: FormChecking) => e.out_check
+                                  )}
+                                />
+                              </>
+                            )}
                           </th>
                           <th
                             style={{
@@ -703,6 +775,11 @@ const DetailServicePage = ({
                                     onChange={() =>
                                       handleCheck(item.id, "in_check")
                                     }
+                                    disabled={
+                                      formData.invoice_number !== ""
+                                        ? true
+                                        : false
+                                    }
                                   />
                                 </td>
                                 <td align="center">
@@ -711,6 +788,11 @@ const DetailServicePage = ({
                                     checked={item.out_check}
                                     onChange={() =>
                                       handleCheck(item.id, "out_check")
+                                    }
+                                    disabled={
+                                      formData.invoice_number !== ""
+                                        ? true
+                                        : false
                                     }
                                   />
                                 </td>
@@ -724,6 +806,11 @@ const DetailServicePage = ({
                                     value={item.notes}
                                     onChange={(e) =>
                                       handleDescCheck(item.id, e.target.value)
+                                    }
+                                    disabled={
+                                      formData.invoice_number !== ""
+                                        ? true
+                                        : false
                                     }
                                   />
                                 </td>
@@ -770,6 +857,7 @@ const DetailServicePage = ({
                             )
                           : null
                       }
+                      isDisabled={formData.invoice_number !== "" ? true : false}
                     />
                   </div>
 
@@ -780,22 +868,7 @@ const DetailServicePage = ({
                       placeholder="Pilih Status Service"
                       isClearable
                       required
-                      options={[
-                        {
-                          value: "1",
-                          label: "SERVICE MASUK - BARANG DITINGGAL",
-                        },
-                        { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-                        {
-                          value: "3",
-                          label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
-                        },
-                        {
-                          value: "4",
-                          label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
-                        },
-                        { value: "5", label: "SERVICE BATAL/CANCEL" },
-                      ]}
+                      options={optionsStatus}
                       onChange={(e: any) =>
                         setFormData({
                           ...formData,
@@ -804,22 +877,7 @@ const DetailServicePage = ({
                       }
                       value={
                         formData.service_status
-                          ? [
-                              {
-                                value: "1",
-                                label: "SERVICE MASUK - BARANG DITINGGAL",
-                              },
-                              { value: "2", label: "SERVICE MASUK - LANGSUNG" },
-                              {
-                                value: "3",
-                                label: "SERVICE SELESAI - BARANG SUDAH DIAMBIL",
-                              },
-                              {
-                                value: "4",
-                                label: "SERVICE SELESAI - BARANG BELUM DIAMBIL",
-                              },
-                              { value: "5", label: "SERVICE BATAL/CANCEL" },
-                            ].find(
+                          ? optionsStatus.find(
                               (option) =>
                                 option.value === formData.service_status
                             )
@@ -828,19 +886,39 @@ const DetailServicePage = ({
                     />
                   </div>
 
+                  <div className="form-group">
+                    <label htmlFor="repair_desc">Deskripsi Perbaikan</label>
+                    <textarea
+                      className="form-control"
+                      rows={4}
+                      id="repair_desc"
+                      style={{ textTransform: "uppercase" }}
+                      value={formData.repair_desc}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          repair_desc: e.target.value,
+                        })
+                      }
+                      disabled={formData.invoice_number !== "" ? true : false}
+                    />
+                  </div>
+
                   <hr />
 
                   <div className="card p-3 shadow-lg mt-3">
                     <div className="table-responsive mt-2">
-                      <button
-                        type="button"
-                        className="btn btn-outline-primary btn-sm mb-2"
-                        onClick={() => {
-                          setIsProductOpen(true);
-                        }}
-                      >
-                        Tambah Produk
-                      </button>
+                      {formData.invoice_number === "" && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary btn-sm mb-2"
+                          onClick={() => {
+                            setIsProductOpen(true);
+                          }}
+                        >
+                          Tambah Produk
+                        </button>
+                      )}
                       <table className="table table-sm table-striped table-bordered nowrap mb-5">
                         <thead>
                           <tr>
@@ -848,7 +926,6 @@ const DetailServicePage = ({
                               style={{ width: "1%", textAlign: "center" }}
                             ></th>
                             <th style={{ width: "1%", textAlign: "center" }}>
-                              {" "}
                               NO{" "}
                             </th>
                             <th style={{ textAlign: "center" }}>
@@ -882,7 +959,15 @@ const DetailServicePage = ({
                                       type="button"
                                       className="btn btn-danger btn-sm"
                                       onClick={() =>
-                                        handleRemoveSelectedProduct(item.id)
+                                        formData.invoice_number === "" &&
+                                        handleRemoveSelectedProduct(
+                                          item.product_id
+                                        )
+                                      }
+                                      disabled={
+                                        formData.invoice_number !== ""
+                                          ? true
+                                          : false
                                       }
                                     >
                                       <i className="fa fa-trash"></i>
@@ -904,7 +989,7 @@ const DetailServicePage = ({
                                         onValueChange={(values: any) => {
                                           if (values.floatValue !== undefined) {
                                             handleUpdateQtySelectedProduct(
-                                              item.id,
+                                              item.product_id,
                                               values.floatValue
                                             );
                                           }
@@ -912,6 +997,11 @@ const DetailServicePage = ({
                                         allowLeadingZeros={false}
                                         allowNegative={false}
                                         required
+                                        disabled={
+                                          formData.invoice_number !== ""
+                                            ? true
+                                            : false
+                                        }
                                       />
                                     ) : (
                                       item.qty
@@ -970,13 +1060,15 @@ const DetailServicePage = ({
                   Save Changes
                 </button>
 
-                <button
-                  className="btn btn-success ml-2"
-                  type="button"
-                  onClick={() => handleSubmit(true)}
-                >
-                  Create Invoice
-                </button>
+                {formData.invoice_number === "" && (
+                  <button
+                    className="btn btn-success ml-2"
+                    type="button"
+                    onClick={() => handleSubmit(true)}
+                  >
+                    Create Invoice
+                  </button>
+                )}
               </>
             )}
           </div>

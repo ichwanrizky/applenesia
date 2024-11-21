@@ -66,6 +66,15 @@ export const GET = async (
             name: true,
           },
         },
+        invoice_service: {
+          select: {
+            invoice: {
+              select: {
+                invoice_number: true,
+              },
+            },
+          },
+        },
       },
       where: {
         is_deleted: false,
@@ -152,7 +161,6 @@ export const PUT = async (
     const technician = body.technician;
     const service_status = body.service_status;
     const products = body.products;
-    console.log("🚀 ~ products:", products);
     const create_invoice = body.create_invoice;
     const missingFields = [
       {
@@ -318,6 +326,7 @@ export const PUT = async (
               ),
               invoice_item: {
                 create: products?.map((e: any) => ({
+                  product_id: Number(e.product_id),
                   name: e.name,
                   sub_name: e.sub_name,
                   price: Number(e.price),

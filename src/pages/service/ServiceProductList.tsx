@@ -58,7 +58,7 @@ const ServiceProductList = (props: Props) => {
   const [selectedProduct, setSelectedProduct] = useState(productList as any);
   const [isSelected, setIsSelected] = useState<SelectedProps>(
     productList?.reduce((acc: any, item: any) => {
-      return { ...acc, [item.id]: true };
+      return { ...acc, [item.product_id]: true };
     }, {})
   );
 
@@ -78,7 +78,7 @@ const ServiceProductList = (props: Props) => {
     setSelectedProduct([
       ...selectedProduct,
       {
-        id: product.id,
+        product_id: product.id,
         name: product.name,
         sub_name: product.sub_name,
         price: product.sell_price,
@@ -92,7 +92,7 @@ const ServiceProductList = (props: Props) => {
   const handleRemoveProduct = (product: ProductList) => {
     setIsSelected({ ...isSelected, [product.id]: false });
     setSelectedProduct(
-      selectedProduct.filter((item: any) => item.id !== product.id)
+      selectedProduct.filter((item: any) => item.product_id !== product.id)
     );
   };
 

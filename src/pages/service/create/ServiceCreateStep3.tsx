@@ -34,7 +34,7 @@ type Technician = {
 };
 
 type SelectedProduct = {
-  id: number;
+  product_id: number;
   name: string;
   sub_name?: string;
   price: number;
@@ -105,13 +105,15 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
 
   const handleRemoveSelectedProduct = (id: number) => {
     setSelectedProduct(
-      selectedProduct.filter((product: SelectedProduct) => product.id !== id)
+      selectedProduct.filter(
+        (product: SelectedProduct) => product.product_id !== id
+      )
     );
 
     setFormData({
       ...formData,
       products: selectedProduct.filter(
-        (product: SelectedProduct) => product.id !== id
+        (product: SelectedProduct) => product.product_id !== id
       ) as any,
     });
   };
@@ -119,7 +121,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
   const handleUpdateQtySelectedProduct = (id: number, qty: number) => {
     setSelectedProduct(
       selectedProduct.map((product: SelectedProduct) => {
-        if (product.id === id) {
+        if (product.product_id === id) {
           return { ...product, qty: qty };
         }
         return product;
@@ -460,7 +462,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                                 type="button"
                                 className="btn btn-danger btn-sm"
                                 onClick={() =>
-                                  handleRemoveSelectedProduct(item.id)
+                                  handleRemoveSelectedProduct(item.product_id)
                                 }
                               >
                                 <i className="fa fa-trash"></i>
@@ -482,7 +484,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                                   onValueChange={(values: any) => {
                                     if (values.floatValue !== undefined) {
                                       handleUpdateQtySelectedProduct(
-                                        item.id,
+                                        item.product_id,
                                         values.floatValue
                                       );
                                     }

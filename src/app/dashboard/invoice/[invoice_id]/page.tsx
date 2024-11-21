@@ -1,5 +1,5 @@
 import { authOptions } from "@/libs/AuthOptions";
-import DetailServicePage from "@/pages/service/ServiceDetail";
+import DetailInvoicePage from "@/pages/invoice/InvoiceDetail";
 import libServices from "@/services/libServices";
 import { getServerSession } from "next-auth";
 
@@ -32,7 +32,7 @@ const getDeviceType = async (accessToken: string) => {
 export default async function ServiceDetail({
   params,
 }: {
-  params: { service_id: string };
+  params: { invoice_id: string };
 }) {
   const session = (await getServerSession(authOptions)) as Session | null;
 
@@ -40,8 +40,7 @@ export default async function ServiceDetail({
     return null;
   }
 
-  const { service_id } = params;
-  const deviceType = await getDeviceType(session.user.accessToken);
+  const { invoice_id } = params;
 
   return (
     <div className="page-content">
@@ -61,11 +60,8 @@ export default async function ServiceDetail({
             </div>
           </div>
         </div>
-        <DetailServicePage
-          session={session.user}
-          service_id={service_id}
-          deviceTypeData={deviceType}
-        />
+
+        <DetailInvoicePage session={session.user} invoice_id={invoice_id} />
       </div>
     </div>
   );

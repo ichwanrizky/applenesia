@@ -153,6 +153,7 @@ model product {
   product_log      product_log[]
   product_purchase product_purchase[]
   service_product  service_product[]
+  invoice_item     invoice_item[]
 
   @@index([branch_id], map: "product_branch_id")
 }
@@ -363,14 +364,16 @@ model invoice_service {
 }
 
 model invoice_item {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  product_id Int?
+  product    product? @relation(fields: [product_id], references: [id])
   name       String
   sub_name   String?
-  qty        Int     @default(0)
-  price      Int     @default(0)
-  warranty   Int     @default(0)
+  qty        Int      @default(0)
+  price      Int      @default(0)
+  warranty   Int      @default(0)
   invoice_id Int
-  invoice    invoice @relation(fields: [invoice_id], references: [id])
+  invoice    invoice  @relation(fields: [invoice_id], references: [id])
 
   @@index([invoice_id], map: "invoice_item_invoice_id")
 }
