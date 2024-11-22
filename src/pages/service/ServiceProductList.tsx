@@ -123,251 +123,248 @@ const ServiceProductList = (props: Props) => {
     };
   }, [search]);
 
+  if (!isOpen) return null;
+
   return (
-    isOpen && (
-      <>
-        <div className="modal-backdrop fade show"></div>
-        <div
-          className="modal fade show"
-          tabIndex={-1}
-          role="dialog"
-          aria-labelledby="exampleModalScrollableTitle"
-          style={{ display: "block" }}
-        >
-          <div className="modal-dialog modal-xl" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "100%",
-                  }}
-                >
-                  <h5 className="modal-title" id="exampleModalScrollableTitle">
-                    List Produk / Jasa
-                  </h5>
-
-                  {/* Add the alert below the title inside the modal-header */}
-                  {alert?.status && (
-                    <div className="mt-2">
-                      <CustomAlert
-                        message={alert.message}
-                        color={alert.color}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  className="close waves-effect waves-light"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                  onClick={() => onClose(selectedProduct)}
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div className="modal-header">
-                <select
-                  className="custom-select"
-                  style={{ width: "20%" }}
-                  value={deviceType}
-                  onChange={(e) => setDeviceType(e.target.value)}
-                >
-                  <option value="all">SEMUA TIPE DEVICE</option>
-                  {deviceTypeData?.map((e, index: number) => (
-                    <option value={e.id} key={index}>
-                      {e.name?.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-
-                <input
-                  type="text"
-                  className="form-control ml-2"
-                  placeholder="Cari Produk / Jasa"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-
+    <>
+      <div className="modal-backdrop fade show"></div>
+      <div
+        className="modal fade show"
+        tabIndex={-1}
+        role="dialog"
+        aria-labelledby="exampleModalScrollableTitle"
+        style={{ display: "block" }}
+      >
+        <div className="modal-dialog modal-xl" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
               <div
-                className="modal-body"
-                style={{ maxHeight: "70vh", overflowY: "auto" }}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
               >
-                {isLoading ? (
-                  <div className="text-center">
-                    <span
-                      className="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    />{" "}
-                    Loading...
-                  </div>
-                ) : error || !data.status ? (
-                  <div className="text-center">
-                    <CustomAlert
-                      message={
-                        data?.message &&
-                        `Error (): ${data?.message} - please refresh the page or login again`
-                      }
-                      color="danger"
-                    />
-                  </div>
-                ) : (
-                  (() => {
-                    const items = data?.data;
+                <h5 className="modal-title" id="exampleModalScrollableTitle">
+                  List Produk / Jasa
+                </h5>
 
-                    return (
-                      <div className="row">
-                        {items.length === 0 ? (
-                          <div className="col-sm-12">
-                            <div className="text-center text-danger">
-                              Produk Tidak Tersedia
-                            </div>
+                {/* Add the alert below the title inside the modal-header */}
+                {alert?.status && (
+                  <div className="mt-2">
+                    <CustomAlert message={alert.message} color={alert.color} />
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="button"
+                className="close waves-effect waves-light"
+                data-dismiss="modal"
+                aria-label="Close"
+                onClick={() => onClose(selectedProduct)}
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div className="modal-header">
+              <select
+                className="custom-select"
+                style={{ width: "20%" }}
+                value={deviceType}
+                onChange={(e) => setDeviceType(e.target.value)}
+              >
+                <option value="all">SEMUA TIPE DEVICE</option>
+                {deviceTypeData?.map((e, index: number) => (
+                  <option value={e.id} key={index}>
+                    {e.name?.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                className="form-control ml-2"
+                placeholder="Cari Produk / Jasa"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+
+            <div
+              className="modal-body"
+              style={{ maxHeight: "70vh", overflowY: "auto" }}
+            >
+              {isLoading ? (
+                <div className="text-center">
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                  />{" "}
+                  Loading...
+                </div>
+              ) : error || !data.status ? (
+                <div className="text-center">
+                  <CustomAlert
+                    message={
+                      data?.message &&
+                      `Error (): ${data?.message} - please refresh the page or login again`
+                    }
+                    color="danger"
+                  />
+                </div>
+              ) : (
+                (() => {
+                  const items = data?.data;
+
+                  return (
+                    <div className="row">
+                      {items.length === 0 ? (
+                        <div className="col-sm-12">
+                          <div className="text-center text-danger">
+                            Produk Tidak Tersedia
                           </div>
-                        ) : (
-                          items?.map((item: ProductList, index: number) => (
-                            <div className="col-sm-4 mb-2" key={index}>
-                              <div className="card border">
-                                <div
-                                  className="card-header"
-                                  style={{ maxHeight: "55px" }}
-                                >
-                                  <h6 className="card-title fs-8">
-                                    {item.name?.toUpperCase()}
-                                  </h6>
-                                  {item.sub_name ? (
-                                    <p
-                                      className="text-muted small"
-                                      style={{ marginTop: "-10px" }}
-                                    >
-                                      {item.sub_name?.toUpperCase()}
-                                    </p>
-                                  ) : (
-                                    <p>&nbsp;</p>
-                                  )}
-                                </div>
-                                <div className="card-body">
-                                  <table width={"100%"}>
-                                    <tbody>
-                                      <tr>
-                                        <td width={"100"}>Harga</td>
-                                        <td width={"10"}>:</td>
-                                        <td>
-                                          {`Rp. ${item.sell_price?.toLocaleString(
-                                            "id-ID"
-                                          )}`}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>Garansi</td>
-                                        <td>:</td>
-                                        <td>
-                                          {item.warranty > 0
-                                            ? `${item.warranty} Hari`
-                                            : "Tidak Ada"}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>Device</td>
-                                        <td>:</td>
-                                        <td
+                        </div>
+                      ) : (
+                        items?.map((item: ProductList, index: number) => (
+                          <div className="col-sm-4 mb-2" key={index}>
+                            <div className="card border">
+                              <div
+                                className="card-header"
+                                style={{ maxHeight: "55px" }}
+                              >
+                                <h6 className="card-title fs-8">
+                                  {item.name?.toUpperCase()}
+                                </h6>
+                                {item.sub_name ? (
+                                  <p
+                                    className="text-muted small"
+                                    style={{ marginTop: "-10px" }}
+                                  >
+                                    {item.sub_name?.toUpperCase()}
+                                  </p>
+                                ) : (
+                                  <p>&nbsp;</p>
+                                )}
+                              </div>
+                              <div className="card-body">
+                                <table width={"100%"}>
+                                  <tbody>
+                                    <tr>
+                                      <td width={"100"}>Harga</td>
+                                      <td width={"10"}>:</td>
+                                      <td>
+                                        {`Rp. ${item.sell_price?.toLocaleString(
+                                          "id-ID"
+                                        )}`}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Garansi</td>
+                                      <td>:</td>
+                                      <td>
+                                        {item.warranty > 0
+                                          ? `${item.warranty} Hari`
+                                          : "Tidak Ada"}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Device</td>
+                                      <td>:</td>
+                                      <td
+                                        style={{
+                                          maxWidth: "100px",
+                                          overflow: "hidden",
+                                          textOverflow: "ellipsis",
+                                          whiteSpace: "nowrap",
+                                          position: "relative",
+                                        }}
+                                        title={item.product_device
+                                          ?.map((e) =>
+                                            e.device.name?.toUpperCase()
+                                          )
+                                          .join(", ")}
+                                      >
+                                        {item.product_device
+                                          ?.map((e) =>
+                                            e.device.name?.toUpperCase()
+                                          )
+                                          .join(", ")}
+                                        <span
                                           style={{
-                                            maxWidth: "100px",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            position: "relative",
+                                            position: "absolute",
+                                            top: "100%", // Position the tooltip below the cell
+                                            left: 0,
+                                            backgroundColor: "white",
+                                            padding: "5px",
+                                            borderRadius: "5px",
+                                            boxShadow:
+                                              "0px 0px 5px rgba(0,0,0,0.5)",
+                                            display: "none", // Initially hide the tooltip
                                           }}
-                                          title={item.product_device
-                                            ?.map((e) =>
-                                              e.device.name?.toUpperCase()
-                                            )
-                                            .join(", ")}
                                         >
                                           {item.product_device
                                             ?.map((e) =>
                                               e.device.name?.toUpperCase()
                                             )
                                             .join(", ")}
-                                          <span
-                                            style={{
-                                              position: "absolute",
-                                              top: "100%", // Position the tooltip below the cell
-                                              left: 0,
-                                              backgroundColor: "white",
-                                              padding: "5px",
-                                              borderRadius: "5px",
-                                              boxShadow:
-                                                "0px 0px 5px rgba(0,0,0,0.5)",
-                                              display: "none", // Initially hide the tooltip
-                                            }}
-                                          >
-                                            {item.product_device
-                                              ?.map((e) =>
-                                                e.device.name?.toUpperCase()
-                                              )
-                                              .join(", ")}
-                                          </span>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>Jum Stock</td>
-                                        <td>:</td>
-                                        <td>
-                                          {item.product_log.length > 0
-                                            ? item.stock
-                                            : "-"}
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <div className="card-footer">
-                                  {isSelected[item.id] ? (
-                                    <button
-                                      className="btn btn-danger btn-sm"
-                                      type="button"
-                                      onClick={() => handleRemoveProduct(item)}
-                                    >
-                                      Cancel
-                                    </button>
-                                  ) : (
-                                    <button
-                                      className="btn btn-success btn-sm"
-                                      type="button"
-                                      onClick={() => handleAddProduct(item)}
-                                    >
-                                      Select
-                                    </button>
-                                  )}
-                                </div>
+                                        </span>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>Jum Stock</td>
+                                      <td>:</td>
+                                      <td>
+                                        {item.product_log.length > 0
+                                          ? item.stock
+                                          : "-"}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div className="card-footer">
+                                {isSelected[item.id] ? (
+                                  <button
+                                    className="btn btn-danger btn-sm"
+                                    type="button"
+                                    onClick={() => handleRemoveProduct(item)}
+                                  >
+                                    Cancel
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="btn btn-success btn-sm"
+                                    type="button"
+                                    onClick={() => handleAddProduct(item)}
+                                  >
+                                    Select
+                                  </button>
+                                )}
                               </div>
                             </div>
-                          ))
-                        )}
-                      </div>
-                    );
-                  })()
-                )}
-              </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  );
+                })()
+              )}
+            </div>
 
-              <div className="modal-footer">
-                <CustomButton
-                  buttonType="close"
-                  onClick={() => onClose(selectedProduct)}
-                >
-                  Close
-                </CustomButton>
-              </div>
+            <div className="modal-footer">
+              <CustomButton
+                buttonType="close"
+                onClick={() => onClose(selectedProduct)}
+              >
+                Close
+              </CustomButton>
             </div>
           </div>
         </div>
-      </>
-    )
+      </div>
+    </>
   );
 };
 

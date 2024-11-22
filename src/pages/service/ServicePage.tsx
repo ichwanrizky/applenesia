@@ -424,7 +424,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                   </td>
                                   <td align="center" className="align-middle">
                                     <span
-                                      className={`badge badge-${item.service_status.label_color}`}
+                                      className={`badge badge-soft-${item.service_status.label_color}`}
                                       dangerouslySetInnerHTML={{
                                         __html: item.service_status.name
                                           ?.toUpperCase()
