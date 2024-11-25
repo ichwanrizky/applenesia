@@ -40,7 +40,7 @@ export const GET = async (request: Request) => {
               },
             }),
       },
-      orderBy: { name: "asc" },
+      orderBy: { id: "asc" },
     });
 
     if (!data) {

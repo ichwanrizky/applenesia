@@ -7,6 +7,7 @@ import { NumericFormat } from "react-number-format";
 import ServiceProductList from "../service/ServiceProductList";
 import libServices from "@/services/libServices";
 import InvoicePaymentUpdate from "./InvoicePaymentUpdate";
+import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
 
 type Session = {
   name: string;
@@ -32,7 +33,18 @@ type InvoiceDetail = {
   branch_id: number;
   is_deleted: boolean;
   customer_id: number;
-  invoice_payment: any[];
+  invoice_payment: {
+    id: number;
+    invoice_id: number;
+    payment_id: number;
+    nominal: number;
+    created_at: Date;
+    created_by: number;
+    payment: {
+      id: number;
+      name: string;
+    };
+  }[];
   invoice_item: {
     id: number;
     name: string;
@@ -74,6 +86,11 @@ type DeviceType = {
   name: string;
 };
 
+type PaymentMethod = {
+  id: number;
+  name: string;
+};
+
 const DetailInvoicePage = ({
   session,
   invoice_id,
@@ -84,40 +101,17 @@ const DetailInvoicePage = ({
   deviceTypeData: DeviceType[];
 }) => {
   const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const [isLoadingSubmit, setIsloadingSubmit] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [isUpdatePaymentOpen, setIsUpdatePaymentOpen] = useState(false);
   const [alertPage, setAlertPage] = useState<AlertProps | null>(null);
+  const [alert, setAlert] = useState<AlertProps | null>(null);
   const [invoicData, setInvoiceData] = useState({} as InvoiceDetail);
-  const [paymentMethodData, setPaymentMethodData] = useState([] as any[]);
+  const [paymentMethodData, setPaymentMethodData] = useState(
+    [] as PaymentMethod[]
+  );
 
   useEffect(() => {
-    const getDetailInvoice = async () => {
-      try {
-        const response = await invoiceService.getInvoiceById(
-          session.accessToken!,
-          invoice_id
-        );
-
-        if (!response.status) {
-          setAlertPage({
-            status: true,
-            color: "danger",
-            message: response.message,
-          });
-        } else {
-          setInvoiceData(response.data);
-        }
-      } catch (error) {
-        setAlertPage({
-          status: true,
-          color: "danger",
-          message: "Something went wrong, please refresh and try again",
-        });
-      } finally {
-        setIsLoadingPage(false);
-      }
-    };
-
     const getPaymentMethod = async () => {
       try {
         const response = await libServices.getPaymentMethod(
@@ -146,6 +140,34 @@ const DetailInvoicePage = ({
     getDetailInvoice();
     getPaymentMethod();
   }, []);
+
+  const getDetailInvoice = async () => {
+    setIsLoadingPage(true);
+    try {
+      const response = await invoiceService.getInvoiceById(
+        session.accessToken!,
+        invoice_id
+      );
+
+      if (!response.status) {
+        setAlertPage({
+          status: true,
+          color: "danger",
+          message: response.message,
+        });
+      } else {
+        setInvoiceData(response.data);
+      }
+    } catch (error) {
+      setAlertPage({
+        status: true,
+        color: "danger",
+        message: "Something went wrong, please refresh and try again",
+      });
+    } finally {
+      setIsLoadingPage(false);
+    }
+  };
 
   const handleRemoveSelectedProduct = (id: number) => {
     setInvoiceData({
@@ -210,6 +232,46 @@ const DetailInvoicePage = ({
     });
   };
 
+  const handleSubmit = async () => {
+    if (confirm("Update this data?")) {
+      setIsloadingSubmit(true);
+      try {
+        const resultUpdate = await invoiceService.updateInvoice(
+          session?.accessToken,
+          invoicData.invoice_number,
+          JSON.stringify({
+            branch: invoicData.branch_id,
+            invoice_item: invoicData.invoice_item,
+          })
+        );
+
+        if (!resultUpdate.status) {
+          setAlert({
+            status: true,
+            color: "danger",
+            message: resultUpdate.message,
+          });
+          return;
+        }
+        setAlert({
+          status: true,
+          color: "success",
+          message: resultUpdate.message,
+        });
+
+        getDetailInvoice();
+      } catch (error) {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "something went wrong, please refresh and try again",
+        });
+      } finally {
+        setIsloadingSubmit(false);
+      }
+    }
+  };
+
   if (isLoadingPage) {
     return (
       <div className="text-center">
@@ -235,6 +297,11 @@ const DetailInvoicePage = ({
       <div className="row">
         <div className="col-md-12">
           <div className="card">
+            {alert?.status && (
+              <div className="card-header">
+                <CustomAlert message={alert.message} color={alert.color} />
+              </div>
+            )}
             <div className="card-body">
               <div className="clearfix">
                 <div className="float-left">
@@ -273,13 +340,29 @@ const DetailInvoicePage = ({
                   <div className="mt-3 float-right">
                     <table width="100%" border={0}>
                       <tbody>
-                        <tr>
+                        <tr style={{ verticalAlign: "top" }}>
                           <td width="150px">
-                            <strong>Invoice Date</strong>
+                            <strong>Service ID</strong>
                           </td>
                           <td width="10px" align="center">
                             :
                           </td>
+                          <td>
+                            {invoicData.invoice_service?.map(
+                              (e: any, index: number) => (
+                                <Fragment key={index}>
+                                  #{e.service.service_number}
+                                  <br />
+                                </Fragment>
+                              )
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <strong>Invoice Date</strong>
+                          </td>
+                          <td align="center">:</td>
                           <td>
                             {new Date(invoicData.created_at)
                               .toLocaleString("id-ID", {
@@ -299,11 +382,21 @@ const DetailInvoicePage = ({
                           <td>
                             <strong>Payment Status</strong>
                           </td>
-                          <td>:</td>
+                          <td align="center">:</td>
                           <td>
                             {invoicData.payment_status === "UNPAID" && (
                               <span className="badge badge-soft-danger">
                                 UNPAID
+                              </span>
+                            )}
+                            {invoicData.payment_status === "PARTIAL" && (
+                              <span className="badge badge-soft-warning">
+                                PARTIAL
+                              </span>
+                            )}
+                            {invoicData.payment_status === "PAID" && (
+                              <span className="badge badge-soft-success">
+                                PAID
                               </span>
                             )}
                           </td>
@@ -312,23 +405,9 @@ const DetailInvoicePage = ({
                           <td>
                             <strong>Payment Amount</strong>
                           </td>
-                          <td>:</td>
-                          <td>{invoicData.amount}</td>
-                        </tr>
-                        <tr style={{ verticalAlign: "top" }}>
+                          <td align="center">:</td>
                           <td>
-                            <strong>Service ID</strong>
-                          </td>
-                          <td>:</td>
-                          <td>
-                            {invoicData.invoice_service?.map(
-                              (e: any, index: number) => (
-                                <Fragment key={index}>
-                                  #{e.service.service_number}
-                                  <br />
-                                </Fragment>
-                              )
-                            )}
+                            {`Rp. ${invoicData.amount.toLocaleString("id-ID")}`}
                           </td>
                         </tr>
                       </tbody>
@@ -341,15 +420,17 @@ const DetailInvoicePage = ({
               <div className="row">
                 <div className="col-md-12">
                   <div className="table-responsive mt-4">
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary btn-sm mb-2"
-                      onClick={() => {
-                        setIsProductOpen(true);
-                      }}
-                    >
-                      Tambah Produk
-                    </button>
+                    {invoicData.payment_status !== "PAID" && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary btn-sm mb-2"
+                        onClick={() => {
+                          setIsProductOpen(true);
+                        }}
+                      >
+                        Tambah Produk
+                      </button>
+                    )}
 
                     <table className="table table-bordered" width="100%">
                       <thead>
@@ -404,13 +485,30 @@ const DetailInvoicePage = ({
                                       onClick={() =>
                                         handleRemoveSelectedProduct(index)
                                       }
+                                      disabled={
+                                        invoicData.payment_status === "PAID"
+                                      }
                                     >
                                       <i className="fa fa-trash"></i>
                                     </button>
                                   </td>
-                                  <td align="center">{index + 1}</td>
-                                  <td>{item.name?.toUpperCase()}</td>
-                                  <td>
+                                  <td className="align-middle text-center">
+                                    {index + 1}
+                                  </td>
+                                  <td className="align-middle">
+                                    {item.name?.toUpperCase()}
+                                    {item.warranty > 0 && (
+                                      <>
+                                        <br />
+                                        <small className="font-italic">
+                                          * Garansi{" "}
+                                          {WarrantyDisplay(item.warranty)}
+                                        </small>
+                                      </>
+                                    )}
+                                    <br />
+                                  </td>
+                                  <td className="align-middle">
                                     <NumericFormat
                                       className="form-control form-control-sm text-center"
                                       value={item.discount_percent || 0}
@@ -437,9 +535,12 @@ const DetailInvoicePage = ({
                                         (values.floatValue <= 100 &&
                                           values.floatValue >= 0)
                                       }
+                                      disabled={
+                                        invoicData.payment_status === "PAID"
+                                      }
                                     />
                                   </td>
-                                  <td>
+                                  <td className="align-middle">
                                     <NumericFormat
                                       className="form-control form-control-sm text-center"
                                       value={item.discount_price || 0}
@@ -466,9 +567,12 @@ const DetailInvoicePage = ({
                                         (values.floatValue <= item.price &&
                                           values.floatValue >= 0)
                                       }
+                                      disabled={
+                                        invoicData.payment_status === "PAID"
+                                      }
                                     />
                                   </td>
-                                  <td align="center">
+                                  <td className="align-middle">
                                     {
                                       <NumericFormat
                                         className="form-control form-control-sm text-center"
@@ -493,20 +597,18 @@ const DetailInvoicePage = ({
                                           values.floatValue === undefined ||
                                           values.floatValue > 0
                                         }
-                                        // disabled={
-                                        //   formData.invoice_number !== ""
-                                        //     ? true
-                                        //     : false
-                                        // }
+                                        disabled={
+                                          invoicData.payment_status === "PAID"
+                                        }
                                       />
                                     }
                                   </td>
-                                  <td align="right">
+                                  <td className="align-middle text-right">
                                     {`Rp. ${item.price?.toLocaleString(
                                       "id-ID"
                                     )}`}
                                   </td>
-                                  <td align="right">
+                                  <td className="align-middle text-right">
                                     {`Rp. ${totalPrice.toLocaleString(
                                       "id-ID"
                                     )}`}
@@ -573,16 +675,95 @@ const DetailInvoicePage = ({
                   <div className="clearfix" />
                 </div>
               </div>
-              <div className="d-print-none my-4">
-                <div className="text-right">
-                  <button type="button" className="btn btn-success mr-2">
-                    Update Payment
-                  </button>
-                  <button type="button" className="btn btn-primary">
-                    Save Changes
-                  </button>
+              {invoicData.payment_status !== "PAID" && (
+                <div className="d-print-none my-4">
+                  <div className="text-right">
+                    <button
+                      type="button"
+                      className="btn btn-success mr-2"
+                      onClick={() => setIsUpdatePaymentOpen(true)}
+                    >
+                      Update Payment
+                    </button>
+
+                    {isLoadingSubmit ? (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        disabled
+                      >
+                        <span
+                          className="spinner-border spinner-border-sm mr-2"
+                          role="status"
+                          aria-hidden="true"
+                        />
+                        Loading...
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={handleSubmit}
+                      >
+                        Save Changes
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {invoicData.invoice_payment.length > 0 && (
+                <>
+                  <hr />
+                  <div className="row">
+                    <div className="col-md-12">
+                      <div className="table-responsive ">
+                        <table className="table table-bordered" width="100%">
+                          <thead>
+                            <tr>
+                              <th style={{ width: "1%" }}>#</th>
+                              <th style={{ width: "30%" }}>Payment Date</th>
+                              <th style={{ width: "30%" }}>Payment Method</th>
+                              <th style={{ width: "30%" }}>Payment Nominal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoicData.invoice_payment?.map(
+                              (item, index: number) => (
+                                <tr key={index}>
+                                  <td align="center">{index + 1}</td>
+                                  <td align="center">
+                                    {new Date(item.created_at)
+                                      .toLocaleString("id-ID", {
+                                        timeZone: "UTC",
+                                        day: "numeric",
+                                        month: "numeric",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        second: "2-digit",
+                                        hour12: false,
+                                      })
+                                      .replace(/\./g, ":")}
+                                  </td>
+                                  <td align="center">
+                                    {item.payment.name?.toUpperCase()}
+                                  </td>
+                                  <td align="center">
+                                    {`Rp. ${item.nominal.toLocaleString(
+                                      "id-ID"
+                                    )}`}
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -599,15 +780,20 @@ const DetailInvoicePage = ({
         />
       )}
 
-      {/* {isUpdatePaymentOpen && (
+      {isUpdatePaymentOpen && (
         <InvoicePaymentUpdate
           isOpen={isUpdatePaymentOpen}
-          onClose={closeProductList}
+          onClose={() => {
+            setIsUpdatePaymentOpen(false);
+            getDetailInvoice();
+          }}
           accessToken={session.accessToken!}
+          paymentMethodData={paymentMethodData}
           invoiceNumber={invoicData.invoice_number}
-          invoiceAmount={}
+          invoiceAmount={subTotal - subTotalDiscount}
+          invoicePayment={invoicData.amount}
         />
-      )} */}
+      )}
     </>
   );
 };

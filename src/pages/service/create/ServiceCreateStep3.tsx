@@ -127,6 +127,16 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
         return product;
       })
     );
+
+    setFormData({
+      ...formData,
+      products: selectedProduct.map((product: SelectedProduct) => {
+        if (product.product_id === id) {
+          return { ...product, qty: qty };
+        }
+        return product;
+      }) as any,
+    });
   };
 
   const optionsBranch = branchData?.map((e) => ({

@@ -153,7 +153,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
     if (confirm("Create invoice?")) {
       setIsLoadingAction({ ...isLoadingAction, [0]: true });
       try {
-        const response = await invoiceService.createInvoiceBulk(
+        const result = await invoiceService.createInvoiceBulk(
           accessToken!,
           JSON.stringify({
             branch: branchAccess,
@@ -161,11 +161,11 @@ const ServicePage = ({ session }: { session: Session | null }) => {
           })
         );
 
-        if (!response.status) {
+        if (!result.status) {
           setAlert({
             status: true,
             color: "danger",
-            message: response.message,
+            message: result.message,
           });
 
           return;
@@ -173,12 +173,13 @@ const ServicePage = ({ session }: { session: Session | null }) => {
         setAlert({
           status: true,
           color: "success",
-          message: response.message,
+          message: result.message,
         });
         setCurrentPage(1);
         mutate(
           `${process.env.NEXT_PUBLIC_API_URL}/api/service?branchaccess=${branchAccess}&page=1`
         );
+        push(`invoice/${result.data.invoice_number}`);
       } catch (error) {
         setAlert({
           status: true,

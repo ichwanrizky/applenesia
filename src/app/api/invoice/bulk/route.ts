@@ -140,15 +140,7 @@ export const POST = async (request: Request) => {
         payment_status: "UNPAID",
         branch_id: Number(branch),
         customer_id: Number(service[0].customer_id),
-        amount: service
-          .map((e: any) =>
-            e.service_product?.reduce(
-              (total: number, item: any) =>
-                total + Number(item.price) * Number(item.qty),
-              0
-            )
-          )
-          .reduce((total: number, item: number) => total + item, 0),
+        amount: 0,
         invoice_item: {
           create: service.flatMap((e: any) =>
             e.service_product.length > 0

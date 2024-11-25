@@ -318,12 +318,8 @@ export const PUT = async (
             payment_status: "UNPAID",
             branch_id: Number(branch),
             customer_id: Number(customer_id),
+            amount: 0,
             ...(products.length > 0 && {
-              amount: products?.reduce(
-                (total: number, item: any) =>
-                  total + Number(item.price) * Number(item.qty),
-                0
-              ),
               invoice_item: {
                 create: products?.map((e: any) => ({
                   product_id: Number(e.product_id),
