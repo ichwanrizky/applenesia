@@ -10,6 +10,7 @@ import InvoicePaymentUpdate from "./InvoicePaymentUpdate";
 import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoiceDocument from "@/libs/InvoicePdf";
+import sendWhatsappMessage from "@/libs/WhatsappService";
 
 type Session = {
   name: string;
@@ -280,6 +281,65 @@ const DetailInvoicePage = ({
     }
   };
 
+  const sendMessage = async () => {
+    try {
+      const response = await sendWa();
+      if (response) {
+        setAlert({
+          status: true,
+          color: "success",
+          message: "Pesan berhasil dikirim",
+        });
+      } else {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Pesan gagal dikirim",
+        });
+      }
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "something went wrong, please refresh and try again",
+      });
+    }
+  };
+
+  const sendWa = async () => {
+    let totalPaymentLeft = 0;
+    invoicData.invoice_item.forEach((item: any) => {
+      const totalPrice = item.price * item.qty;
+      const totalDiscountPrice = totalPrice * (item.discount_percent / 100);
+      totalPaymentLeft +=
+        totalPrice - totalDiscountPrice - -item.discount_price;
+    });
+
+    const phoneNumber = invoicData.customer.telp;
+    const message = `
+    *Notifikasi | Applenesia*
+    
+    Halo, *${invoicData.customer.name?.toUpperCase()}*,
+    
+    Kami ingin menginformasikan bahwa invoice Anda telah diterbitkan dengan detail sebagai berikut:
+    
+    💳 *Total Tagihan*: *Rp. ${totalPaymentLeft.toLocaleString("id-ID")}*
+    📅 *Status Pembayaran*: *${invoicData.payment_status}*
+    
+    Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:
+    🔗 *https://yourcompany.com/invoice/${invoicData.invoice_number}*
+    
+    Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda keterlambatan. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.
+    Terima kasih atas kepercayaan Anda kepada kami.
+    
+    Salam,
+    Applenesia Team
+    `;
+
+    const response = await sendWhatsappMessage(phoneNumber, message);
+    return response;
+  };
+
   if (isLoadingPage) {
     return (
       <div className="text-center">
@@ -344,6 +404,7 @@ const DetailInvoicePage = ({
                   <button
                     type="button"
                     className="btn btn-info waves-effect waves-light"
+                    onClick={() => sendMessage()}
                   >
                     <i className="fa fa-envelope m-r-5" /> Send Email/WA
                   </button>
