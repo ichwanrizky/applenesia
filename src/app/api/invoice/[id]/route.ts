@@ -59,6 +59,13 @@ export const GET = async (
             name: true,
           },
         },
+        branch: {
+          select: {
+            name: true,
+            address: true,
+            telp: true,
+          },
+        },
       },
       where: {
         is_deleted: false,

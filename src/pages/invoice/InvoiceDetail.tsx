@@ -8,6 +8,8 @@ import ServiceProductList from "../service/ServiceProductList";
 import libServices from "@/services/libServices";
 import InvoicePaymentUpdate from "./InvoicePaymentUpdate";
 import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import InvoiceDocument from "@/libs/InvoicePdf";
 
 type Session = {
   name: string;
@@ -72,6 +74,12 @@ type InvoiceDetail = {
   user_created: {
     id: number;
     name: string;
+  };
+  branch: {
+    id: number;
+    name: string;
+    address: string;
+    telp: string;
   };
 };
 
@@ -305,12 +313,34 @@ const DetailInvoicePage = ({
             <div className="card-body">
               <div className="clearfix">
                 <div className="float-left">
-                  <button
-                    type="button"
-                    className="btn btn-info waves-effect waves-light mr-2"
+                  <PDFDownloadLink
+                    document={<InvoiceDocument invoicData={invoicData} />}
+                    fileName={`INV-${invoicData.invoice_number}`}
                   >
-                    <i className="fa fa-print m-r-5" /> Print
-                  </button>
+                    {({ loading }) =>
+                      loading ? (
+                        <button
+                          type="button"
+                          className="btn btn-info waves-effect waves-light mr-2"
+                          disabled
+                        >
+                          <span
+                            className="spinner-border spinner-border-sm mr-2"
+                            role="status"
+                            aria-hidden="true"
+                          />
+                          Loading...
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-info waves-effect waves-light mr-2"
+                        >
+                          <i className="fa fa-print m-r-5" /> Print
+                        </button>
+                      )
+                    }
+                  </PDFDownloadLink>
                   <button
                     type="button"
                     className="btn btn-info waves-effect waves-light"
