@@ -4,6 +4,7 @@ import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
 import { formattedDateNow } from "@/libs/DateFormat";
 import { accessLog } from "@/libs/AccessLog";
+import sendWhatsappMessage from "@/libs/WhatsappService";
 
 export const POST = async (request: Request) => {
   try {
@@ -131,6 +132,10 @@ export const POST = async (request: Request) => {
       .slice(-2)}${randomNumber}${padId}`;
 
     const createBulk = await prisma.invoice.create({
+      include: {
+        customer: true,
+        invoice_item: true,
+      },
       data: {
         invoice_number: invoiceNumber,
         year,
@@ -175,6 +180,30 @@ export const POST = async (request: Request) => {
       );
     }
 
+    let totalPaymentLeft = 0;
+    createBulk.invoice_item.forEach((item: any) => {
+      const totalPrice = item.price * item.qty;
+      const totalDiscountPrice = totalPrice * (item.discount_percent / 100);
+      totalPaymentLeft +=
+        totalPrice - totalDiscountPrice - -item.discount_price;
+    });
+
+    const message =
+      `*Notifikasi | Applenesia* \n\n` +
+      `Halo, *${createBulk.customer.name?.toUpperCase()}*,\n\n` +
+      `Kami ingin menginformasikan bahwa invoice Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
+      `💳 *Total Tagihan*: *Rp. ${totalPaymentLeft.toLocaleString(
+        "id-ID"
+      )}*\n` +
+      `📅 *Status Pembayaran*: *${createBulk.payment_status}*\n\n` +
+      `Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:\n` +
+      `🔗 *https://yourcompany.com/invoice/${createBulk.invoice_number}*\n\n` +
+      `Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda keterlambatan. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.\n\n` +
+      `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
+      `Salam,\n` +
+      `Applenesia Team\n\n`;
+
+    sendWhatsappMessage(createBulk.customer.telp || "", message);
     accessLog(`create invoice id: ${createBulk.id}`, session[1].id);
 
     return new NextResponse(

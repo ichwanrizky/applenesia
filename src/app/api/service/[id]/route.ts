@@ -4,6 +4,7 @@ import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
 import { accessLog } from "@/libs/AccessLog";
 import { formattedDateNow } from "@/libs/DateFormat";
+import sendWhatsappMessage from "@/libs/WhatsappService";
 
 export const GET = async (
   request: Request,
@@ -290,6 +291,8 @@ export const PUT = async (
         },
       });
 
+      let createdInvoice = null;
+
       if (create_invoice) {
         const year = new Date().getFullYear();
         const month = new Date().getMonth() + 1;
@@ -308,7 +311,11 @@ export const PUT = async (
           .toString()
           .slice(-2)}${randomNumber}${padId}`;
 
-        await prisma.invoice.create({
+        createdInvoice = await prisma.invoice.create({
+          include: {
+            customer: true,
+            invoice_item: true,
+          },
           data: {
             invoice_number: invoiceNumber,
             year,
@@ -340,7 +347,7 @@ export const PUT = async (
         });
       }
 
-      return { updateCustomer, updateService };
+      return { updateCustomer, updateService, createdInvoice };
     });
 
     if (!updateData) {
@@ -355,6 +362,36 @@ export const PUT = async (
       );
     }
 
+    if (updateData.createdInvoice) {
+      let totalPaymentLeft = 0;
+      updateData.createdInvoice.invoice_item.forEach((item: any) => {
+        const totalPrice = item.price * item.qty;
+        const totalDiscountPrice = totalPrice * (item.discount_percent / 100);
+        totalPaymentLeft +=
+          totalPrice - totalDiscountPrice - -item.discount_price;
+      });
+
+      const message =
+        `*Notifikasi | Applenesia* \n\n` +
+        `Halo, *${updateData.createdInvoice.customer.name?.toUpperCase()}*,\n\n` +
+        `Kami ingin menginformasikan bahwa invoice Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
+        `💳 *Total Tagihan*: *Rp. ${totalPaymentLeft.toLocaleString(
+          "id-ID"
+        )}*\n` +
+        `📅 *Status Pembayaran*: *${updateData.createdInvoice.payment_status}*\n\n` +
+        `Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:\n` +
+        `🔗 *https://yourcompany.com/invoice/${updateData.createdInvoice.invoice_number}*\n\n` +
+        `Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda keterlambatan. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.\n\n` +
+        `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
+        `Salam,\n` +
+        `Applenesia Team\n\n`;
+
+      sendWhatsappMessage(
+        updateData.createdInvoice.customer.telp || "",
+        message
+      );
+    }
+
     accessLog(
       `update service id: ${updateData.updateService.id}`,
       session[1].id
@@ -364,7 +401,10 @@ export const PUT = async (
       JSON.stringify({
         status: true,
         message: "Success to update service",
-        data: updateData,
+        data: {
+          update_service: updateData.updateService,
+          invoice_number: updateData.createdInvoice?.invoice_number,
+        },
       }),
       {
         status: 200,

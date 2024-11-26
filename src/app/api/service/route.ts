@@ -4,6 +4,7 @@ import prisma from "@/libs/ConnPrisma";
 import { checkSession } from "@/libs/CheckSession";
 import { formattedDateNow } from "@/libs/DateFormat";
 import { accessLog } from "@/libs/AccessLog";
+import sendWhatsappMessage from "@/libs/WhatsappService";
 
 export const GET = async (request: Request) => {
   try {
@@ -359,6 +360,15 @@ export const POST = async (request: Request) => {
       .slice(-2)}${randomNumber}${padId}`;
 
     const create = await prisma.service.create({
+      include: {
+        customer: true,
+        device: {
+          select: {
+            name: true,
+          },
+        },
+        service_status: true,
+      },
       data: {
         service_number: serviceNumber,
         unique_code: randomNumber?.toString(),
@@ -409,6 +419,22 @@ export const POST = async (request: Request) => {
       );
     }
 
+    const message =
+      `*Notifikasi | Applenesia* \n\n` +
+      `Halo, *${create.customer.name?.toUpperCase()}*,\n\n` +
+      `Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
+      `🔧 *Nomor Servis*: *${create.service_number}*\n` +
+      `🔐 *Kode Unik*: *${create.unique_code}*\n\n` +
+      `📱 *Perangkat*: *${create.device.name}*\n` +
+      `📝 *Deskripsi Kerusakan*: *${create.service_desc}*\n` +
+      `📌 *Status*: *${create.service_status.name?.toUpperCase()}*\n\n` +
+      `Untuk memtracking status servis Anda, silakan klik tautan di bawah ini:\n` +
+      `🔗 *https://yourcompany.com/service_tracking/${create.uuid}*\n\n` +
+      `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
+      `Salam,\n` +
+      `Applenesia Team\n\n`;
+
+    sendWhatsappMessage(customer_telp, message);
     accessLog(`create service id: ${create.id}`, session[1].id);
 
     return new NextResponse(

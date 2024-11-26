@@ -428,7 +428,11 @@ const DetailServicePage = ({
           message: resultUpdate.message,
         });
         setTimeout(() => {
-          push("/dashboard/service");
+          if (isCreateInvoice) {
+            push(`/dashboard/invoice/${resultUpdate.data.invoice_number}`);
+          } else {
+            push("/dashboard/service");
+          }
         }, 1000);
       } catch (error) {
         setAlert({

@@ -316,25 +316,20 @@ const DetailInvoicePage = ({
     });
 
     const phoneNumber = invoicData.customer.telp;
-    const message = `
-    *Notifikasi | Applenesia*
-    
-    Halo, *${invoicData.customer.name?.toUpperCase()}*,
-    
-    Kami ingin menginformasikan bahwa invoice Anda telah diterbitkan dengan detail sebagai berikut:
-    
-    💳 *Total Tagihan*: *Rp. ${totalPaymentLeft.toLocaleString("id-ID")}*
-    📅 *Status Pembayaran*: *${invoicData.payment_status}*
-    
-    Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:
-    🔗 *https://yourcompany.com/invoice/${invoicData.invoice_number}*
-    
-    Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda keterlambatan. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.
-    Terima kasih atas kepercayaan Anda kepada kami.
-    
-    Salam,
-    Applenesia Team
-    `;
+    const message =
+      `*Notifikasi | Applenesia* \n\n` +
+      `Halo, *${invoicData.customer.name?.toUpperCase()}*,\n\n` +
+      `Kami ingin menginformasikan bahwa invoice Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
+      `💳 *Total Tagihan*: *Rp. ${totalPaymentLeft.toLocaleString(
+        "id-ID"
+      )}*\n` +
+      `📅 *Status Pembayaran*: *${invoicData.payment_status}*\n\n` +
+      `Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:\n` +
+      `🔗 *https://yourcompany.com/invoice/${invoicData.invoice_number}*\n\n` +
+      `Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.\n\n` +
+      `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
+      `Salam,\n` +
+      `Applenesia Team\n\n`;
 
     const response = await sendWhatsappMessage(phoneNumber, message);
     return response;

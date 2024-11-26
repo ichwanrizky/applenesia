@@ -10,6 +10,7 @@ import BranchOptions from "@/components/BranchOptions";
 import { useRouter } from "next/navigation";
 import serviceServices from "@/services/serviceServices";
 import invoiceService from "@/services/invoiceService";
+import sendWhatsappMessage from "@/libs/WhatsappService";
 
 type Session = {
   name: string;
@@ -192,6 +193,60 @@ const ServicePage = ({ session }: { session: Session | null }) => {
     }
   };
 
+  const sendMessage = async (service: Service) => {
+    try {
+      const response = await sendWa(service);
+      if (response) {
+        setAlert({
+          status: true,
+          color: "success",
+          message: "Pesan berhasil dikirim",
+        });
+      } else {
+        setAlert({
+          status: true,
+          color: "danger",
+          message: "Pesan gagal dikirim",
+        });
+      }
+    } catch (error) {
+      setAlert({
+        status: true,
+        color: "danger",
+        message: "something went wrong, please refresh and try again",
+      });
+    }
+  };
+
+  const sendWa = async (service: Service) => {
+    const message = `
+    *Notifikasi | Applenesia*
+    
+    Halo, *${service.customer.name?.toUpperCase()}*,
+        
+    Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:
+
+    🔧 *Nomor Servis*: *${service.service_number}*  
+    🔐 *Kode Unik*: *${service.unique_code}*  
+
+    📱 *Perangkat*: *${service.device.name}*  
+    📝 *Deskripsi Kerusakan*: *${service.service_desc}*  
+    📌 *Status*: *${service.service_status.name?.toUpperCase()}*  
+
+    
+    Untuk memtracking status service anda, silakan klik tautan di bawah ini:
+    🔗 *https://yourcompany.com/service_tracking/${service.uuid}*
+    
+    Terima kasih atas kepercayaan Anda kepada kami.
+    
+    Salam,
+    Applenesia Team
+    `;
+
+    const response = await sendWhatsappMessage(service.customer.telp, message);
+    return response;
+  };
+
   const fetcher = (url: RequestInfo) => {
     return fetch(url, {
       headers: {
@@ -304,6 +359,9 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                 AKSI
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
+                                AKSI
+                              </th>
+                              <th style={{ width: "1%", textAlign: "center" }}>
                                 NO
                               </th>
                               <th style={{ width: "1%", textAlign: "center" }}>
@@ -352,6 +410,15 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                     >
                                       <i className="mdi mdi-trash-can-outline" />
                                     </CustomButton>
+                                  </td>
+                                  <td align="center" className="align-middle">
+                                    <button
+                                      type="button"
+                                      className="btn btn-outline-success btn-sm"
+                                      onClick={() => sendMessage(item)}
+                                    >
+                                      NOTIF
+                                    </button>
                                   </td>
                                   <td align="center" className="align-middle">
                                     {item.number}
@@ -425,14 +492,14 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                   </td>
                                   <td align="center" className="align-middle">
                                     <span
-                                      className={`badge badge-soft-${item.service_status.label_color}`}
+                                      className={`text-${item.service_status.label_color}`}
                                       dangerouslySetInnerHTML={{
                                         __html: item.service_status.name
                                           ?.toUpperCase()
                                           .split(" - ")
                                           .map(
                                             (line) =>
-                                              `<div style="line-height: 2;">${line}</div>`
+                                              `<div style="line-height: 1.5;">${line}</div>`
                                           )
                                           .join(""),
                                       }}
