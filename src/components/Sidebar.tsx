@@ -29,7 +29,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             {/*  */}
             <li className="menu-title">POINT OF SALE</li>
             <li>
-              <a href="/dashboard/service" className="waves-effect">
+              <a href="/console/dashboard/service" className="waves-effect">
                 <i className="mdi mdi-toolbox" />
                 <span>Data Service</span>
               </a>
@@ -41,7 +41,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a href="/dashboard/product" className="waves-effect">
+                <a href="/console/dashboard/product" className="waves-effect">
                   <i className="mdi mdi-file-document-box" />
                   <span>Data Product</span>
                 </a>
@@ -52,7 +52,10 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a href="/dashboard/productinventory" className="waves-effect">
+                <a
+                  href="/console/dashboard/productinventory"
+                  className="waves-effect"
+                >
                   <i className="mdi mdi-package" />
                   <span>Product Inventory</span>
                 </a>
@@ -63,7 +66,10 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a href="/dashboard/productpurchase" className="waves-effect">
+                <a
+                  href="/console/dashboard/productpurchase"
+                  className="waves-effect"
+                >
                   <i className="mdi mdi-cart" />
                   <span>Product Pembelian</span>
                 </a>
@@ -74,7 +80,10 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a href="/dashboard/productlog" className="waves-effect">
+                <a
+                  href="/console/dashboard/productlog"
+                  className="waves-effect"
+                >
                   <i className="mdi mdi-history" />
                   <span>Product LOG</span>
                 </a>
@@ -85,7 +94,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             <li className="menu-title">CONFIGURATION</li>
             {session.user.role_name === "ADMINISTRATOR" && (
               <li>
-                <a href="/dashboard/cabang" className="waves-effect">
+                <a href="/console/dashboard/cabang" className="waves-effect">
                   <i className="mdi mdi mdi-office-building" />
                   <span>Data Cabang</span>
                 </a>
@@ -95,7 +104,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             {(session.user.role_name === "ADMINISTRATOR" ||
               session.user.role_name === "SUPERVISOR") && (
               <li>
-                <a href="/dashboard/user" className="waves-effect">
+                <a href="/console/dashboard/user" className="waves-effect">
                   <i className="mdi mdi-account-multiple-outline" />
                   <span>Data User</span>
                 </a>
@@ -103,13 +112,13 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             )}
 
             <li>
-              <a href="/dashboard/device" className="waves-effect">
+              <a href="/console/dashboard/device" className="waves-effect">
                 <i className="mdi mdi-cellphone-android" />
                 <span>Data Device</span>
               </a>
             </li>
             <li>
-              <a href="/dashboard/kategori" className="waves-effect">
+              <a href="/console/dashboard/kategori" className="waves-effect">
                 <i className="mdi mdi-format-list-checkbox" />
                 <span>Data Kategori</span>
               </a>

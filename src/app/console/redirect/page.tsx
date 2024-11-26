@@ -12,7 +12,7 @@ export default function Redirect() {
     } else if (status === "authenticated") {
       switch (session.user.role_name) {
         case "ADMINISTRATOR":
-          redirect("/dashboard/cabang");
+          redirect("/console/dashboard/cabang");
       }
     }
   }, [status]);

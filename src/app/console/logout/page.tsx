@@ -8,9 +8,9 @@ export default function Logout() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      redirect("/");
+      redirect("/console");
     } else if (status === "authenticated") {
-      signOut({ redirect: true, callbackUrl: "/" });
+      signOut({ redirect: true, callbackUrl: "/console" });
       handleLogout(session?.user?.accessToken);
     }
   }, [status]);
