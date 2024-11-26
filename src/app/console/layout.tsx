@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <>
       <head>
         <meta charSet="utf-8" />
         <meta
@@ -60,6 +60,7 @@ export default function RootLayout({
       </head>
       <body>
         {children}
+
         <div className="menu-overlay"></div>
 
         <Script src="/themes/assets/js/jquery.min.js"></Script>
@@ -85,6 +86,6 @@ export default function RootLayout({
         <Script src="/themes/plugins/datatables/vfs_fonts.js"></Script>
         <Script src="/themes/assets/pages/datatables-demo.js"></Script>
       </body>
-    </html>
+    </>
   );
 }
