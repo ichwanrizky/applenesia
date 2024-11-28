@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const PortalHeader = () => {
   return (
     <>
@@ -19,13 +17,13 @@ const PortalHeader = () => {
               <div className="col-auto d-flex align-items-center">
                 <ul className="header-nav">
                   <li>
-                    <Link href="/">Home</Link>
+                    <a href="/">Home</a>
                   </li>
                   <li>
-                    <Link href="/portal/tracking">Tracking</Link>
+                    <a href="/portal/tracking">Tracking</a>
                   </li>
                   <li>
-                    <a href="index.html">About Us</a>
+                    <a href="/portal/store">Our Store</a>
                   </li>
                 </ul>
               </div>

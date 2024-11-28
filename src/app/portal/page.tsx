@@ -74,7 +74,7 @@ export default function Portal() {
         </div>
 
         {/* 1 */}
-        <div className="content-display-section section-top-gap-100">
+        {/* <div className="content-display-section section-top-gap-100">
           <div className="box-wrapper custom-box-wrapper pos-relative">
             <div className="section-wrapper mb-4">
               <div className="container">
@@ -136,6 +136,67 @@ export default function Portal() {
                 src="/portal/assets/images_apn/1.png"
                 alt=""
               />
+            </div>
+          </div>
+        </div> */}
+        <div className="content-display-section section-top-gap-100 mb-5">
+          <div className="container">
+            <div className="row align-items-center">
+              <div className="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                <div className="content-wrapper">
+                  <div className="d-inline-block bg-primary text-white px-3 py-1 rounded mb-3">
+                    <strong>iPhone Kamu Rusak???</strong>
+                  </div>
+                  <h3 className="section-title fw-bold mb-3 display-5">
+                    Applenesia Solusinya
+                  </h3>
+                  <p className="mb-4 lead">
+                    Service <strong>#PastiAman</strong> hanya di Applenesia!
+                  </p>
+                  <ul className="list-unstyled mb-4">
+                    <li className="mb-2">
+                      <i className="icofont-check text-success me-2"></i>{" "}
+                      Konsultasi GRATIS
+                    </li>
+                    <li className="mb-2">
+                      <i className="icofont-check text-success me-2"></i> Solusi
+                      Tepat
+                    </li>
+                    <li className="mb-2">
+                      <i className="icofont-check text-success me-2"></i> Skill
+                      Profesional
+                    </li>
+                    <li>
+                      <i className="icofont-check text-success me-2"></i>{" "}
+                      Bergaransi
+                    </li>
+                  </ul>
+                  <div>
+                    <a
+                      href="#kalkulator-service"
+                      className="btn btn-primary p-3 me-2"
+                    >
+                      Estimasi Biaya <i className="icofont-double-right"></i>
+                    </a>
+                    <a
+                      href="https://wa.me/628117779914"
+                      className="btn btn-success p-3"
+                      target="_blank"
+                    >
+                      Konsultasi <i className="icofont-double-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-lg-6 col-md-12 text-center">
+                <img
+                  className="img-fluid"
+                  src="/portal/assets/images_apn/1.png"
+                  alt="Applenesia Service"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
+              </div>
             </div>
           </div>
         </div>

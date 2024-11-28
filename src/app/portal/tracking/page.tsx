@@ -3,7 +3,6 @@ import PortalFooter from "@/components/portal/Footer";
 import PortalHeader from "@/components/portal/Header";
 import PortalLayout from "@/components/portal/Layout";
 import portalServices from "@/services/portalServices";
-import Link from "next/link";
 import { useState } from "react";
 
 type TrackingService = {
@@ -63,7 +62,7 @@ export default function PortalTracking() {
                     <h2 className="breadcrumb-title">Tracking Service</h2>
                     <ul className="breadcrumb-nav">
                       <li>
-                        <Link href={"/"}>Home</Link>
+                        <a href={"/"}>Home</a>
                       </li>
                       <li>Tracking Service</li>
                     </ul>
