@@ -328,6 +328,7 @@ export const POST = async (request: Request) => {
     const countServiceExist = await prisma.service.count({
       where: {
         year,
+        month,
         branch_id: branch,
       },
     });
@@ -355,9 +356,9 @@ export const POST = async (request: Request) => {
     const randomNumber = Math.floor(100000 + Math.random() * 900000);
 
     const padId = (countServiceExist + 1).toString().padStart(3, "0");
-    const serviceNumber = `SC${branchAlias.alias?.toUpperCase()}${year
+    const serviceNumber = `${branchAlias.alias?.toUpperCase()}-${year
       .toString()
-      .slice(-2)}${randomNumber}${padId}`;
+      .slice(-2)}${month}${padId}`;
 
     const create = await prisma.service.create({
       include: {
@@ -423,8 +424,8 @@ export const POST = async (request: Request) => {
       `*Notifikasi | Applenesia* \n\n` +
       `Halo, *${create.customer.name?.toUpperCase()}*,\n\n` +
       `Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
-      `🔧 *Nomor Servis*: *${create.service_number}*\n` +
-      `🔐 *Kode Unik*: *${create.unique_code}*\n\n` +
+      `🔧 *Service No*: *${create.service_number}*\n` +
+      `🔐 *Service Code*: *${create.unique_code}*\n\n` +
       `📱 *Perangkat*: *${create.device.name}*\n` +
       `📝 *Deskripsi Kerusakan*: *${create.service_desc}*\n` +
       `📌 *Status*: *${create.service_status.name?.toUpperCase()}*\n\n` +

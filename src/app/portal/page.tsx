@@ -3,37 +3,6 @@ import PortalHeader from "@/components/portal/Header";
 import PortalLayout from "@/components/portal/Layout";
 
 export default function Portal() {
-  const stores = [
-    {
-      id: 1,
-      name: "Applenesia - Cabang Batam Center",
-      address:
-        "Ruko Royal Sincom Blok E No. 9, Tlk. Tering, Kota Batam, Kepulauan Riau 29431 (Sebrang Panasonic - Deretan Tarempa)",
-      phone: "0857-3333-3723",
-      mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.164567947092!2d104.00998831523012!3d1.1112944991692655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d98bff567a33df%3A0xf112233445566778!2sApplenesia!5e0!3m2!1sen!2sid!4v1234567890123",
-      contactLink: "https://wa.me/6285733333723",
-    },
-    {
-      id: 2,
-      name: "Applenesia Jakarta",
-      address: "Jl. MH Thamrin No. 10, Jakarta Pusat, Indonesia",
-      phone: "0812-3456-7890",
-      mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125564.81358684583!2d106.70098790923984!3d-6.214620574895584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6993015eecaaa9%3A0xfabcde1234567890!2sApplenesia!5e0!3m2!1sen!2sid!4v9876543210123",
-      contactLink: "https://wa.me/6285733333723",
-    },
-    {
-      id: 3,
-      name: "Applenesia Surabaya",
-      address: "Jl. Raya Darmo No. 5, Surabaya, Indonesia",
-      phone: "0851-2345-6789",
-      mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.235659987184!2d112.73176381522679!3d-7.290493995154993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fdf9a78b8c65%3A0xf123456789abcdef!2sApplenesia!5e0!3m2!1sen!2sid!4v0123456789012",
-      contactLink: "https://wa.me/6285733333723",
-    },
-  ];
-
   return (
     <PortalLayout>
       <main className="main-wrapper">
@@ -105,71 +74,6 @@ export default function Portal() {
         </div>
 
         {/* 1 */}
-        {/* <div className="content-display-section section-top-gap-100">
-          <div className="box-wrapper custom-box-wrapper pos-relative">
-            <div className="section-wrapper mb-4">
-              <div className="container">
-                <div className="row">
-                  <div className="col-12 pos-relative">
-                    <div className="custom-section-content custom-section-content-left">
-                      <div className="section-content">
-                        <h6
-                          className="section-tag tag-blue"
-                          style={{ marginBottom: 0 }}
-                        >
-                          iPhone Kamu Rusak ???
-                        </h6>
-                        <h3
-                          className="section-title"
-                          style={{ fontWeight: 800 }}
-                        >
-                          Applenesia Solusinya
-                        </h3>
-                      </div>
-                      <p>
-                        Service <strong>#PastiAman</strong> hanya di Applenesia!
-                      </p>
-                      <ul className="content-lists">
-                        <li>
-                          <i className="icofont-check" /> Konsultasi GRATIS
-                        </li>
-                        <li>
-                          <i className="icofont-check" /> Solusi Tepat
-                        </li>
-                        <li>
-                          <i className="icofont-check" /> Skill Profesional
-                        </li>
-                        <li>
-                          <i className="icofont-check" /> Bergaransi
-                        </li>
-                      </ul>
-                      <a
-                        href="#kalkulator-service"
-                        className="btn btn-primary icon-right"
-                      >
-                        Estimasi Biaya <i className="icofont-double-right" />
-                      </a>
-                      <a
-                        href="https://wa.me/628117779914"
-                        className="btn btn-success icon-right ms-2"
-                        target="_blank"
-                      >
-                        Konsultasi <i className="icofont-double-right" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="content-inner-img content-inner-img-right">
-              <img
-                className="img-fluid"
-                src="/portal/assets/images_apn/1.png"
-                alt=""
-              />
-            </div>
-          </div>
-        </div> */}
         <div className="content-display-section section-top-gap-100 mb-5">
           <div className="container">
             <div className="row align-items-center">
@@ -263,27 +167,29 @@ export default function Portal() {
                           </div>
                         </div>
                       </a>
-                      <div className="promo-single-items">
-                        <div className="icon">
-                          <img
-                            src="/portal/assets/images/icons/promo/cyber-security.png"
-                            alt=""
-                          />
-                          <img
-                            src="/portal/assets/images/icons/promo/cyber-security-gradient.png"
-                            alt=""
-                          />
-                          <div className="dot-icon-hover">
-                            <span />
-                            <span />
-                            <span />
+                      <a href="/portal/tracking">
+                        <div className="promo-single-items">
+                          <div className="icon">
+                            <img
+                              src="/portal/assets/images/icons/promo/cyber-security.png"
+                              alt=""
+                            />
+                            <img
+                              src="/portal/assets/images/icons/promo/cyber-security-gradient.png"
+                              alt=""
+                            />
+                            <div className="dot-icon-hover">
+                              <span />
+                              <span />
+                              <span />
+                            </div>
+                          </div>
+                          <div className="content">
+                            <h4 className="title">TRACKING</h4>
+                            <p>Cek status perbaikan device kamu disini .</p>
                           </div>
                         </div>
-                        <div className="content">
-                          <h4 className="title">TRACKING</h4>
-                          <p>Cek status perbaikan device kamu disini .</p>
-                        </div>
-                      </div>
+                      </a>
                       <div className="promo-single-items">
                         <div className="icon">
                           <img

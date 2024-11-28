@@ -19,8 +19,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
       <div data-simplebar="" className="h-100">
         <div className="navbar-brand-box">
           <a href="index.html" className="logo">
-            <i className="mdi mdi-album" />
-            <span>Xeloro</span>
+            <span>Applenesia</span>
           </a>
         </div>
 

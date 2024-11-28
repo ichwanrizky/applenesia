@@ -429,9 +429,11 @@ const DetailServicePage = ({
         });
         setTimeout(() => {
           if (isCreateInvoice) {
-            push(`/dashboard/invoice/${resultUpdate.data.invoice_number}`);
+            push(
+              `/console/dashboard/invoice/${resultUpdate.data.invoice_number}`
+            );
           } else {
-            push("/dashboard/service");
+            push("/console/dashboard/service");
           }
         }, 1000);
       } catch (error) {

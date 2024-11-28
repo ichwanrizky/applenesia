@@ -300,16 +300,23 @@ export const PUT = async (
         const countInvoiceExist = await prisma.invoice.count({
           where: {
             year,
+            month,
             branch_id: Number(branch),
           },
         });
 
-        const randomNumber = Math.floor(100000 + Math.random() * 900000);
+        const branchAlias = await prisma.branch.findFirst({
+          select: { alias: true },
+          where: {
+            id: Number(branch),
+            is_deleted: false,
+          },
+        });
 
         const padId = (countInvoiceExist + 1).toString().padStart(3, "0");
-        const invoiceNumber = `INV${year
+        const invoiceNumber = `INV-APN${branchAlias?.alias?.toUpperCase()}-${year
           .toString()
-          .slice(-2)}${randomNumber}${padId}`;
+          .slice(-2)}${month}${padId}`;
 
         createdInvoice = await prisma.invoice.create({
           include: {

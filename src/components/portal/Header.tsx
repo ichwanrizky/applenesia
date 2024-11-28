@@ -29,7 +29,7 @@ const PortalHeader = () => {
               </div>
               <div className="col-auto">
                 <div className="header-btn-link">
-                  <a href="contact.html" className="btn btn-lg btn-default">
+                  <a href="#" className="btn btn-lg btn-default">
                     Academy
                   </a>
                 </div>

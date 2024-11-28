@@ -226,8 +226,8 @@ const ServicePage = ({ session }: { session: Session | null }) => {
         
     Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:
 
-    🔧 *Nomor Servis*: *${service.service_number}*  
-    🔐 *Kode Unik*: *${service.unique_code}*  
+    🔧 *Service No*: *${service.service_number}*  
+    🔐 *Service Code*: *${service.unique_code}*  
 
     📱 *Perangkat*: *${service.device.name}*  
     📝 *Deskripsi Kerusakan*: *${service.service_desc}*  
@@ -394,7 +394,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                           <tbody>
                             {items.length === 0 ? (
                               <tr>
-                                <td colSpan={11} align="center">
+                                <td colSpan={12} align="center">
                                   Tidak ada data
                                 </td>
                               </tr>

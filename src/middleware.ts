@@ -8,4 +8,7 @@ export function mainMiddleware(request: NextRequest) {
   return res;
 }
 
-export default withAuth(mainMiddleware, ["/dashboard/"]);
+export default withAuth(mainMiddleware, [
+  "/console/dashboard",
+  "/console/dashboard/",
+]);
