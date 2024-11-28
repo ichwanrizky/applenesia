@@ -130,17 +130,27 @@ async function main() {
       data: [
         {
           id: 1,
-          name: "TEST 1",
-          address: "TEST 1",
-          alias: "T1",
-          telp: "08117779914",
+          name: "APPLENESIA BATAM CENTER",
+          address:
+            "Ruko Royal Sincom Blok E No. 9, Tlk. Tering, Kota Batam, Kepulauan Riau 29431 (Sebrang Panasonic - Deretan Tarempa)",
+          alias: "BTC",
+          telp: "085733333723",
         },
         {
           id: 2,
-          name: "TEST 2",
-          address: "TEST 2",
-          alias: "T2",
-          telp: "08117779914",
+          name: "APPLENESIA BATU AJI",
+          address:
+            "Komplek Pertokoan Central Muka Kuning Blok A No.5, Kel. Buliang, Kec. Batu Aji, Kota Batam, Kep. Riau (Sebrang PStore SP - Deretan Dealer Yamaha)",
+          alias: "BAJ",
+          telp: "081371521277",
+        },
+        {
+          id: 3,
+          name: "APPLENESIA TG. PINAG",
+          address:
+            "Ruko ( Ex-PALUGADA ) (Antara Apotek Assyife dan Zovin Baby & Kids Shop) Jl.Raja Ali Haji 3, RT 001, RW011, Kel. Tanjung Ayun Sakti, Kec.Bukit Bestari",
+          alias: "TGP",
+          telp: "081371521266",
         },
       ],
     });

@@ -430,7 +430,7 @@ export const POST = async (request: Request) => {
       `📝 *Deskripsi Kerusakan*: *${create.service_desc}*\n` +
       `📌 *Status*: *${create.service_status.name?.toUpperCase()}*\n\n` +
       `Untuk memtracking status servis Anda, silakan klik tautan di bawah ini:\n` +
-      `🔗 *https://yourcompany.com/service_tracking/${create.uuid}*\n\n` +
+      `🔗 *${process.env.NEXT_PUBLIC_API_URL}/portal/tracking?service_number=${create.service_number}&service_code=${create.unique_code}*\n\n` +
       `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
       `Salam,\n` +
       `Applenesia Team\n\n`;

@@ -219,29 +219,20 @@ const ServicePage = ({ session }: { session: Session | null }) => {
   };
 
   const sendWa = async (service: Service) => {
-    const message = `
-    *Notifikasi | Applenesia*
-    
-    Halo, *${service.customer.name?.toUpperCase()}*,
-        
-    Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:
-
-    🔧 *Service No*: *${service.service_number}*  
-    🔐 *Service Code*: *${service.unique_code}*  
-
-    📱 *Perangkat*: *${service.device.name}*  
-    📝 *Deskripsi Kerusakan*: *${service.service_desc}*  
-    📌 *Status*: *${service.service_status.name?.toUpperCase()}*  
-
-    
-    Untuk memtracking status service anda, silakan klik tautan di bawah ini:
-    🔗 *https://yourcompany.com/service_tracking/${service.uuid}*
-    
-    Terima kasih atas kepercayaan Anda kepada kami.
-    
-    Salam,
-    Applenesia Team
-    `;
+    const message =
+      `*Notifikasi | Applenesia* \n\n` +
+      `Halo, *${service.customer.name?.toUpperCase()}*,\n\n` +
+      `Kami ingin menginformasikan bahwa layanan servis Anda telah diterbitkan dengan detail sebagai berikut:\n\n` +
+      `🔧 *Service No*: *${service.service_number}*\n` +
+      `🔐 *Service Code*: *${service.unique_code}*\n\n` +
+      `📱 *Perangkat*: *${service.device.name}*\n` +
+      `📝 *Deskripsi Kerusakan*: *${service.service_desc}*\n` +
+      `📌 *Status*: *${service.service_status.name?.toUpperCase()}*\n\n` +
+      `Untuk memtracking status servis Anda, silakan klik tautan di bawah ini:\n` +
+      `🔗 *${process.env.NEXT_PUBLIC_API_URL}/portal/tracking?service_number=${service.service_number}&service_code=${service.unique_code}*\n\n` +
+      `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
+      `Salam,\n` +
+      `Applenesia Team\n\n`;
 
     const response = await sendWhatsappMessage(service.customer.telp, message);
     return response;

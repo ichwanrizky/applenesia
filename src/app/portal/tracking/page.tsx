@@ -3,7 +3,7 @@ import PortalFooter from "@/components/portal/Footer";
 import PortalHeader from "@/components/portal/Header";
 import PortalLayout from "@/components/portal/Layout";
 import portalServices from "@/services/portalServices";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TrackingService = {
   service_number: string;
@@ -21,16 +21,36 @@ type TrackingService = {
   }[];
 };
 
-export default function PortalTracking() {
+export default function PortalTracking({
+  searchParams,
+}: {
+  searchParams: any;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [serviceNumber, setServiceNumber] = useState("");
   const [serviceCode, setServiceCode] = useState("");
   const [trackingData, setTrackingData] = useState<TrackingService | null>();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setTrackingData(null);
+  useEffect(() => {
+    if (searchParams && Object.keys(searchParams).length > 0) {
+      const { service_number, service_code } = searchParams;
+
+      if (service_number && service_code) {
+        setServiceNumber(service_number);
+        setServiceCode(service_code);
+
+        // Trigger data fetching
+        fetchTrackingData(service_number, service_code);
+      }
+    }
+  }, [searchParams]);
+
+  const fetchTrackingData = async (
+    serviceNumber: string,
+    serviceCode: string
+  ) => {
     setIsLoading(true);
+    setTrackingData(null);
     try {
       const response = await portalServices.getTrackingService(
         serviceNumber,
@@ -39,14 +59,19 @@ export default function PortalTracking() {
 
       if (!response.status) {
         alert(response.message);
+      } else {
+        setTrackingData(response.data);
       }
-
-      setTrackingData(response.data);
     } catch (error) {
-      alert("something went wrong, please refresh and try again");
+      alert("Something went wrong, please refresh and try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    fetchTrackingData(serviceNumber, serviceCode);
   };
 
   return (
@@ -77,50 +102,52 @@ export default function PortalTracking() {
           <div className="container">
             <div className="row justify-content-center">
               <div className="col-xl-8 col-lg-10">
-                <div className="tracking-form-wrapper p-4 shadow rounded bg-white">
-                  <h3 className="text-center mb-4">Track Your Service</h3>
-                  <form className="default-form" onSubmit={handleSubmit}>
-                    <div className="row g-3 align-items-center">
-                      <div className="col-md-5">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Service Number"
-                          onChange={(e) => setServiceNumber(e.target.value)}
-                          required
-                        />
+                {!(searchParams && Object.keys(searchParams).length > 0) && (
+                  <div className="tracking-form-wrapper p-4 shadow rounded bg-white">
+                    <h3 className="text-center mb-4">Track Your Service</h3>
+                    <form className="default-form" onSubmit={handleSubmit}>
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-5">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Service Number"
+                            onChange={(e) => setServiceNumber(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="col-md-5">
+                          <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Service Code"
+                            onChange={(e) => setServiceCode(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="col-md-2 d-grid">
+                          {isLoading ? (
+                            <button
+                              className="btn btn-primary"
+                              type="button"
+                              disabled
+                            >
+                              <span
+                                className="spinner-border spinner-border-sm"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
+                            </button>
+                          ) : (
+                            <button className="btn btn-primary" type="submit">
+                              Track Now
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="col-md-5">
-                        <input
-                          type="number"
-                          className="form-control"
-                          placeholder="Service Code"
-                          onChange={(e) => setServiceCode(e.target.value)}
-                          required
-                        />
-                      </div>
-                      <div className="col-md-2 d-grid">
-                        {isLoading ? (
-                          <button
-                            className="btn btn-primary"
-                            type="button"
-                            disabled
-                          >
-                            <span
-                              className="spinner-border spinner-border-sm"
-                              role="status"
-                              aria-hidden="true"
-                            ></span>
-                          </button>
-                        ) : (
-                          <button className="btn btn-primary" type="submit">
-                            Track Now
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </form>
-                </div>
+                    </form>
+                  </div>
+                )}
 
                 {trackingData && (
                   <div className="tracking-result-wrapper p-4 mt-4 bg-white shadow rounded">
@@ -152,8 +179,7 @@ export default function PortalTracking() {
                           <tr>
                             <th>🧾 Invoice:</th>
                             <td>
-                              {trackingData?.invoice_service[0]
-                                .invoice_number || (
+                              {trackingData.invoice_service.length === 0 && (
                                 <span className="text-danger">
                                   BELUM TERSEDIA
                                 </span>

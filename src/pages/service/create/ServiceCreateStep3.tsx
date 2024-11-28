@@ -404,133 +404,107 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
           />
         </div>
 
-        <div className="form-group">
-          <input
-            type="checkbox"
-            id="service_finish"
-            checked={serviceFinish}
-            onChange={() => setServiceFinish(!serviceFinish)}
-          />
-          <span className="ml-2 text-danger">
-            <label htmlFor="service_finish">
-              Tampilkan (Sparepart / Product / Jasa)
-            </label>
-          </span>
-        </div>
+        <hr />
 
-        {serviceFinish && (
-          <>
-            <hr />
-
-            <div className="card p-3 shadow-lg mt-3">
-              <div className="table-responsive mt-2">
-                <button
-                  type="button"
-                  className="btn btn-outline-primary btn-sm mb-2"
-                  onClick={() => {
-                    if (formData.branch !== "" && serviceFinish) {
-                      setIsProductOpen(true);
-                    } else {
-                      handleAlert(
-                        true,
-                        "danger",
-                        "Pilih cabang terlebih dahulu"
-                      );
-                    }
-                  }}
-                >
-                  Tambah Produk
-                </button>
-                <table className="table table-sm table-striped table-bordered nowrap mb-5">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "1%", textAlign: "center" }}></th>
-                      <th style={{ width: "1%", textAlign: "center" }}> NO </th>
-                      <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
-                      <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
-                      <th style={{ width: "20%", textAlign: "center" }}>
-                        PRICE
-                      </th>
-                      <th style={{ width: "25%", textAlign: "center" }}>
-                        AMOUNT
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedProduct.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="text-center">
-                          Tidak Ada Data
+        <div className="card p-3 shadow-lg mt-3">
+          <div className="table-responsive mt-2">
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm mb-2"
+              onClick={() => {
+                if (formData.branch !== "" && serviceFinish) {
+                  setIsProductOpen(true);
+                } else {
+                  handleAlert(true, "danger", "Pilih cabang terlebih dahulu");
+                }
+              }}
+            >
+              Tambah Produk
+            </button>
+            <table className="table table-sm table-striped table-bordered nowrap mb-5">
+              <thead>
+                <tr>
+                  <th style={{ width: "1%", textAlign: "center" }}></th>
+                  <th style={{ width: "1%", textAlign: "center" }}> NO </th>
+                  <th style={{ textAlign: "center" }}> PRODUK / JASA </th>
+                  <th style={{ width: "10%", textAlign: "center" }}>QTY</th>
+                  <th style={{ width: "20%", textAlign: "center" }}>PRICE</th>
+                  <th style={{ width: "25%", textAlign: "center" }}>AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedProduct.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center">
+                      Tidak Ada Data
+                    </td>
+                  </tr>
+                ) : (
+                  selectedProduct?.map(
+                    (item: SelectedProduct, index: number) => (
+                      <tr key={index}>
+                        <td className="align-middle text-center">
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm"
+                            onClick={() =>
+                              handleRemoveSelectedProduct(item.product_id)
+                            }
+                          >
+                            <i className="fa fa-trash"></i>
+                          </button>
+                        </td>
+                        <td className="align-middle text-center">
+                          {index + 1}
+                        </td>
+                        <td className="align-middle">
+                          {item.name?.toUpperCase()}
+                        </td>
+                        <td className="align-middle text-center">
+                          <NumericFormat
+                            className="form-control form-control-sm text-center"
+                            value={item.qty}
+                            thousandSeparator=","
+                            displayType="input"
+                            onValueChange={(values: any) => {
+                              if (values.floatValue !== undefined) {
+                                handleUpdateQtySelectedProduct(
+                                  item.product_id,
+                                  values.floatValue
+                                );
+                              }
+                            }}
+                            allowLeadingZeros={false}
+                            allowNegative={false}
+                            required
+                          />
+                        </td>
+                        <td className="align-middle" align="right">
+                          {`Rp. ${item.price?.toLocaleString("id-ID")}`}
+                        </td>
+                        <td className="align-middle" align="right">
+                          {`Rp. ${(item.price * item.qty)?.toLocaleString(
+                            "id-ID"
+                          )}`}
                         </td>
                       </tr>
-                    ) : (
-                      selectedProduct?.map(
-                        (item: SelectedProduct, index: number) => (
-                          <tr key={index}>
-                            <td className="align-middle text-center">
-                              <button
-                                type="button"
-                                className="btn btn-danger btn-sm"
-                                onClick={() =>
-                                  handleRemoveSelectedProduct(item.product_id)
-                                }
-                              >
-                                <i className="fa fa-trash"></i>
-                              </button>
-                            </td>
-                            <td className="align-middle text-center">
-                              {index + 1}
-                            </td>
-                            <td className="align-middle">
-                              {item.name?.toUpperCase()}
-                            </td>
-                            <td className="align-middle text-center">
-                              <NumericFormat
-                                className="form-control form-control-sm text-center"
-                                value={item.qty}
-                                thousandSeparator=","
-                                displayType="input"
-                                onValueChange={(values: any) => {
-                                  if (values.floatValue !== undefined) {
-                                    handleUpdateQtySelectedProduct(
-                                      item.product_id,
-                                      values.floatValue
-                                    );
-                                  }
-                                }}
-                                allowLeadingZeros={false}
-                                allowNegative={false}
-                                required
-                              />
-                            </td>
-                            <td className="align-middle" align="right">
-                              {`Rp. ${item.price?.toLocaleString("id-ID")}`}
-                            </td>
-                            <td className="align-middle" align="right">
-                              {`Rp. ${(item.price * item.qty)?.toLocaleString(
-                                "id-ID"
-                              )}`}
-                            </td>
-                          </tr>
-                        )
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                    )
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            {isProductOpen && (
-              <ServiceProductList
-                isOpen={isProductOpen}
-                onClose={closeProductList}
-                accessToken={accessToken}
-                branch={formData.branch}
-                productList={selectedProduct}
-                deviceTypeData={deviceTypeData}
-              />
-            )}
-          </>
+        {isProductOpen && (
+          <ServiceProductList
+            isOpen={isProductOpen}
+            onClose={closeProductList}
+            accessToken={accessToken}
+            branch={formData.branch}
+            productList={selectedProduct}
+            deviceTypeData={deviceTypeData}
+          />
         )}
       </div>
     </form>

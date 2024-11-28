@@ -8,7 +8,7 @@ export default function Redirect() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      redirect("/");
+      redirect("/console");
     } else if (status === "authenticated") {
       switch (session.user.role_name) {
         case "ADMINISTRATOR":

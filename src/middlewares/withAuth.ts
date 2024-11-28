@@ -18,8 +18,8 @@ export default function withAuth(
       secret: process.env.JWT,
     });
 
-    if (pathname === "/" && token) {
-      return NextResponse.redirect(new URL("/redirect", req.url));
+    if (pathname === "/console" && token) {
+      return NextResponse.redirect(new URL("/console/redirect", req.url));
     }
 
     const authenticationRequired = requireAuth.some((path) =>
@@ -28,7 +28,7 @@ export default function withAuth(
 
     if (authenticationRequired) {
       if (!token) {
-        const url = new URL(`/`, req.url);
+        const url = new URL(`/console`, req.url);
         url.searchParams.set("callbackUrl", encodeURI(pathname));
         return NextResponse.redirect(url);
       }
