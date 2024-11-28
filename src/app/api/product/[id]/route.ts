@@ -149,22 +149,25 @@ export const PUT = async (
     const device = body.device;
     const branch = body.branch;
 
-    if (
-      !name ||
-      !sell_price ||
-      !purchase_price ||
-      !warranty ||
-      !is_pos ||
-      !is_invent ||
-      !product_type ||
-      !category ||
-      !device ||
-      !branch
-    ) {
+    const missingFields = [
+      { name: "name", value: name },
+      { name: "sell price", value: sell_price },
+      { name: "warranty", value: warranty },
+      { name: "is pos", value: is_pos },
+      { name: "is invent", value: is_invent },
+      { name: "product type", value: product_type },
+      { name: "category", value: category },
+      { name: "device", value: device },
+      { name: "branch", value: branch },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Missing fields",
+          message: "Missing fields: " + missingFields.join(", "),
         }),
         {
           status: 400,

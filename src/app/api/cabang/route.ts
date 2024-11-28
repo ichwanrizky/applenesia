@@ -118,24 +118,43 @@ export const POST = async (request: Request) => {
     const name = body.name;
     const telp = body.telp;
     const address = body.address;
+    const alias = body.alias;
 
-    if (!name || !telp || !address) {
+    const missingFields = [
+      {
+        name: "branch name",
+        value: name,
+      },
+      {
+        name: "branch telp",
+        value: telp,
+      },
+      {
+        name: "branch address",
+        value: address,
+      },
+      {
+        name: "branch alias",
+        value: alias,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Missing fields" }),
+        JSON.stringify({
+          status: false,
+          message: "Missing fields: " + missingFields.join(", "),
+        }),
         {
-          status: 500,
+          status: 400,
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
     }
-
-    const alias = name
-      .split(" ")
-      .map((char: string) => char[0])
-      .join("")
-      .toUpperCase();
 
     const create = await prisma.branch.create({
       data: {

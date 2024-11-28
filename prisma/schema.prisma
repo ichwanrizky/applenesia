@@ -56,8 +56,7 @@ model branch {
   address     String?
   alias       String?       @unique
   telp        String?
-  latitude    String?
-  longitude   String?
+  email       String?
   is_deleted  Boolean       @default(false)
   user_branch user_branch[]
   product     product[]

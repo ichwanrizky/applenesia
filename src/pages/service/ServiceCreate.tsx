@@ -93,6 +93,16 @@ const CreateServicePage = ({
     }
   }, [step]);
 
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
+
   const nextStep = async () => {
     const form1 = document.getElementById("step1Form") as HTMLFormElement;
     if (step === 1 && form1) {

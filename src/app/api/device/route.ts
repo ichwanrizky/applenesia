@@ -135,11 +135,27 @@ export const POST = async (request: Request) => {
     const name = body.name?.toUpperCase();
     const device_type_id = body.type;
 
-    if (!name || !device_type_id) {
+    const missingFields = [
+      {
+        name: "device name",
+        value: name,
+      },
+      {
+        name: "device type",
+        value: device_type_id,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Missing fields" }),
+        JSON.stringify({
+          status: false,
+          message: "Missing fields: " + missingFields.join(", "),
+        }),
         {
-          status: 500,
+          status: 400,
           headers: {
             "Content-Type": "application/json",
           },

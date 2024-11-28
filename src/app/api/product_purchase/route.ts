@@ -209,11 +209,36 @@ export const POST = async (request: Request) => {
     const payment_id = body.payment_id;
     const branch = body.branch;
 
-    if (!product_id || !qty || !price || !payment_id || !branch) {
+    const missingFields = [
+      {
+        name: "product",
+        value: product_id,
+      },
+      {
+        name: "qty",
+        value: qty,
+      },
+      {
+        name: "price",
+        value: price,
+      },
+      {
+        name: "payment method",
+        value: payment_id,
+      },
+      {
+        name: "branch",
+        value: branch,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Missing fields",
+          message: "Missing fields: " + missingFields.join(", "),
         }),
         {
           status: 400,

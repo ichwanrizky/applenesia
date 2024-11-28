@@ -2,7 +2,7 @@
 
 import Modal from "@/components/Modal";
 import invoiceService from "@/services/invoiceService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import Select from "react-select";
 
@@ -45,6 +45,16 @@ const InvoicePaymentUpdate = (props: Props) => {
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [updatePayment, setUpdatePayment] = useState<Payment[]>([]);
+
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
 
   const handleAdditionalPayment = (
     index: number,

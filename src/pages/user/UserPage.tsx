@@ -1,6 +1,6 @@
 "use client";
 import CustomButton from "@/components/CustomButton";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import CustomAlert from "@/components/CustomAlert";
 import Pagination from "@/components/Pagination";
@@ -88,6 +88,16 @@ const UserPage = ({ session }: { session: Session | null }) => {
   );
 
   const accessToken = session?.accessToken;
+
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
 
   const handleCreate = async () => {
     setIsLoadingAction({ ...isLoadingAction, [0]: true });
@@ -289,7 +299,6 @@ const UserPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
-                    isDismissable={false}
                   />
                 </div>
               ) : (

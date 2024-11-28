@@ -118,11 +118,39 @@ export const PUT = async (
     const roleUser = body.role;
     const manageBranch = body.manageBranch;
 
-    if (!name || !username || !telp || !roleUser || !manageBranch) {
+    const missingFields = [
+      {
+        name: "name",
+        value: name,
+      },
+      {
+        name: "username",
+        value: username,
+      },
+      {
+        name: "telp",
+        value: telp,
+      },
+      {
+        name: "role",
+        value: roleUser,
+      },
+      {
+        name: "manage branch",
+        value: manageBranch,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Missing fields" }),
+        JSON.stringify({
+          status: false,
+          message: "Missing fields: " + missingFields.join(", "),
+        }),
         {
-          status: 500,
+          status: 400,
           headers: {
             "Content-Type": "application/json",
           },

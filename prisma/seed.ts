@@ -98,6 +98,10 @@ async function main() {
           id: 3,
           name: "macbook",
         },
+        {
+          id: 4,
+          name: "iwatch",
+        },
       ],
     });
 

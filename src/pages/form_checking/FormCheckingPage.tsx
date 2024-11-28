@@ -52,6 +52,16 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
   const [deviceType, setDeviceType] = useState("");
   const accessToken = session?.accessToken;
 
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
+
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });

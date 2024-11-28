@@ -150,6 +150,16 @@ const DetailInvoicePage = ({
     getPaymentMethod();
   }, []);
 
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
+
   const getDetailInvoice = async () => {
     setIsLoadingPage(true);
     try {

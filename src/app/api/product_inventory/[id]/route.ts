@@ -144,11 +144,28 @@ export const PUT = async (
     const desc = body.desc;
     const type = body.type;
 
-    if (!qty || !desc) {
+    const missingFields = [
+      {
+        name: "qty",
+        value: qty,
+      },
+      {
+        name: "desc",
+        value: desc,
+      },
+      {
+        name: "type",
+        value: type,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Missing fields",
+          message: "Missing fields: " + missingFields.join(", "),
         }),
         {
           status: 400,

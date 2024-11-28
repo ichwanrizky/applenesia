@@ -47,6 +47,16 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const accessToken = session?.accessToken;
 
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => {
+        setAlert(null); // Set alert back to null after 2 seconds
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alert]);
+
   const handleDelete = async (id: number) => {
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
@@ -181,7 +191,6 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
                       `Error (): ${data?.message} - please refresh the page or login again`
                     }
                     color="danger"
-                    isDismissable={false}
                   />
                 </div>
               ) : (

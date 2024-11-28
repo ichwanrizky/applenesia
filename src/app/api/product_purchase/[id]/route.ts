@@ -137,11 +137,32 @@ export const PUT = async (
     const payment_id = body.payment_id;
     const branch = body.branch;
 
-    if (!qty || !price || !payment_id || !branch) {
+    const missingFields = [
+      {
+        name: "qty",
+        value: qty,
+      },
+      {
+        name: "price",
+        value: price,
+      },
+      {
+        name: "payment method",
+        value: payment_id,
+      },
+      {
+        name: "branch",
+        value: branch,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
+
+    if (missingFields.length > 0) {
       return new NextResponse(
         JSON.stringify({
           status: false,
-          message: "Missing fields",
+          message: "Missing fields: " + missingFields.join(", "),
         }),
         {
           status: 400,

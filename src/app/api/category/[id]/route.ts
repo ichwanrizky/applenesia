@@ -93,7 +93,10 @@ export const PUT = async (
 
     if (!name) {
       return new NextResponse(
-        JSON.stringify({ status: false, message: "Missing fields" }),
+        JSON.stringify({
+          status: false,
+          message: "Missing fields: category name",
+        }),
         {
           status: 500,
           headers: {
