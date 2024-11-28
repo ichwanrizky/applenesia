@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import CustomAlert from "./CustomAlert";
 import CustomButton from "./CustomButton";
 
@@ -27,6 +28,27 @@ const Modal = (props: ModalProps) => {
     alert,
     isLoadingHeader,
   } = props;
+
+  const [alertModal, setAlertModal] = useState<AlertProps | null>(
+    alert || null
+  );
+
+  useEffect(() => {
+    if (alert) {
+      setAlertModal(alert);
+    }
+  }, [alert]);
+
+  useEffect(() => {
+    if (alertModal) {
+      const timer = setTimeout(() => {
+        setAlertModal(null); // Set alert back to null after 2 seconds
+      }, 2000);
+
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [alertModal]);
+
   return (
     <>
       <div className="modal-backdrop fade show"></div>
@@ -57,12 +79,11 @@ const Modal = (props: ModalProps) => {
                   </h5>
 
                   {/* Add the alert below the title inside the modal-header */}
-                  {alert?.status && (
+                  {alertModal?.status && (
                     <div className="mt-2">
                       <CustomAlert
-                        message={alert.message}
-                        color={alert.color}
-                        isDismissable={true}
+                        message={alertModal.message}
+                        color={alertModal.color}
                       />
                     </div>
                   )}

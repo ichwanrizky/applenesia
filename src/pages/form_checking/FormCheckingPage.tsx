@@ -161,7 +161,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    <select
+                    {/* <select
                       className="custom-select custom-select-sm w-auto mr-2"
                       onChange={(e) => setDeviceType(e.target.value)}
                       value={
@@ -173,7 +173,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
                           {item.name?.toUpperCase()}
                         </option>
                       ))}
-                    </select>
+                    </select> */}
                     <input
                       className="form-control form-control-sm"
                       placeholder="Search"

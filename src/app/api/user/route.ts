@@ -263,6 +263,24 @@ export const POST = async (request: Request) => {
       );
     }
 
+    const userExist = await prisma.user.findFirst({
+      where: {
+        username: username,
+      },
+    });
+
+    if (userExist) {
+      return new NextResponse(
+        JSON.stringify({ status: false, message: "Username already exist" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     const create = await prisma.user.create({
       data: {
         name,

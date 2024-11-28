@@ -119,6 +119,7 @@ export const POST = async (request: Request) => {
     const telp = body.telp;
     const address = body.address;
     const alias = body.alias;
+    const email = body.email;
 
     const missingFields = [
       {
@@ -162,6 +163,7 @@ export const POST = async (request: Request) => {
         telp,
         address,
         alias,
+        email,
       },
     });
 

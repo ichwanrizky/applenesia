@@ -29,8 +29,7 @@ type Branch = {
   address: string;
   alias: string;
   telp: string;
-  latitude: null;
-  longitude: null;
+  email: string;
   is_deleted: boolean;
 };
 
@@ -224,11 +223,17 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                               <th style={{ width: "5%", textAlign: "center" }}>
                                 NO
                               </th>
-                              <th>CABANG</th>
+                              <th style={{ width: "20%", textAlign: "center" }}>
+                                CABANG
+                              </th>
                               <th style={{ textAlign: "center" }}>ALIAS</th>
-                              <th>TELP</th>
-                              <th>ALAMAT</th>
-                              <th>LOKASI</th>
+                              <th style={{ width: "13%", textAlign: "center" }}>
+                                TELP
+                              </th>
+                              <th style={{ width: "13%", textAlign: "center" }}>
+                                EMAIL
+                              </th>
+                              <th style={{ textAlign: "center" }}>ALAMAT</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -241,7 +246,7 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                             ) : (
                               items.map((item: Branch, index: number) => (
                                 <tr key={index}>
-                                  <td align="center">
+                                  <td className="align-middle" align="center">
                                     <CustomButton
                                       buttonType="action"
                                       indexData={index}
@@ -261,11 +266,15 @@ const CabangPage = ({ session }: { session: Session | null }) => {
                                   <td className="align-middle" align="center">
                                     {item.alias?.toUpperCase()}
                                   </td>
-                                  <td className="align-middle">{item.telp}</td>
+                                  <td className="align-middle" align="center">
+                                    {item.telp}
+                                  </td>
+                                  <td className="align-middle" align="center">
+                                    {item.email}
+                                  </td>
                                   <td className="align-middle">
                                     {item.address}
                                   </td>
-                                  <td className="align-middle"></td>
                                 </tr>
                               ))
                             )}

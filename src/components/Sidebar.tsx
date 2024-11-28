@@ -93,7 +93,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             <li className="menu-title">CONFIGURATION</li>
             {session.user.role_name === "ADMINISTRATOR" && (
               <li>
-                <a href="/console/dashboard/cabang" className="waves-effect">
+                <a href="/console/config/cabang" className="waves-effect">
                   <i className="mdi mdi mdi-office-building" />
                   <span>Data Cabang</span>
                 </a>
@@ -103,7 +103,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             {(session.user.role_name === "ADMINISTRATOR" ||
               session.user.role_name === "SUPERVISOR") && (
               <li>
-                <a href="/console/dashboard/user" className="waves-effect">
+                <a href="/console/config/user" className="waves-effect">
                   <i className="mdi mdi-account-multiple-outline" />
                   <span>Data User</span>
                 </a>
@@ -111,15 +111,21 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             )}
 
             <li>
-              <a href="/console/dashboard/device" className="waves-effect">
+              <a href="/console/config/device" className="waves-effect">
                 <i className="mdi mdi-cellphone-android" />
                 <span>Data Device</span>
               </a>
             </li>
             <li>
-              <a href="/console/dashboard/kategori" className="waves-effect">
+              <a href="/console/config/kategori" className="waves-effect">
                 <i className="mdi mdi-format-list-checkbox" />
                 <span>Data Kategori</span>
+              </a>
+            </li>
+            <li>
+              <a href="/console/config/formchecking" className="waves-effect">
+                <i className="mdi mdi-format-list-checkbox" />
+                <span>Data Form Check</span>
               </a>
             </li>
           </ul>

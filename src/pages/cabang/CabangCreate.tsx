@@ -24,6 +24,8 @@ const CreateCabang = (props: Props) => {
     name: "",
     telp: "",
     address: "",
+    email: "",
+    alias: "",
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -89,6 +91,20 @@ const CreateCabang = (props: Props) => {
       </div>
 
       <div className="form-group">
+        <label htmlFor="branch_alias">Alias</label>
+        <input
+          type="text"
+          id="branch_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, alias: e.target.value })}
+          value={formData.alias}
+        />
+      </div>
+
+      <div className="form-group">
         <label htmlFor="branch_telp">Telp</label>
         <input
           type="number"
@@ -99,6 +115,18 @@ const CreateCabang = (props: Props) => {
           required
           onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
           value={formData.telp}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="branch_email">Email</label>
+        <input
+          type="email"
+          id="branch_email"
+          className="form-control"
+          autoComplete="off"
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          value={formData.email}
         />
       </div>
 

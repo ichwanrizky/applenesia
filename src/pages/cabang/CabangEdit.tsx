@@ -24,8 +24,7 @@ type Branch = {
   address: string;
   alias: string;
   telp: string;
-  latitude: null;
-  longitude: null;
+  email: string;
   is_deleted: boolean;
 };
 
@@ -39,6 +38,8 @@ const EditCabang = (props: Props) => {
     name: editData?.name || "",
     telp: editData?.telp || "",
     address: editData?.address || "",
+    email: editData?.email || "",
+    alias: editData?.alias || "",
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -105,6 +106,20 @@ const EditCabang = (props: Props) => {
       </div>
 
       <div className="form-group">
+        <label htmlFor="branch_alias">Alias</label>
+        <input
+          type="text"
+          id="branch_name"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          autoComplete="off"
+          required
+          onChange={(e) => setFormData({ ...formData, alias: e.target.value })}
+          value={formData.alias}
+        />
+      </div>
+
+      <div className="form-group">
         <label htmlFor="branch_telp">Telp</label>
         <input
           type="number"
@@ -115,6 +130,18 @@ const EditCabang = (props: Props) => {
           required
           onChange={(e) => setFormData({ ...formData, telp: e.target.value })}
           value={formData.telp}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="branch_email">Email</label>
+        <input
+          type="email"
+          id="branch_email"
+          className="form-control"
+          autoComplete="off"
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          value={formData.email}
         />
       </div>
 

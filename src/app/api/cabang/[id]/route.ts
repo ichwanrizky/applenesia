@@ -94,6 +94,7 @@ export const PUT = async (
     const telp = body.telp;
     const address = body.address;
     const alias = body.alias;
+    const email = body.email;
 
     const missingFields = [
       {
@@ -137,6 +138,7 @@ export const PUT = async (
         telp,
         address,
         alias,
+        email,
       },
       where: {
         id: Number(params.id),
