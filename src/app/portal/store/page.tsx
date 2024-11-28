@@ -9,27 +9,31 @@ export default function PortalStore() {
       name: "Applenesia Batam",
       address: "Ruko Royal Sincom E-12, Batam, Kepulauan Riau, Indonesia",
       phone: "0857-3333-3723",
+      email: "id.applenesia@gmail.com",
       mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.164567947092!2d104.00998831523012!3d1.1112944991692655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d98bff567a33df%3A0xf112233445566778!2sApplenesia!5e0!3m2!1sen!2sid!4v1234567890123",
+        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.0630849942013!2d104.05329739999999!3d1.1148310999999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d989a3680c73ed%3A0x68e99d016e84f113!2sApplenesia%20-%20Apple%20Service%20Center%20Specialist!5e0!3m2!1sid!2sid!4v1732782142936!5m2!1sid!2sid",
       contactLink: "https://wa.me/6285733333723",
     },
     {
       id: 2,
-      name: "Applenesia Jakarta",
-      address: "Jl. MH Thamrin No. 10, Jakarta Pusat, Indonesia",
-      phone: "0812-3456-7890",
+      name: "Applenesia - Cabang Batu Aji",
+      address:
+        "Komplek Pertokoan Central Muka Kuning Blok A No.5, Kel. Buliang, Kec. Batu Aji, Kota Batam, Kep. Riau (Sebrang PStore SP - Deretan Dealer Yamaha)",
+      phone: "0813-7152-1277",
+      email: "baj.applenesia@gmail.com",
       mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125564.81358684583!2d106.70098790923984!3d-6.214620574895584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6993015eecaaa9%3A0xfabcde1234567890!2sApplenesia!5e0!3m2!1sen!2sid!4v9876543210123",
-      contactLink: "https://wa.me/6285733333723",
+        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.155177205756!2d103.9797193!3d1.0446498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d989f803e39073%3A0xbc343fb10b77c97a!2sApplenesia%20Batu%20Aji%20-%20Service%20iPhone%20Batam!5e0!3m2!1sid!2sid!4v1732782371813!5m2!1sid!2sid",
+      contactLink: "https://wa.me/6281371521277",
     },
     {
       id: 3,
-      name: "Applenesia Surabaya",
-      address: "Jl. Raya Darmo No. 5, Surabaya, Indonesia",
-      phone: "0851-2345-6789",
-      mapEmbed:
-        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.235659987184!2d112.73176381522679!3d-7.290493995154993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fdf9a78b8c65%3A0xf123456789abcdef!2sApplenesia!5e0!3m2!1sen!2sid!4v0123456789012",
-      contactLink: "https://wa.me/6285733333723",
+      name: "Applenesia - Cabang Tanjung Pinang",
+      address:
+        "Lokasi: Ruko ( Ex-PALUGADA ) (Antara Apotek Assyife dan Zovin Baby & Kids Shop) Jl.Raja Ali Haji 3, RT 001, RW011, Kel. Tanjung Ayun Sakti, Kec.Bukit Bestari .",
+      phone: "0813-7152-1266",
+      email: "tnj.applenesia@gmail.com",
+      mapEmbed: "",
+      contactLink: "https://wa.me/6281371521266",
     },
   ];
 
@@ -83,6 +87,8 @@ export default function PortalStore() {
                     </p>
                     <p>
                       <strong>Phone:</strong> {store.phone}
+                      <br />
+                      <strong>Email:</strong> {store.email}
                     </p>
                     <a
                       href={store.contactLink}
