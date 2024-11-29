@@ -79,6 +79,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
             message: resultDelete.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(`${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`);
         }
       } catch (error) {
@@ -267,6 +268,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );
@@ -279,6 +281,7 @@ const KategoriPage = ({ session }: { session: Session | null }) => {
                           isOpen={isEditOpen}
                           onClose={() => {
                             setIsEditOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );

@@ -94,6 +94,7 @@ const DevicePage = ({
             message: resultDelete.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(
             `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
           );
@@ -302,6 +303,7 @@ const DevicePage = ({
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
                             );
@@ -315,6 +317,7 @@ const DevicePage = ({
                           isOpen={isEditOpen}
                           onClose={() => {
                             setIsEditOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/device?device_type=${deviceType}&page=1`
                             );

@@ -264,6 +264,7 @@ const ProductInventoryPage = ({ session }: { session: Session | null }) => {
                           isOpen={isEditOpen}
                           onClose={() => {
                             setIsEditOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/category?page=1`
                             );

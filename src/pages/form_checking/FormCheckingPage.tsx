@@ -93,6 +93,7 @@ const FormCheckingPage = ({
             message: result.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(
             `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
           );

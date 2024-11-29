@@ -1,5 +1,5 @@
 import { authOptions } from "@/libs/AuthOptions";
-import CabangPage from "@/pages/cabang/CabangPages";
+import CabangPage from "@/pages/cabang/CabangPage";
 import { getServerSession } from "next-auth";
 
 type Session = {

@@ -127,6 +127,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
             message: result.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(
             `${process.env.NEXT_PUBLIC_API_URL}/api/service?branchaccess=${branchAccess}&page=1`
           );
@@ -187,6 +188,7 @@ const ServicePage = ({ session }: { session: Session | null }) => {
           message: result.message,
         });
         setCurrentPage(1);
+        setSearch("");
         mutate(
           `${process.env.NEXT_PUBLIC_API_URL}/api/service?branchaccess=${branchAccess}&page=1`
         );

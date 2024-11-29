@@ -143,6 +143,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
             message: resultDelete.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(
             `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
           );
@@ -210,6 +211,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
             message: resultResetPass.message,
           });
           setCurrentPage(1);
+          setSearch("");
           mutate(
             `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
           );
@@ -420,6 +422,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
                             );
@@ -433,6 +436,7 @@ const UserPage = ({ session }: { session: Session | null }) => {
                           isOpen={isEditOpen}
                           onClose={() => {
                             setIsEditOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/user?branchaccess=${branchAccess}&page=1`
                             );
