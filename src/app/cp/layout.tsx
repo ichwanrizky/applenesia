@@ -65,26 +65,10 @@ export default function RootLayout({
 
         <Script src="/themes/assets/js/jquery.min.js"></Script>
         <Script src="/themes/assets/js/bootstrap.bundle.min.js"></Script>
-        <Script src="/themes/assets/js/metismenu.min.js"></Script>
-        <Script src="/themes/assets/js/waves.js"></Script>
-        <Script src="/themes/assets/js/simplebar.min.js"></Script>
-        <Script src="/themes/assets/js/theme.js"></Script>
-
-        {/* Datatables */}
-        <Script src="/themes/plugins/datatables/jquery.dataTables.min.js"></Script>
-        <Script src="/themes/plugins/datatables/dataTables.bootstrap4.js"></Script>
-        <Script src="/themes/plugins/datatables/dataTables.responsive.min.js"></Script>
-        <Script src="/themes/plugins/datatables/responsive.bootstrap4.min.js"></Script>
-        <Script src="/themes/plugins/datatables/dataTables.buttons.min.js"></Script>
-        <Script src="/themes/plugins/datatables/buttons.bootstrap4.min.js"></Script>
-        <Script src="/themes/plugins/datatables/buttons.html5.min.js"></Script>
-        <Script src="/themes/plugins/datatables/buttons.flash.min.js"></Script>
-        <Script src="/themes/plugins/datatables/buttons.print.min.js"></Script>
-        <Script src="/themes/plugins/datatables/dataTables.keyTable.min.js"></Script>
-        <Script src="/themes/plugins/datatables/dataTables.select.min.js"></Script>
-        <Script src="/themes/plugins/datatables/pdfmake.min.js"></Script>
-        <Script src="/themes/plugins/datatables/vfs_fonts.js"></Script>
-        <Script src="/themes/assets/pages/datatables-demo.js"></Script>
+        <Script defer src="/themes/assets/js/metismenu.min.js"></Script>
+        <Script defer src="/themes/assets/js/waves.js"></Script>
+        <Script defer src="/themes/assets/js/simplebar.min.js"></Script>
+        <Script defer src="/themes/assets/js/theme.js"></Script>
       </body>
     </>
   );

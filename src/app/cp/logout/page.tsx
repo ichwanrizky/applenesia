@@ -3,19 +3,27 @@ import { signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
-export default function Redirect() {
+export default function Logout() {
   const { data: session, status }: any = useSession();
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      redirect("/console");
+      redirect("/cp");
     } else if (status === "authenticated") {
-      switch (session.user.role_name) {
-        case "ADMINISTRATOR":
-          redirect("/console/dashboard/cabang");
-      }
+      signOut({ redirect: true, callbackUrl: "/cp" });
+      handleLogout(session?.user?.accessToken);
     }
   }, [status]);
+
+  const handleLogout = async (accessToken: string) => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+  };
 
   if (status === "loading") {
     return (

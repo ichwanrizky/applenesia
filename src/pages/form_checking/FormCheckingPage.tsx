@@ -78,7 +78,10 @@ const FormCheckingPage = ({
     if (confirm("Delete this data?")) {
       setIsLoadingAction({ ...isLoadingAction, [id]: true });
       try {
-        const result = await deviceServices.deleteDevice(accessToken!, id);
+        const result = await formCheckingServices.deleteFormCheking(
+          accessToken!,
+          id
+        );
 
         if (!result.status) {
           setAlert({
