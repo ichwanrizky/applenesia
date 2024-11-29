@@ -7,7 +7,11 @@ import { accessLog } from "@/libs/AccessLog";
 export const GET = async (request: Request) => {
   try {
     const authorization = request.headers.get("Authorization");
-    const session = await checkSession(authorization, "form_checking", "GET");
+    const session = await checkSession(
+      authorization,
+      "MENU_FORMCHECKING",
+      "GET"
+    );
     if (!session[0]) {
       return new NextResponse(
         JSON.stringify({
@@ -34,7 +38,11 @@ export const GET = async (request: Request) => {
 
     const condition = {
       where: {
-        device_type_id: Number(device_type),
+        ...(device_type === "all"
+          ? {}
+          : {
+              device_type_id: Number(device_type),
+            }),
         ...(search && {
           OR: [
             {
@@ -107,80 +115,100 @@ export const GET = async (request: Request) => {
   }
 };
 
-// export const POST = async (request: Request) => {
-//   try {
-//     const authorization = request.headers.get("Authorization");
-//     const session = await checkSession(authorization);
-//     if (!session[0]) {
-//       return new NextResponse(
-//         JSON.stringify({
-//           status: false,
-//           message: "Unauthorized",
-//         }),
-//         {
-//           status: 401,
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-//     }
+export const POST = async (request: Request) => {
+  try {
+    const authorization = request.headers.get("Authorization");
+    const session = await checkSession(
+      authorization,
+      "MENU_FORMCHECKING",
+      "POST"
+    );
+    if (!session[0]) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
-//     const body = await request.json();
+    const body = await request.json();
 
-//     const name = body.name?.toUpperCase();
-//     const device_type_id = body.type;
+    const name = body.name?.toUpperCase();
+    const device_type_id = body.type;
 
-//     if (!name || !device_type_id) {
-//       return new NextResponse(
-//         JSON.stringify({ status: false, message: "Missing fields" }),
-//         {
-//           status: 500,
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-//     }
+    const missingFields = [
+      {
+        name: "form checking name",
+        value: name,
+      },
+      {
+        name: "device type",
+        value: device_type_id,
+      },
+    ]
+      .filter((item) => !item.value)
+      .map((item) => item.name);
 
-//     const create = await prisma.form_checking.create({
-//       data: {
-//         name,
-//         device_type_id,
-//       },
-//     });
+    if (missingFields.length > 0) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Missing fields: " + missingFields.join(", "),
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
-//     if (!create) {
-//       return new NextResponse(
-//         JSON.stringify({
-//           status: false,
-//           message: "Failed to create form checking",
-//         }),
-//         {
-//           status: 500,
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-//     }
+    const create = await prisma.form_checking.create({
+      data: {
+        name,
+        device_type_id,
+      },
+    });
 
-//     accessLog(`create form checking id: ${create.id}`, session[1].id);
+    if (!create) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Failed to create form checking",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
-//     return new NextResponse(
-//       JSON.stringify({
-//         status: true,
-//         message: "Success to create form checking",
-//         data: create,
-//       }),
-//       {
-//         status: 200,
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//   } catch (error) {
-//     return handleError(error);
-//   }
-// };
+    accessLog(`create form checking id: ${create.id}`, session[1].id);
+
+    return new NextResponse(
+      JSON.stringify({
+        status: true,
+        message: "Success to create form checking",
+        data: create,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    return handleError(error);
+  }
+};

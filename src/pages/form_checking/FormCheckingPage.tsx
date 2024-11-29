@@ -8,6 +8,7 @@ import React from "react";
 import deviceServices from "@/services/deviceServices";
 import CreateFormChecking from "./FormCheckingCreate";
 import EditFormChecking from "./FormCheckingEdit";
+import formCheckingServices from "@/services/formCheckingServices";
 
 type Session = {
   name: string;
@@ -39,7 +40,18 @@ type AlertProps = {
   message: string;
 };
 
-const FormCheckingPage = ({ session }: { session: Session | null }) => {
+type DeviceType = {
+  id: number;
+  name: string;
+};
+
+const FormCheckingPage = ({
+  session,
+  deviceTypeData,
+}: {
+  session: Session | null;
+  deviceTypeData: DeviceType[];
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
@@ -49,7 +61,7 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
   const [isLoadingAction, setIsLoadingAction] = useState<isLoadingProps>({});
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [deviceType, setDeviceType] = useState("");
+  const [deviceType, setDeviceType] = useState("all");
   const accessToken = session?.accessToken;
 
   useEffect(() => {
@@ -100,7 +112,10 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
   const handleEdit = async (id: number) => {
     setIsLoadingAction({ ...isLoadingAction, [id]: true });
     try {
-      const result = await deviceServices.getDeviceById(accessToken!, id);
+      const result = await formCheckingServices.getFormCheckingByID(
+        accessToken!,
+        id
+      );
       if (!result.status) {
         setAlert({
           status: true,
@@ -161,19 +176,18 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
               {!error && data?.status && (
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
-                    {/* <select
+                    <select
                       className="custom-select custom-select-sm w-auto mr-2"
                       onChange={(e) => setDeviceType(e.target.value)}
-                      value={
-                        deviceType === "" ? data.device_type[0]?.id : deviceType
-                      }
+                      value={deviceType === "all" ? "all" : deviceType}
                     >
-                      {data.device_type?.map((item: any, index: number) => (
+                      <option value="all">SEMUA</option>
+                      {deviceTypeData?.map((item, index: number) => (
                         <option value={item.id} key={index}>
                           {item.name?.toUpperCase()}
                         </option>
                       ))}
-                    </select> */}
+                    </select>
                     <input
                       className="form-control form-control-sm"
                       placeholder="Search"
@@ -296,12 +310,13 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
                           isOpen={isCreateOpen}
                           onClose={() => {
                             setIsCreateOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
+                          deviceTypeData={deviceTypeData}
                         />
                       )}
                       {isEditOpen && (
@@ -309,12 +324,13 @@ const FormCheckingPage = ({ session }: { session: Session | null }) => {
                           isOpen={isEditOpen}
                           onClose={() => {
                             setIsEditOpen(false);
+                            setSearch("");
                             mutate(
                               `${process.env.NEXT_PUBLIC_API_URL}/api/form_checking?device_type=${deviceType}&page=1`
                             );
                           }}
                           accessToken={accessToken!}
-                          deviceType={data.device_type as any}
+                          deviceTypeData={deviceTypeData}
                           editData={editData}
                         />
                       )}

@@ -7,7 +7,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  deviceType: {
+  deviceTypeData: {
     id: number;
     name: string;
   }[];
@@ -32,28 +32,25 @@ type AlertProps = {
 };
 
 const EditFormChecking = (props: Props) => {
-  const { isOpen, onClose, accessToken, deviceType, editData } = props;
+  const { isOpen, onClose, accessToken, deviceTypeData, editData } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState(editData?.name || "");
-  const [type, setType] = useState(editData?.device_type_id || "");
+  const [formData, setFormData] = useState({
+    name: editData?.name || "",
+    type: editData?.device_type_id || "",
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name,
-          type: Number(type),
-        };
-
         const result = await formCheckingServices.editFormCheking(
           accessToken,
           editData.id,
-          data
+          JSON.stringify(formData)
         );
 
         if (!result.status) {
@@ -99,11 +96,11 @@ const EditFormChecking = (props: Props) => {
             className="custom-select"
             id="device_type"
             required
-            onChange={(e) => setType(e.target.value)}
-            value={type}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+            value={formData.type}
           >
             <option value="">Pilih Tipe Device</option>
-            {deviceType?.map((item, index) => (
+            {deviceTypeData?.map((item, index) => (
               <option value={item.id} key={index}>
                 {item.name?.toUpperCase()}
               </option>
@@ -119,8 +116,8 @@ const EditFormChecking = (props: Props) => {
             className="form-control"
             style={{ textTransform: "uppercase" }}
             required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
           />
         </div>
       </Modal>

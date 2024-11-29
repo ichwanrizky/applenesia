@@ -1,8 +1,3 @@
-type DataFormChecking = {
-  name: string;
-  type: number;
-};
-
 const getFormCheckingByID = async (accessToken: string, id: number) => {
   try {
     const response = await fetch(`/api/form_checking/${id}`, {
@@ -17,24 +12,15 @@ const getFormCheckingByID = async (accessToken: string, id: number) => {
   }
 };
 
-const createFormChecking = async (
-  accessToken: string,
-  data: DataFormChecking
-) => {
+const createFormChecking = async (accessToken: string, data: string) => {
   try {
-    const name = data.name;
-    const type = data.type;
-
     const response = await fetch("/api/form_checking", {
       method: "POST",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        type,
-      }),
+      body: data,
     });
 
     const res = await response.json();
@@ -63,22 +49,16 @@ const deleteFormCheking = async (accessToken: string, id: number) => {
 const editFormCheking = async (
   accessToken: string,
   id: number,
-  data: DataFormChecking
+  data: string
 ) => {
   try {
-    const name = data.name;
-    const type = data.type;
-
     const response = await fetch(`/api/form_checking/${id}`, {
       method: "PUT",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name,
-        type,
-      }),
+      body: data,
     });
 
     const res = await response.json();

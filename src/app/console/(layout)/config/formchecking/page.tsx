@@ -1,5 +1,6 @@
 import { authOptions } from "@/libs/AuthOptions";
 import FormCheckingPage from "@/pages/form_checking/FormCheckingPage";
+import libServices from "@/services/libServices";
 import { getServerSession } from "next-auth";
 
 type Session = {
@@ -15,12 +16,26 @@ type UserSession = {
   userBranch: any;
 };
 
-export default async function Cabang() {
+const getDeviceType = async (accessToken: string) => {
+  try {
+    const result = await libServices.getDeviceType(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+export default async function FormChecking() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
   if (!session) {
     return null;
   }
+
+  const deviceType = await getDeviceType(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -40,7 +55,7 @@ export default async function Cabang() {
             </div>
           </div>
         </div>
-        <FormCheckingPage session={session.user} />
+        <FormCheckingPage session={session.user} deviceTypeData={deviceType} />
       </div>
     </div>
   );

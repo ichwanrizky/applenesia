@@ -87,6 +87,17 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    case "MENU_FORMCHECKING":
+      if (
+        method === "GET" ||
+        method === "POST" ||
+        method === "DELETE" ||
+        method === "PUT"
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
     // CATEGORY
     case "MENU_CATEGORY":
       if (
@@ -184,16 +195,7 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
-    case "form_checking":
-      if (
-        method === "GET" ||
-        method === "POST" ||
-        method === "DELETE" ||
-        method === "PUT"
-      ) {
-        return [true, decoded.data, null];
-      }
-      return [false, null, "unauthorized"];
+    //----------------------
 
     case "customer":
       if (method === "GET") {

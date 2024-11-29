@@ -7,7 +7,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   accessToken: string;
-  deviceType: {
+  deviceTypeData: {
     id: number;
     name: string;
   }[];
@@ -20,27 +20,24 @@ type AlertProps = {
 };
 
 const CreateFormChecking = (props: Props) => {
-  const { isOpen, onClose, accessToken, deviceType } = props;
+  const { isOpen, onClose, accessToken, deviceTypeData } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
-  const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "",
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirm("Add this data?")) {
       setIsLoading(true);
       try {
-        const data = {
-          name,
-          type: Number(type),
-        };
-
         const result = await formCheckingServices.createFormChecking(
           accessToken,
-          data
+          JSON.stringify(formData)
         );
 
         if (!result.status) {
@@ -71,47 +68,47 @@ const CreateFormChecking = (props: Props) => {
     }
   };
 
-  return (
-    isOpen && (
-      <Modal
-        modalTitle="Tambah Data"
-        onClose={onClose}
-        onSubmit={handleSubmit}
-        alert={alert}
-        isLoading={isLoading}
-      >
-        <div className="form-group">
-          <label htmlFor="device_type">Tipe Device</label>
-          <select
-            className="custom-select"
-            id="device_type"
-            required
-            onChange={(e) => setType(e.target.value)}
-            value={type}
-          >
-            <option value="">Pilih Tipe Device</option>
-            {deviceType?.map((item, index) => (
-              <option value={item.id} key={index}>
-                {item.name?.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </div>
+  if (!isOpen) return null;
 
-        <div className="form-group">
-          <label htmlFor="list_checking">List Checking</label>
-          <input
-            type="text"
-            id="list_checking"
-            className="form-control"
-            style={{ textTransform: "uppercase" }}
-            required
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-        </div>
-      </Modal>
-    )
+  return (
+    <Modal
+      modalTitle="Tambah Data"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      alert={alert}
+      isLoading={isLoading}
+    >
+      <div className="form-group">
+        <label htmlFor="device_type">Tipe Device</label>
+        <select
+          className="custom-select"
+          id="device_type"
+          required
+          onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+          value={formData.type}
+        >
+          <option value="">Pilih Tipe Device</option>
+          {deviceTypeData?.map((item, index) => (
+            <option value={item.id} key={index}>
+              {item.name?.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="list_checking">List Checking</label>
+        <input
+          type="text"
+          id="list_checking"
+          className="form-control"
+          style={{ textTransform: "uppercase" }}
+          required
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={formData.name}
+        />
+      </div>
+    </Modal>
   );
 };
 
