@@ -28,7 +28,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             {/*  */}
             <li className="menu-title">POINT OF SALE</li>
             <li>
-              <a href="/console/dashboard/service" className="waves-effect">
+              <a href="/cp/pos/service" className="waves-effect">
                 <i className="mdi mdi-toolbox" />
                 <span>Data Service</span>
               </a>
@@ -40,7 +40,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a href="/console/dashboard/product" className="waves-effect">
+                <a href="/cp/inventory/product" className="waves-effect">
                   <i className="mdi mdi-file-document-box" />
                   <span>Data Product</span>
                 </a>
@@ -52,7 +52,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "ADMINCABANG") && (
               <li>
                 <a
-                  href="/console/dashboard/productinventory"
+                  href="/cp/inventory/productinventory"
                   className="waves-effect"
                 >
                   <i className="mdi mdi-package" />
@@ -66,7 +66,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "ADMINCABANG") && (
               <li>
                 <a
-                  href="/console/dashboard/productpurchase"
+                  href="/cp/inventory/productpurchase"
                   className="waves-effect"
                 >
                   <i className="mdi mdi-cart" />
@@ -79,10 +79,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               role_name === "SUPERVISOR" ||
               role_name === "ADMINCABANG") && (
               <li>
-                <a
-                  href="/console/dashboard/productlog"
-                  className="waves-effect"
-                >
+                <a href="/cp/inventory/productlog" className="waves-effect">
                   <i className="mdi mdi-history" />
                   <span>Product LOG</span>
                 </a>
@@ -93,7 +90,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             <li className="menu-title">CONFIGURATION</li>
             {session.user.role_name === "ADMINISTRATOR" && (
               <li>
-                <a href="/console/config/cabang" className="waves-effect">
+                <a href="/cp/config/cabang" className="waves-effect">
                   <i className="mdi mdi mdi-office-building" />
                   <span>Data Cabang</span>
                 </a>
@@ -103,7 +100,7 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             {(session.user.role_name === "ADMINISTRATOR" ||
               session.user.role_name === "SUPERVISOR") && (
               <li>
-                <a href="/console/config/user" className="waves-effect">
+                <a href="/cp/config/user" className="waves-effect">
                   <i className="mdi mdi-account-multiple-outline" />
                   <span>Data User</span>
                 </a>
@@ -111,19 +108,19 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
             )}
 
             <li>
-              <a href="/console/config/device" className="waves-effect">
+              <a href="/cp/config/device" className="waves-effect">
                 <i className="mdi mdi-cellphone-android" />
                 <span>Data Device</span>
               </a>
             </li>
             <li>
-              <a href="/console/config/kategori" className="waves-effect">
+              <a href="/cp/config/kategori" className="waves-effect">
                 <i className="mdi mdi-format-list-checkbox" />
                 <span>Data Kategori</span>
               </a>
             </li>
             <li>
-              <a href="/console/config/formchecking" className="waves-effect">
+              <a href="/cp/config/formchecking" className="waves-effect">
                 <i className="mdi mdi-format-list-checkbox" />
                 <span>Data Form Check</span>
               </a>

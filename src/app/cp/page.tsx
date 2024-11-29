@@ -16,7 +16,7 @@ export default function Login({ searchParams }: { searchParams: any }) {
 
   const callbackUrl = searchParams?.callbackUrl
     ? searchParams?.callbackUrl
-    : "/console/redirect";
+    : "/cp/redirect";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
