@@ -106,6 +106,7 @@ const EditProduct = (props: Props) => {
       value: e.device.id,
       label: e.device.name?.toUpperCase(),
     })),
+    branch: editData?.branch.id,
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

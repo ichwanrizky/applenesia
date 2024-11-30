@@ -11,6 +11,7 @@ import libServices from "@/services/libServices";
 import SearchInput from "@/components/SearchInput";
 import productServices from "@/services/productServices";
 import EditProduct from "./ProductEdit";
+import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
 
 type Session = {
   name: string;
@@ -409,7 +410,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                                     )}`}
                                   </td>
                                   <td align="center" className="align-middle">
-                                    {`${item.warranty} Hari`}
+                                    {`${WarrantyDisplay(item.warranty)}`}
                                   </td>
                                 </tr>
                               ))
