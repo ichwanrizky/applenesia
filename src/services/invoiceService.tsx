@@ -31,6 +31,16 @@ const getInvoiceById = async (accessToken: string, invoice_id: string) => {
   }
 };
 
+const getInvoiceByUuid = async (invoice_uuid: string) => {
+  try {
+    const response = await fetch(`/api/portal/invoice/${invoice_uuid}`, {});
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const updatePayment = async (
   accessToken: string,
   invoice_id: string,
@@ -77,9 +87,26 @@ const updateInvoice = async (
   }
 };
 
+const deleteInvoice = async (accessToken: string, id: number) => {
+  try {
+    const response = await fetch(`/api/invoice/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   createInvoiceBulk,
   getInvoiceById,
   updatePayment,
   updateInvoice,
+  deleteInvoice,
+  getInvoiceByUuid,
 };

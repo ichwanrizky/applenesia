@@ -229,3 +229,86 @@ export const PUT = async (
     return handleError(error);
   }
 };
+
+export const DELETE = async (
+  request: Request,
+  { params }: { params: { id: string } }
+) => {
+  try {
+    const authorization = request.headers.get("Authorization");
+    const session = await checkSession(authorization, "MENU_INVOICE", "DELETE");
+    if (!session[0]) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Unauthorized",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    const role = session[1].role.name;
+    const user_branch = session[1].user_branch;
+
+    const deleteData = await prisma.invoice.update({
+      data: {
+        is_deleted: true,
+        invoice_service: {
+          deleteMany: {},
+        },
+      },
+      where: {
+        is_deleted: false,
+        id: Number(params.id),
+        ...(role === "ADMINISTRATOR"
+          ? {}
+          : {
+              branch_id: {
+                in: user_branch.map((item: any) => item.branch.id),
+              },
+            }),
+        payment_status: {
+          not: "PAID",
+        },
+      },
+    });
+
+    if (!deleteData) {
+      return new NextResponse(
+        JSON.stringify({
+          status: false,
+          message: "Failed to delete invoice",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    accessLog(`delete invoice id: ${deleteData.id}`, session[1].id);
+
+    return new NextResponse(
+      JSON.stringify({
+        status: true,
+        message: "Success to delete invoice",
+        data: deleteData,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    return handleError(error);
+  }
+};

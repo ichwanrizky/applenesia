@@ -238,7 +238,7 @@ const CreateServicePage = ({
             message: resultCreate.message,
           });
           setTimeout(() => {
-            push("/console/dashboard/service");
+            push("/cp/pos/service");
           }, 1000);
         }
       } catch (error) {

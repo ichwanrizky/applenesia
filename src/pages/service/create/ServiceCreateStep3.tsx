@@ -60,7 +60,6 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
   } = props;
 
   const [techncianData, setTechncianData] = useState([] as Technician[]);
-  const [serviceFinish, setServiceFinish] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(
     [] as SelectedProduct[]
@@ -412,7 +411,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
               type="button"
               className="btn btn-outline-primary btn-sm mb-2"
               onClick={() => {
-                if (formData.branch !== "" && serviceFinish) {
+                if (formData.branch !== "" ) {
                   setIsProductOpen(true);
                 } else {
                   handleAlert(true, "danger", "Pilih cabang terlebih dahulu");

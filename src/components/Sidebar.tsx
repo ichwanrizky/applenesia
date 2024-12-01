@@ -34,6 +34,14 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               </a>
             </li>
 
+            <li>
+              <a href="/cp/pos/invoice" className="waves-effect">
+                <i className="mdi mdi-file-document" />
+
+                <span>Data Invoice</span>
+              </a>
+            </li>
+
             {/*  */}
             <li className="menu-title">INVENTORY & PRODUCT</li>
             {(role_name === "ADMINISTRATOR" ||

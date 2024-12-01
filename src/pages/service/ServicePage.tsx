@@ -405,14 +405,16 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                               items.map((item: Service, index: number) => (
                                 <tr key={index}>
                                   <td align="center" className="align-middle">
-                                    <CustomButton
-                                      buttonType="delete"
-                                      indexData={index}
-                                      isLoading={isLoadingAction[item.id]}
-                                      onDelete={() => handleDelete(item.id)}
-                                    >
-                                      <i className="mdi mdi-trash-can-outline" />
-                                    </CustomButton>
+                                    {item.invoice_service.length === 0 && (
+                                      <CustomButton
+                                        buttonType="delete"
+                                        indexData={index}
+                                        isLoading={isLoadingAction[item.id]}
+                                        onDelete={() => handleDelete(item.id)}
+                                      >
+                                        <i className="mdi mdi-trash-can-outline" />
+                                      </CustomButton>
+                                    )}
                                   </td>
                                   <td align="center" className="align-middle">
                                     <button

@@ -1,6 +1,6 @@
 import Script from "next/script";
 
-export default function RootLayout({
+export default function CpLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

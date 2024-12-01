@@ -8,4 +8,9 @@ export function mainMiddleware(request: NextRequest) {
   return res;
 }
 
-export default withAuth(mainMiddleware, ["/cp/dashboard", "/cp/config"]);
+export default withAuth(mainMiddleware, [
+  "/cp/dashboard",
+  "/cp/config",
+  "/cp/pos",
+  "/cp/inventory",
+]);

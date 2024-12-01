@@ -178,7 +178,7 @@ export const checkSession = async (
 
     // INVOICE
     case "MENU_INVOICE":
-      if (method === "GET" || method === "PUT") {
+      if (method === "GET" || method === "PUT" || method === "DELETE") {
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];

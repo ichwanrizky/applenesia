@@ -440,10 +440,10 @@ const DetailServicePage = ({
         setTimeout(() => {
           if (isCreateInvoice) {
             push(
-              `/console/dashboard/invoice/${resultUpdate.data.invoice_number}`
+              `/cp/pos/invoice/${resultUpdate.data.invoice_number}`
             );
           } else {
-            push("/console/dashboard/service");
+            push("/cp/pos/service");
           }
         }, 1000);
       } catch (error) {
