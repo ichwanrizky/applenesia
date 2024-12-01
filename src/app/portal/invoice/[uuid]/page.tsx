@@ -1,7 +1,10 @@
+"use client";
 import CpLayout from "@/app/cp/layout";
 import DetailInvoicePortal from "@/components/portal/DetailInvoicePortal";
+import Script from "next/script";
+import { Suspense } from "react";
 
-export default async function ServiceDetail({
+export default function ServiceDetail({
   params,
 }: {
   params: { uuid: string };
@@ -10,7 +13,9 @@ export default async function ServiceDetail({
     <CpLayout>
       <div className="page-content">
         <div className="container-fluid">
-          <DetailInvoicePortal uuid={params.uuid} />
+          <Suspense fallback={<p>Loading invoice details...</p>}>
+            <DetailInvoicePortal uuid={params.uuid} />
+          </Suspense>
         </div>
       </div>
     </CpLayout>
