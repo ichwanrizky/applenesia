@@ -112,11 +112,11 @@ export const checkSession = async (
 
     // PRODUCT
     case "MENU_PRODUCT":
+      if (method === "GET") {
+        return [true, decoded.data, null];
+      }
       if (
-        (method === "GET" ||
-          method === "POST" ||
-          method === "DELETE" ||
-          method === "PUT") &&
+        (method === "POST" || method === "DELETE" || method === "PUT") &&
         (role_name === "ADMINISTRATOR" ||
           role_name === "SUPERVISOR" ||
           role_name === "ADMINCABANG")
@@ -166,11 +166,15 @@ export const checkSession = async (
 
     // SERVICE
     case "MENU_SERVICE":
+      if (method === "GET" || method === "POST" || method === "PUT") {
+        return [true, decoded.data, null];
+      }
+
       if (
-        method === "GET" ||
-        method === "POST" ||
-        method === "DELETE" ||
-        method === "PUT"
+        method === "DELETE" &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "ADMINCABANG" ||
+          role_name === "SUPERVISOR")
       ) {
         return [true, decoded.data, null];
       }
@@ -178,7 +182,15 @@ export const checkSession = async (
 
     // INVOICE
     case "MENU_INVOICE":
-      if (method === "GET" || method === "PUT" || method === "DELETE") {
+      if (method === "GET" || method === "PUT") {
+        return [true, decoded.data, null];
+      }
+      if (
+        method === "DELETE" &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "ADMINCABANG" ||
+          role_name === "SUPERVISOR")
+      ) {
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];
@@ -190,7 +202,12 @@ export const checkSession = async (
       return [false, null, "unauthorized"];
 
     case "MENU_INVOICE_PAYMENT":
-      if (method === "PUT") {
+      if (
+        method === "PUT" &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "ADMINCABANG" ||
+          role_name === "SUPERVISOR")
+      ) {
         return [true, decoded.data, null];
       }
       return [false, null, "unauthorized"];

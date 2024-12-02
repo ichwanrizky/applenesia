@@ -202,30 +202,40 @@ export const PUT = async (
       );
     }
 
-    const update = await prisma.user.update({
-      data: {
-        name,
-        username,
-        telp,
-        role: {
-          connect: {
-            id: Number(roleUser),
+    const updateData = await prisma.$transaction(async (prisma) => {
+      const updateUser = await prisma.user.update({
+        data: {
+          name,
+          username,
+          telp,
+          role: {
+            connect: {
+              id: Number(roleUser),
+            },
+          },
+          user_branch: {
+            deleteMany: {},
+            create: manageBranch?.map((item: any) => ({
+              branch_id: Number(item.value),
+            })),
           },
         },
-        user_branch: {
-          deleteMany: {},
-          create: manageBranch?.map((item: any) => ({
-            branch_id: Number(item.value),
-          })),
+        where: {
+          id: Number(params.id),
+          is_deleted: false,
         },
-      },
-      where: {
-        id: Number(params.id),
-        is_deleted: false,
-      },
+      });
+
+      await prisma.token.deleteMany({
+        where: {
+          user_id: Number(params.id),
+        },
+      });
+
+      return { updateUser };
     });
 
-    if (!update) {
+    if (!updateData.updateUser) {
       return new NextResponse(
         JSON.stringify({ status: false, message: "Failed to update user" }),
         {
@@ -237,13 +247,13 @@ export const PUT = async (
       );
     }
 
-    accessLog(`update user id: ${update.id}`, session[1].id);
+    accessLog(`update user id: ${updateData.updateUser.id}`, session[1].id);
 
     return new NextResponse(
       JSON.stringify({
         status: true,
         message: "Success to update user",
-        data: update,
+        data: updateData.updateUser,
       }),
       {
         status: 200,

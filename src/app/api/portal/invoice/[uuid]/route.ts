@@ -7,7 +7,6 @@ export const GET = async (
   { params }: { params: { uuid: string } }
 ) => {
   try {
-    console.log(params.uuid);
     const data = await prisma.invoice.findFirst({
       include: {
         invoice_payment: {
