@@ -41,6 +41,9 @@ export const GET = async (
       where: {
         id: Number(params.id),
         is_deleted: false,
+        username: {
+          not: "ichwan",
+        },
         ...(role === "ADMINISTRATOR"
           ? {}
           : {

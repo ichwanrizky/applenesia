@@ -61,6 +61,9 @@ export const GET = async (request: Request) => {
     const condition = {
       where: {
         is_deleted: false,
+        username: {
+          not: "ichwan",
+        },
         ...(role === "ADMINISTRATOR"
           ? {
               ...(branchaccess === "all"
