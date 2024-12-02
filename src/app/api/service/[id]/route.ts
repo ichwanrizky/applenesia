@@ -387,7 +387,7 @@ export const PUT = async (
         )}*\n` +
         `📅 *Status Pembayaran*: *${updateData.createdInvoice.payment_status}*\n\n` +
         `Untuk melihat detail invoice Anda, silakan klik tautan di bawah ini:\n` +
-        `🔗 *https://yourcompany.com/invoice/${updateData.createdInvoice.invoice_number}*\n\n` +
+        `🔗 *${process.env.INVOICE_URL}/${updateData.createdInvoice.invoice_number}*\n\n` +
         `Mohon segera melakukan pembayaran sebelum tanggal jatuh tempo untuk menghindari denda keterlambatan. Jika Anda sudah melakukan pembayaran, abaikan pesan ini.\n\n` +
         `Terima kasih atas kepercayaan Anda kepada kami.\n\n` +
         `Salam,\n` +
