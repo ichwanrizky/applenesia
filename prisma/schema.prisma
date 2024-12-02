@@ -47,6 +47,7 @@ model user {
   service_user_created service[]          @relation("service_user_created")
   invoice              invoice[]          @relation("invoice_user_created")
   invoice_payment      invoice_payment[]
+  Transaction          Transaction[]
 }
 
 model branch {
@@ -63,6 +64,7 @@ model branch {
   cash_flow   cash_flow[]
   service     service[]
   invoice     invoice[]
+  Transaction Transaction[]
 
   @@index([uuid], map: "branch_uuid")
 }
@@ -131,6 +133,7 @@ model payment_method {
   product_purchase product_purchase[]
   cash_flow        cash_flow[]
   invoice_payment  invoice_payment[]
+  Transaction      Transaction[]
 }
 
 model product {
@@ -397,4 +400,19 @@ enum payment_status {
   UNPAID
   PARTIAL
   PAID
+}
+
+model Transaction {
+  id           Int            @id @default(autoincrement())
+  desc         String?
+  payment_id   Int
+  payment      payment_method @relation(fields: [payment_id], references: [id])
+  nominal      Int            @default(0)
+  type         String
+  created_at   DateTime       @db.DateTime(0)
+  created_by   Int
+  user_created user           @relation(fields: [created_by], references: [id])
+  branch_id    Int
+  branch       branch         @relation(fields: [branch_id], references: [id])
+  is_deleted   Boolean        @default(false)
 }

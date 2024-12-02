@@ -118,6 +118,7 @@ export const PUT = async (
               payment: true,
             },
           },
+          branch_id: true,
         },
         data: {
           amount: {
@@ -139,6 +140,18 @@ export const PUT = async (
         where: {
           invoice_number: params.id,
         },
+      });
+
+      await prisma.transaction.createMany({
+        data: payment_data.map((item: any) => ({
+          desc: `Payment invoice ${updateInvoice.invoice_number}`,
+          payment_id: Number(item.paymentId),
+          nominal: item.nominal,
+          created_at: formattedDateNow(),
+          created_by: session[1].id,
+          branch_id: updateInvoice.branch_id,
+          type: "INCOME",
+        })),
       });
 
       return updateInvoice;

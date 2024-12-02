@@ -42,6 +42,19 @@ const SidebarAdmin = ({ session }: { session: Session }) => {
               </a>
             </li>
 
+            {(role_name === "ADMINISTRATOR" ||
+              role_name === "SUPERVISOR" ||
+              role_name === "ADMINCABANG" ||
+              role_name === "CASHIER") && (
+              <li>
+                <a href="/cp/pos/transaction" className="waves-effect">
+                  <i className="mdi mdi-cart" />
+
+                  <span>Data Transaction</span>
+                </a>
+              </li>
+            )}
+
             {/*  */}
             <li className="menu-title">INVENTORY & PRODUCT</li>
             <li>

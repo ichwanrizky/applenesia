@@ -212,6 +212,21 @@ export const checkSession = async (
       }
       return [false, null, "unauthorized"];
 
+    // TRANSACTION
+    case "MENU_TRANSACTION":
+      if (
+        method === "GET" &&
+        (role_name === "ADMINISTRATOR" ||
+          role_name === "ADMINCABANG" ||
+          role_name === "CASHIER" ||
+          role_name === "SUPERVISOR")
+      ) {
+        return [true, decoded.data, null];
+      }
+      return [false, null, "unauthorized"];
+
+      return [false, null, "unauthorized"];
+
     //----------------------
 
     case "customer":

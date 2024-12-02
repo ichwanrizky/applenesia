@@ -469,7 +469,8 @@ const ServicePage = ({ session }: { session: Session | null }) => {
                                         {item.invoice_service[0].invoice.invoice_number?.toUpperCase()}
                                       </span>
                                     ) : (
-                                      (item.service_status_id === 3 ||
+                                      (item.service_status_id === 2 ||
+                                        item.service_status_id === 3 ||
                                         item.service_status_id === 4) && (
                                         <input
                                           type="checkbox"
