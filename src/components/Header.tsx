@@ -59,36 +59,23 @@ const HeaderAdmin = ({ session }: { session: Session }) => {
                 <a
                   className="dropdown-item d-flex align-items-center justify-content-between"
                   href="#"
-                >
-                  <span>Inbox</span>
-                  <span>
-                    <span className="badge badge-pill badge-info">3</span>
-                  </span>
-                </a>
-                <a
-                  className="dropdown-item d-flex align-items-center justify-content-between"
-                  href="#"
+                  style={{
+                    pointerEvents: "none",
+                    cursor: "not-allowed",
+                    opacity: 0.6,
+                  }}
                 >
                   <span>Profile</span>
                   <span>
-                    <span className="badge badge-pill badge-warning">1</span>
+                    <span className="badge badge-pill badge-warning">
+                      INCOMING
+                    </span>
                   </span>
                 </a>
+
                 <a
                   className="dropdown-item d-flex align-items-center justify-content-between"
-                  href="#"
-                >
-                  Settings
-                </a>
-                <a
-                  className="dropdown-item d-flex align-items-center justify-content-between"
-                  href="#"
-                >
-                  <span>Lock Account</span>
-                </a>
-                <a
-                  className="dropdown-item d-flex align-items-center justify-content-between"
-                  href="#"
+                  href="/cp/logout"
                 >
                   <span>Log Out</span>
                 </a>

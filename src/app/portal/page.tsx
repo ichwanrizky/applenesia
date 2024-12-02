@@ -474,8 +474,6 @@ export default function Portal() {
                               <button
                                 type="button"
                                 className="btn btn-outline-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#iphoneModal"
                               >
                                 Cek Harga Service
                               </button>
@@ -503,8 +501,6 @@ export default function Portal() {
                               <button
                                 type="button"
                                 className="btn btn-outline-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#iphoneModal"
                               >
                                 Cek Harga Service
                               </button>
@@ -528,8 +524,6 @@ export default function Portal() {
                               <button
                                 type="button"
                                 className="btn btn-outline-primary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#iphoneModal"
                               >
                                 Cek Harga Service
                               </button>
