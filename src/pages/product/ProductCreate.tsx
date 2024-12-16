@@ -52,6 +52,7 @@ const CreateProduct = (props: Props) => {
     warranty: 0,
     is_pos: "",
     is_invent: "",
+    is_show_portal: "",
     product_type: "",
     category: [],
     device: [],
@@ -354,6 +355,25 @@ const CreateProduct = (props: Props) => {
           value={formData.is_invent}
           onChange={(e) =>
             setFormData({ ...formData, is_invent: e.target.value })
+          }
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_is_show_portal">
+          Tampilkan Di Kalkulator Service?
+        </label>
+        <select
+          id="product_is_show_portal"
+          className="custom-select"
+          required
+          value={formData.is_show_portal}
+          onChange={(e) =>
+            setFormData({ ...formData, is_show_portal: e.target.value })
           }
         >
           <option value="">--PILIH--</option>

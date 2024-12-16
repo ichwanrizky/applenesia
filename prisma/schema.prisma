@@ -145,6 +145,7 @@ model product {
   warranty         Int                @default(0)
   is_inventory     Boolean            @default(false)
   is_pos           Boolean            @default(false)
+  is_show_portal   Boolean            @default(false)
   product_type     product_type
   created_at       DateTime           @db.DateTime(0)
   is_deleted       Boolean            @default(false)

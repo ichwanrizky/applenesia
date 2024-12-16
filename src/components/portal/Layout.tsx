@@ -13,10 +13,34 @@ export default function PortalLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <meta content="Service iPhone" name="description" />
-        <meta content="MyraStudio" name="author" />
+        <meta
+          name="description"
+          content="Servis iPhone di Applenesia, Pusat Servis Apple terkemuka. Layanan perbaikan tepercaya dan dukungan ahli untuk perangkat Apple."
+        />
+        <meta name="author" content="Applenesia" />
+        <meta
+          name="keywords"
+          content="Apple service center, iPhone repair, MacBook repair, iWatch service, iPad repair, Apple support, Applenesia, Apple service, Apple care, professional Apple repair, service iPhone, service MacBook, service iWatch, service iPad"
+        />
+        <meta name="robots" content="index, follow" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <link rel="shortcut icon" href="/themes/assets/images/favicon.ico" />
+
+        {/* Open Graph Metadata */}
+        <meta property="og:title" content="Applenesia | Apple Service Center" />
+        <meta
+          property="og:description"
+          content="Discover Applenesia, the trusted Apple Service Center for expert repairs and support for all your Apple devices. Visit us today!"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.applenesia.com/" />
+        <meta
+          property="og:image"
+          content="https://www.applenesia.com/portal/assets/images_apn/1.png"
+        />
+        <meta property="og:site_name" content="Applenesia" />
+
+        <title>Applenesia | Apple Service Center</title>
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
         <link
           rel="stylesheet"
           href="/portal/assets/css/vendor/bootstrap.min.css"

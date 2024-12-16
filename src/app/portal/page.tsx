@@ -114,7 +114,7 @@ export default function Portal() {
                       Estimasi Biaya <i className="icofont-double-right"></i>
                     </a>
                     <a
-                      href="https://wa.me/628117779914"
+                      href="https://wa.me/6285733333723"
                       className="btn btn-success p-3"
                       target="_blank"
                     >

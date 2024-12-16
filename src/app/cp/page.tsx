@@ -49,7 +49,7 @@ export default function Login({ searchParams }: { searchParams: any }) {
 
   return (
     <>
-      <title> Login - Applenesia</title>
+      <title>Login | Dashboard Applenesia</title>
       <div className="container">
         <div className="row">
           <div className="col-12">

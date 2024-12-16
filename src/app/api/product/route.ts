@@ -223,6 +223,7 @@ export const POST = async (request: Request) => {
     const warranty = body.warranty;
     const is_pos = body.is_pos;
     const is_invent = body.is_invent;
+    const is_show_portal = body.is_show_portal;
     const product_type = body.product_type;
     const category = body.category;
     const device = body.device;
@@ -235,6 +236,7 @@ export const POST = async (request: Request) => {
       { name: "warranty", value: warranty },
       { name: "is pos", value: is_pos },
       { name: "is invent", value: is_invent },
+      { name: "is show portal", value: is_show_portal },
       { name: "product type", value: product_type },
       { name: "category", value: category },
       { name: "device", value: device },
@@ -291,6 +293,7 @@ export const POST = async (request: Request) => {
         warranty,
         is_pos: is_pos === "1" ? true : false,
         is_inventory: is_invent === "1" ? true : false,
+        is_show_portal: is_show_portal === "1" ? true : false,
         product_type,
         product_category: {
           create: category?.map((item: any) => ({

@@ -25,6 +25,7 @@ type Product = {
   warranty: number;
   is_inventory: boolean;
   is_pos: boolean;
+  is_show_portal: boolean;
   product_type: string;
   created_at: Date;
   is_deleted: boolean;
@@ -97,6 +98,7 @@ const EditProduct = (props: Props) => {
     warranty: editData?.warranty || 0,
     is_pos: editData?.is_pos ? "1" : "0",
     is_invent: editData?.is_inventory ? "1" : "0",
+    is_show_portal: editData?.is_show_portal ? "1" : "0",
     product_type: editData?.product_type || "",
     category: editData?.product_category.map((e) => ({
       value: e.category.id,
@@ -386,6 +388,25 @@ const EditProduct = (props: Props) => {
             setFormData({ ...formData, is_invent: e.target.value })
           }
           value={formData.is_invent}
+        >
+          <option value="">--PILIH--</option>
+          <option value="1">YA</option>
+          <option value="0">TIDAK</option>
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="product_is_show_portal">
+          Tampilkan Di Kalkulator Service?
+        </label>
+        <select
+          id="product_is_show_portal"
+          className="custom-select"
+          required
+          value={formData.is_show_portal}
+          onChange={(e) =>
+            setFormData({ ...formData, is_show_portal: e.target.value })
+          }
         >
           <option value="">--PILIH--</option>
           <option value="1">YA</option>

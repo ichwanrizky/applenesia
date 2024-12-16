@@ -37,6 +37,7 @@ type Product = {
   warranty: number;
   is_inventory: boolean;
   is_pos: boolean;
+  is_show_portal: boolean;
   product_type: string;
   created_at: Date;
   is_deleted: boolean;

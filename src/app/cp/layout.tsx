@@ -16,8 +16,7 @@ export default function CpLayout({
         <meta content="Service iPhone" name="description" />
         <meta content="MyraStudio" name="author" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        {/* App favicon */}
-        <link rel="shortcut icon" href="/themes/assets/images/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon/favicon.ico" />
         {/* App css */}
         <link
           href="/themes/assets/css/bootstrap.min.css"

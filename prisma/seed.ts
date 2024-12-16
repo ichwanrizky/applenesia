@@ -1,217 +1,432 @@
 import { formattedDateNow } from "../src/libs/DateFormat";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, product_type } from "@prisma/client";
 
 const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.$transaction(async (prisma) => {
-    await prisma.role.deleteMany({}),
-      await prisma.device_type.deleteMany({}),
-      await prisma.user.deleteMany({}),
-      await prisma.branch.deleteMany({}),
-      await prisma.payment_method.deleteMany({}),
-      await prisma.service_status.deleteMany({}),
-      await prisma.category.deleteMany({}),
-      //
-      await prisma.category.createMany({
-        data: [
-          {
-            name: "AKSESORIS",
-          },
-          {
-            name: "BATTTERY",
-          },
-          {
-            name: "HOUSING",
-          },
-          {
-            name: "LCD",
-          },
-        ],
-      }),
-      await prisma.service_status.createMany({
-        data: [
-          {
-            id: 1,
-            name: "service masuk - barang ditinggal",
-            label_color: "info",
-          },
-          {
-            id: 2,
-            name: "service masuk - langsung",
-            label_color: "info",
-          },
-          {
-            id: 3,
-            name: "service selesai - barang sudah diambil",
-            label_color: "success",
-          },
-          {
-            id: 4,
-            name: "service selesai - barang belum diambil",
-            label_color: "warning",
-          },
-          {
-            id: 5,
-            name: "service batal",
-            label_color: "danger",
-          },
-        ],
-      });
-    await prisma.role.createMany({
-      data: [
-        {
-          id: 1,
-          name: "ADMINISTRATOR",
-        },
-        {
-          id: 2,
-          name: "ADMINCABANG",
-        },
-        {
-          id: 3,
-          name: "CASHIER",
-        },
-        {
-          id: 4,
-          name: "TEKNISI",
-        },
-        {
-          id: 5,
-          name: "SUPERVISOR",
-        },
-      ],
-    });
+  const data = [
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 1 }],
+      sell_price: 650000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 2 }],
+      sell_price: 850000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 3 }],
+      sell_price: 950000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 4 }],
+      sell_price: 1150000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 5 }],
+      sell_price: 1300000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 6 }],
+      sell_price: 1500000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 7 }],
+      sell_price: 1550000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 8 }],
+      sell_price: 1750000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 9 }],
+      sell_price: 1850000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 10 }],
+      sell_price: 1900000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 11 }],
+      sell_price: 1950000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 12 }],
+      sell_price: 2100000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 13 }],
+      sell_price: 2300000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 14 }, { id: 15 }],
+      sell_price: 2500000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 16 }],
+      sell_price: 2700000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 17 }],
+      sell_price: 2900000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 18 }],
+      sell_price: 3000000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 19 }],
+      sell_price: 1800000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 20 }],
+      sell_price: 3100000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 21 }],
+      sell_price: 3300000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 22 }],
+      sell_price: 3500000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 23 }],
+      sell_price: 3800000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 24 }],
+      sell_price: 4000000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 25 }],
+      sell_price: 4300000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 26 }, { id: 27 }],
+      sell_price: 4500000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 28 }],
+      sell_price: 4800000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 29 }],
+      sell_price: 5100000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+    {
+      name: "SWAP BOARD",
+      product_type: "MACHINE",
+      category: {
+        id: 17,
+      },
+      device_type: "IPHONE",
+      device: [{ id: 30 }],
+      sell_price: 5400000,
+      warranty: 90,
+      is_pos: true,
+      is_inventory: false,
+      is_show_portal: true,
+    },
+  ];
 
-    await prisma.device_type.createMany({
-      data: [
-        {
-          id: 1,
-          name: "iphone",
-        },
-        {
-          id: 2,
-          name: "ipad",
-        },
-        {
-          id: 3,
-          name: "macbook",
-        },
-        {
-          id: 4,
-          name: "iwatch",
-        },
-      ],
-    });
-
-    await prisma.payment_method.createMany({
-      data: [
-        {
-          id: 1,
-          name: "double payment",
-        },
-        {
-          id: 2,
-          name: "CASH",
-        },
-        {
-          id: 3,
-          name: "BNI",
-        },
-        {
-          id: 4,
-          name: "BCA",
-        },
-        {
-          id: 5,
-          name: "MANDIRI",
-        },
-      ],
-    });
-
-    const branch = await prisma.branch.createMany({
-      data: [
-        {
-          id: 1,
-          name: "APPLENESIA BATAM CENTER",
-          address:
-            "Ruko Royal Sincom Blok E No. 9, Tlk. Tering, Kota Batam, Kepulauan Riau 29431 (Sebrang Panasonic - Deretan Tarempa)",
-          alias: "BTC",
-          telp: "085733333723",
-        },
-        {
-          id: 2,
-          name: "APPLENESIA BATU AJI",
-          address:
-            "Komplek Pertokoan Central Muka Kuning Blok A No.5, Kel. Buliang, Kec. Batu Aji, Kota Batam, Kep. Riau (Sebrang PStore SP - Deretan Dealer Yamaha)",
-          alias: "BAJ",
-          telp: "081371521277",
-        },
-        {
-          id: 3,
-          name: "APPLENESIA TG. PINAG",
-          address:
-            "Ruko ( Ex-PALUGADA ) (Antara Apotek Assyife dan Zovin Baby & Kids Shop) Jl.Raja Ali Haji 3, RT 001, RW011, Kel. Tanjung Ayun Sakti, Kec.Bukit Bestari",
-          alias: "TGP",
-          telp: "081371521266",
-        },
-      ],
-    });
-
-    const user = await prisma.user.createMany({
-      data: [
-        {
-          id: 1,
-          username: "ichwan",
-          password: await bcrypt.hash("ichwan", 10),
-          name: "Ichwan Rizky",
-          telp: "08117779914",
-          role_id: 1,
-          created_at: formattedDateNow(),
-        },
-        {
-          username: "admincabang",
-          password: await bcrypt.hash("admincabang", 10),
-          name: "EX ADMIN CABANG",
-          telp: "08117779914",
-          role_id: 2,
-          created_at: formattedDateNow(),
-        },
-        {
-          username: "cashier",
-          password: await bcrypt.hash("cashier", 10),
-          name: "EX CASHIER",
-          telp: "08117779914",
-          role_id: 3,
-          created_at: formattedDateNow(),
-        },
-        {
-          username: "teknisi",
-          password: await bcrypt.hash("teknisi", 10),
-          name: "EX TEKNISI",
-          telp: "08117779914",
-          role_id: 4,
-          created_at: formattedDateNow(),
-        },
-        {
-          username: "supervisor",
-          password: await bcrypt.hash("supervisor", 10),
-          name: "EX SUPERVISOR",
-          telp: "08117779914",
-          role_id: 5,
-          created_at: formattedDateNow(),
-        },
-      ],
-    });
-
-    await prisma.user_branch.create({
+  for (let i = 0; i < data.length; i++) {
+    await prisma.product.create({
       data: {
-        user_id: 1,
+        name: data[i].name,
+        sell_price: data[i].sell_price,
+        warranty: data[i].warranty,
+        is_pos: data[i].is_pos,
+        is_inventory: data[i].is_inventory,
+        is_show_portal: data[i].is_show_portal,
+        product_type: data[i].product_type as product_type,
+        product_category: {
+          create: [
+            {
+              category_id: data[i].category.id,
+            },
+          ],
+        },
+        product_device: {
+          create: data[i].device?.map((item: any) => ({
+            device_id: item.id,
+          })),
+        },
+        created_at: formattedDateNow(),
         branch_id: 1,
       },
     });
-  });
+  }
 }
 
 main()
