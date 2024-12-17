@@ -27,9 +27,22 @@ export const GET = async (request: Request) => {
 
     const data = await prisma.device.findMany({
       where: {
-        device_type_id: Number(type),
+        ...(type === "all"
+          ? {}
+          : {
+              device_type_id: Number(type),
+            }),
       },
-      orderBy: { id: "asc" },
+      orderBy: [
+        {
+          device_type: {
+            name: "asc",
+          },
+        },
+        {
+          id: "asc",
+        },
+      ],
     });
 
     if (!data) {

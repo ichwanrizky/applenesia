@@ -32,6 +32,8 @@ export const GET = async (request: Request) => {
     const page = searchParams.get("page");
     // branch access
     const branchaccess = searchParams.get("branchaccess");
+    // selected device
+    const device = searchParams.get("device");
 
     const role = session[1].role.name;
     const user_branch = session[1].user_branch;
@@ -57,9 +59,22 @@ export const GET = async (request: Request) => {
       );
     }
 
+    const deviceData = device ? JSON.parse(device) : [];
+
     const condition = {
       where: {
         is_deleted: false,
+        ...(deviceData.length > 0 && {
+          product_device: {
+            some: {
+              device: {
+                id: {
+                  in: deviceData.map((item: { value: number }) => item.value),
+                },
+              },
+            },
+          },
+        }),
         ...(role === "ADMINISTRATOR"
           ? {
               ...(branchaccess === "all"

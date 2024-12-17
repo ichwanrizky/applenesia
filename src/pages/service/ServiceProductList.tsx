@@ -1,6 +1,7 @@
 "use client";
 import CustomAlert from "@/components/CustomAlert";
 import CustomButton from "@/components/CustomButton";
+import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
@@ -265,7 +266,7 @@ const ServiceProductList = (props: Props) => {
                                       <td>:</td>
                                       <td>
                                         {item.warranty > 0
-                                          ? `${item.warranty} Hari`
+                                          ? `${WarrantyDisplay(item.warranty)}`
                                           : "Tidak Ada"}
                                       </td>
                                     </tr>

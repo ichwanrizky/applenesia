@@ -136,6 +136,23 @@ const getTechnician = async (accessToken: string, branch: number) => {
   }
 };
 
+const getDevice = async (accessToken: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/libs/device?type=all`,
+      {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   getDeviceType,
   getCategory,
@@ -145,4 +162,5 @@ export default {
   getFormCheck,
   getCabang,
   getTechnician,
+  getDevice,
 };

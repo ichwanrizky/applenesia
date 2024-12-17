@@ -12,6 +12,7 @@ import SearchInput from "@/components/SearchInput";
 import productServices from "@/services/productServices";
 import EditProduct from "./ProductEdit";
 import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
+import Select from "react-select";
 
 type Session = {
   name: string;
@@ -79,7 +80,16 @@ type AlertProps = {
   message: string;
 };
 
-const ProductPage = ({ session }: { session: Session | null }) => {
+const ProductPage = ({
+  session,
+  deviceData,
+}: {
+  session: Session | null;
+  deviceData: {
+    id: number;
+    name: string;
+  }[];
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
@@ -98,6 +108,7 @@ const ProductPage = ({ session }: { session: Session | null }) => {
       ? session?.userBranch[0].branch.id?.toString()
       : ""
   );
+  const [selectedDevice, setSelectedDevice] = useState([] as any);
 
   const accessToken = session?.accessToken;
 
@@ -245,8 +256,16 @@ const ProductPage = ({ session }: { session: Session | null }) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/product?branchaccess=${branchAccess}&page=${currentPage}&search=${debouncedSearch}`,
+      ? `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/product?branchaccess=${branchAccess}&page=${currentPage}&device=${JSON.stringify(
+          selectedDevice
+        )}`
+      : `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/product?branchaccess=${branchAccess}&page=${currentPage}&device=${JSON.stringify(
+          selectedDevice
+        )}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -278,6 +297,21 @@ const ProductPage = ({ session }: { session: Session | null }) => {
                 <div className="row flex-between-center mb-4">
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
                     <SearchInput search={search} setSearch={setSearch} />
+                    <Select
+                      className="ml-2"
+                      instanceId={"product_device"}
+                      placeholder="Pilih Device"
+                      isClearable
+                      options={deviceData?.map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                      }))}
+                      required
+                      isMulti
+                      onChange={(e: any) => setSelectedDevice(e)}
+                      value={selectedDevice}
+                      closeMenuOnSelect={true}
+                    />
                   </div>
                   <div className="col-sm-4 col-sm-auto d-flex justify-content-end">
                     <CustomButton
