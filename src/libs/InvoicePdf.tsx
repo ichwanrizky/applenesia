@@ -158,6 +158,7 @@ type InvoiceDetail = {
     discount_price: number;
     product_id: number;
     product: any;
+    device: any;
   }[];
   invoice_service: {
     service: {
