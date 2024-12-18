@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   logoContainer: {
-    width: 60,
+    width: 80,
     height: 60,
     marginRight: 10,
   },
@@ -157,6 +157,7 @@ type InvoiceDetail = {
     discount_percent: number;
     discount_price: number;
     product_id: number;
+    product: any;
   }[];
   invoice_service: {
     service: {
@@ -179,6 +180,7 @@ type InvoiceDetail = {
     name: string;
     address: string;
     telp: string;
+    email: string;
   };
 };
 
@@ -201,7 +203,9 @@ const InvoiceDocument = ({ invoicData }: { invoicData: InvoiceDetail }) => {
                 <Text
                   style={styles.companyInfo}
                 >{`Phone: ${invoicData.branch.telp}`}</Text>
-                <Text style={styles.companyInfo}>Email: info@company.com</Text>
+                <Text style={styles.companyInfo}>
+                  Email: {invoicData.branch.email}
+                </Text>
               </View>
             </View>
           </View>
@@ -324,10 +328,17 @@ const InvoiceDocument = ({ invoicData }: { invoicData: InvoiceDetail }) => {
                   {index + 1}
                 </Text>
                 <Text style={[styles.tableCell, { flex: 2 }]}>
-                  {item.name?.toUpperCase()}
+                  {`${item.name?.toUpperCase()} \n`}
+
+                  <Text style={[{ fontSize: 7 }]}>
+                    {item.product.product_device
+                      ?.map((e: any) => e.device.name?.toUpperCase())
+                      .join(", ")}
+                  </Text>
+
                   {item.warranty > 0 && (
-                    <Text style={{ fontSize: 8 }}>
-                      {`\n* Garansi ${WarrantyDisplay(item.warranty)}`}
+                    <Text style={{ fontSize: 7 }}>
+                      {`\n\n* Garansi ${WarrantyDisplay(item.warranty)}`}
                     </Text>
                   )}
                 </Text>

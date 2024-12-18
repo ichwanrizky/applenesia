@@ -41,7 +41,24 @@ export const GET = async (
             },
           },
         },
-        invoice_item: true,
+        invoice_item: {
+          include: {
+            product: {
+              select: {
+                product_device: {
+                  select: {
+                    device: {
+                      select: {
+                        id: true,
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         invoice_service: {
           select: {
             service: {
@@ -64,6 +81,7 @@ export const GET = async (
             name: true,
             address: true,
             telp: true,
+            email: true,
           },
         },
       },

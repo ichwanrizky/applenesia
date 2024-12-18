@@ -16,9 +16,9 @@ type UserSession = {
   userBranch: any;
 };
 
-const getDeviceType = async (accessToken: string) => {
+const getDevice = async (accessToken: string) => {
   try {
-    const result = await libServices.getDeviceType(accessToken);
+    const result = await libServices.getDevice(accessToken);
     if (!result.status) {
       return [];
     }
@@ -41,7 +41,7 @@ export default async function ServiceDetail({
   }
 
   const { invoice_id } = params;
-  const deviceType = await getDeviceType(session.user.accessToken);
+  const device = await getDevice(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -65,7 +65,7 @@ export default async function ServiceDetail({
         <DetailInvoicePage
           session={session.user}
           invoice_id={invoice_id}
-          deviceTypeData={deviceType}
+          deviceData={device}
         />
       </div>
     </div>

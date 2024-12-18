@@ -298,7 +298,7 @@ const ProductPage = ({
                   <div className="col-sm-8 col-sm-auto d-flex align-items-center pe-0">
                     <SearchInput search={search} setSearch={setSearch} />
                     <Select
-                      className="ml-2"
+                      className="ml-2 w-25"
                       instanceId={"product_device"}
                       placeholder="Pilih Device"
                       isClearable

@@ -54,10 +54,15 @@ const CreateServicePage = ({
   session,
   deviceTypeData,
   customerData,
+  deviceData,
 }: {
   session: Session;
   deviceTypeData: DeviceType[];
   customerData: Customer[];
+  deviceData: {
+    id: number;
+    name: string;
+  }[];
 }) => {
   const { push } = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -287,7 +292,7 @@ const CreateServicePage = ({
             handleFormChange={handleFormChange}
             parentFormData={defaultFormData}
             branchData={branchData}
-            deviceTypeData={deviceTypeData}
+            deviceData={deviceData}
           />
         );
     }

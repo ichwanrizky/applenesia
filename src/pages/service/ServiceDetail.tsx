@@ -116,10 +116,15 @@ const DetailServicePage = ({
   session,
   service_id,
   deviceTypeData,
+  deviceData,
 }: {
   session: Session;
   service_id: string;
   deviceTypeData: DeviceType[];
+  deviceData: {
+    id: number;
+    name: string;
+  }[];
 }) => {
   const { push } = useRouter();
 
@@ -439,9 +444,7 @@ const DetailServicePage = ({
         });
         setTimeout(() => {
           if (isCreateInvoice) {
-            push(
-              `/cp/pos/invoice/${resultUpdate.data.invoice_number}`
-            );
+            push(`/cp/pos/invoice/${resultUpdate.data.invoice_number}`);
           } else {
             push("/cp/pos/service");
           }
@@ -993,7 +996,20 @@ const DetailServicePage = ({
                                     {index + 1}
                                   </td>
                                   <td className="align-middle">
-                                    {item.name?.toUpperCase()}
+                                    {item.name?.toUpperCase()} <br />
+                                    <span className="text-muted small text-nowrap font-italic">
+                                      {item.product
+                                        ? item.product.product_device
+                                            ?.map((e: any) =>
+                                              e.device.name?.toUpperCase()
+                                            )
+                                            .join(", ")
+                                        : item.device
+                                            ?.map((e: any) =>
+                                              e.device.name?.toUpperCase()
+                                            )
+                                            .join(", ")}
+                                    </span>
                                   </td>
                                   <td className="align-middle text-center">
                                     <NumericFormat
@@ -1045,7 +1061,7 @@ const DetailServicePage = ({
                       accessToken={session.accessToken!}
                       branch={formData.branch}
                       productList={formData.products}
-                      deviceTypeData={deviceTypeData}
+                      deviceData={deviceData}
                     />
                   )}
                 </div>

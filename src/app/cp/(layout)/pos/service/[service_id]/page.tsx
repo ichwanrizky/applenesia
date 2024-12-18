@@ -29,6 +29,19 @@ const getDeviceType = async (accessToken: string) => {
   }
 };
 
+const getDevice = async (accessToken: string) => {
+  try {
+    const result = await libServices.getDevice(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export default async function ServiceDetail({
   params,
 }: {
@@ -42,6 +55,7 @@ export default async function ServiceDetail({
 
   const { service_id } = params;
   const deviceType = await getDeviceType(session.user.accessToken);
+  const device = await getDevice(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -65,6 +79,7 @@ export default async function ServiceDetail({
           session={session.user}
           service_id={service_id}
           deviceTypeData={deviceType}
+          deviceData={device}
         />
       </div>
     </div>

@@ -12,7 +12,10 @@ type ServiceCreateStep3Props = {
   handleFormChange: (updatedFormData: any) => void;
   parentFormData: any;
   branchData: Branch[];
-  deviceTypeData: DeviceType[];
+  deviceData: {
+    id: number;
+    name: string;
+  }[];
 };
 
 type FormChecking = {
@@ -41,6 +44,11 @@ type SelectedProduct = {
   qty: number;
   warranty: number;
   is_product: boolean;
+  device: {
+    device: {
+      name: string;
+    };
+  }[];
 };
 
 type DeviceType = {
@@ -56,7 +64,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
     handleFormChange,
     parentFormData,
     branchData,
-    deviceTypeData,
+    deviceData,
   } = props;
 
   const [techncianData, setTechncianData] = useState([] as Technician[]);
@@ -411,7 +419,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
               type="button"
               className="btn btn-outline-primary btn-sm mb-2"
               onClick={() => {
-                if (formData.branch !== "" ) {
+                if (formData.branch !== "") {
                   setIsProductOpen(true);
                 } else {
                   handleAlert(true, "danger", "Pilih cabang terlebih dahulu");
@@ -457,7 +465,12 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
                           {index + 1}
                         </td>
                         <td className="align-middle">
-                          {item.name?.toUpperCase()}
+                          {item.name?.toUpperCase()} <br />
+                          <span className="text-muted small text-nowrap font-italic">
+                            {item.device
+                              ?.map((e) => e.device.name?.toUpperCase())
+                              .join(", ")}
+                          </span>
                         </td>
                         <td className="align-middle text-center">
                           <NumericFormat
@@ -502,7 +515,7 @@ const ServiceCreateStep3 = (props: ServiceCreateStep3Props) => {
             accessToken={accessToken}
             branch={formData.branch}
             productList={selectedProduct}
-            deviceTypeData={deviceTypeData}
+            deviceData={deviceData}
           />
         )}
       </div>

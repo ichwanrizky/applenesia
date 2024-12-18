@@ -59,7 +59,24 @@ export const GET = async (
             name: true,
           },
         },
-        service_product: true,
+        service_product: {
+          include: {
+            product: {
+              select: {
+                product_device: {
+                  select: {
+                    device: {
+                      select: {
+                        id: true,
+                        name: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
         service_form_checking: true,
         branch: {
           select: {

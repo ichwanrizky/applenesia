@@ -59,6 +59,8 @@ type InvoiceDetail = {
     discount_percent: number;
     discount_price: number;
     product_id: number;
+    product: any;
+    device: any;
   }[];
   invoice_service: {
     service: {
@@ -81,6 +83,7 @@ type InvoiceDetail = {
     name: string;
     address: string;
     telp: string;
+    email: string;
   };
 };
 
@@ -88,11 +91,6 @@ type AlertProps = {
   status: boolean;
   color: string;
   message: string;
-};
-
-type DeviceType = {
-  id: number;
-  name: string;
 };
 
 type PaymentMethod = {
@@ -103,11 +101,11 @@ type PaymentMethod = {
 const DetailInvoicePage = ({
   session,
   invoice_id,
-  deviceTypeData,
+  deviceData,
 }: {
   session: Session;
   invoice_id: string;
-  deviceTypeData: DeviceType[];
+  deviceData: { id: number; name: string }[];
 }) => {
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [isLoadingSubmit, setIsloadingSubmit] = useState(false);
@@ -224,11 +222,13 @@ const DetailInvoicePage = ({
           sub_name: e.sub_name,
           qty: e.qty,
           price: e.price,
-          warranty: e.price,
+          warranty: e.warranty,
           invoice_id: invoicData.id,
           discount_percent: 0,
           discount_price: 0,
           product_id: e.product_id,
+          device: e.device,
+          product: e.product,
         })),
       ],
     });
@@ -592,7 +592,20 @@ const DetailInvoicePage = ({
                                     {index + 1}
                                   </td>
                                   <td className="align-middle">
-                                    {item.name?.toUpperCase()}
+                                    {item.name?.toUpperCase()} <br />
+                                    <span className="text-muted small text-nowrap font-italic">
+                                      {item.product
+                                        ? item.product.product_device
+                                            ?.map((e: any) =>
+                                              e.device.name?.toUpperCase()
+                                            )
+                                            .join(", ")
+                                        : item.device
+                                            ?.map((e: any) =>
+                                              e.device.name?.toUpperCase()
+                                            )
+                                            .join(", ")}
+                                    </span>
                                     {item.warranty > 0 && (
                                       <>
                                         <br />
@@ -872,7 +885,7 @@ const DetailInvoicePage = ({
           accessToken={session.accessToken!}
           branch={invoicData.branch_id?.toString() || ""}
           productList={[]}
-          deviceTypeData={deviceTypeData}
+          deviceData={deviceData}
         />
       )}
 

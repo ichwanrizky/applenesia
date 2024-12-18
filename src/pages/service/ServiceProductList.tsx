@@ -2,8 +2,10 @@
 import CustomAlert from "@/components/CustomAlert";
 import CustomButton from "@/components/CustomButton";
 import { WarrantyDisplay } from "@/libs/WarrantyDisplay";
+import libServices from "@/services/libServices";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
+import Select from "react-select";
 
 type Props = {
   isOpen: boolean;
@@ -11,7 +13,7 @@ type Props = {
   accessToken: string;
   branch: string;
   productList: any;
-  deviceTypeData: {
+  deviceData: {
     id: number;
     name: string;
   }[];
@@ -48,13 +50,13 @@ type SelectedProps = {
 };
 
 const ServiceProductList = (props: Props) => {
-  const { isOpen, onClose, accessToken, branch, productList, deviceTypeData } =
+  const { isOpen, onClose, accessToken, branch, productList, deviceData } =
     props;
 
   const [alert, setAlert] = useState<AlertProps | null>(null);
 
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [deviceType, setDeviceType] = useState("all");
+  const [selectedDevice, setSelectedDevice] = useState([] as any);
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(productList as any);
   const [isSelected, setIsSelected] = useState<SelectedProps>(
@@ -86,6 +88,8 @@ const ServiceProductList = (props: Props) => {
         qty: 1,
         warranty: product.warranty,
         is_product: product.product_log.length > 0 ? true : false,
+        device: product.product_device,
+        product: null,
       },
     ]);
   };
@@ -110,8 +114,16 @@ const ServiceProductList = (props: Props) => {
 
   const { data, error, isLoading } = useSWR(
     debouncedSearch === ""
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/libs/productlist?branch=${branch}&device_type=${deviceType}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/libs/productlist?branch=${branch}&device_type=${deviceType}&search=${debouncedSearch}`,
+      ? `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/libs/productlist?branch=${branch}&device=${JSON.stringify(
+          selectedDevice
+        )}`
+      : `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/api/libs/productlist?branch=${branch}&device=${JSON.stringify(
+          selectedDevice
+        )}&search=${debouncedSearch}`,
     fetcher
   );
 
@@ -169,20 +181,21 @@ const ServiceProductList = (props: Props) => {
               </button>
             </div>
             <div className="modal-header">
-              <select
-                className="custom-select"
-                style={{ width: "20%" }}
-                value={deviceType}
-                onChange={(e) => setDeviceType(e.target.value)}
-              >
-                <option value="all">SEMUA TIPE DEVICE</option>
-                {deviceTypeData?.map((e, index: number) => (
-                  <option value={e.id} key={index}>
-                    {e.name?.toUpperCase()}
-                  </option>
-                ))}
-              </select>
-
+              <Select
+                className="ml-2 w-25"
+                instanceId={"product_device"}
+                placeholder="Pilih Device"
+                isClearable
+                options={deviceData?.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                }))}
+                required
+                isMulti
+                onChange={(e: any) => setSelectedDevice(e)}
+                value={selectedDevice}
+                closeMenuOnSelect={true}
+              />
               <input
                 type="text"
                 className="form-control ml-2"
@@ -221,132 +234,114 @@ const ServiceProductList = (props: Props) => {
 
                   return (
                     <div className="row">
-                      {items.length === 0 ? (
-                        <div className="col-sm-12">
-                          <div className="text-center text-danger">
-                            Produk Tidak Tersedia
+                      {selectedDevice.length > 0 || debouncedSearch !== "" ? (
+                        items.length === 0 ? (
+                          <div className="col-sm-12">
+                            <div className="text-center text-danger">
+                              Produk Tidak Tersedia
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        items?.map((item: ProductList, index: number) => (
-                          <div className="col-sm-4 mb-2" key={index}>
-                            <div className="card border">
-                              <div
-                                className="card-header"
-                                style={{ maxHeight: "55px" }}
-                              >
-                                <h6 className="card-title fs-8">
-                                  {item.name?.toUpperCase()}
-                                </h6>
-                                {item.sub_name ? (
-                                  <p
-                                    className="text-muted small"
-                                    style={{ marginTop: "-10px" }}
-                                  >
-                                    {item.sub_name?.toUpperCase()}
-                                  </p>
-                                ) : (
-                                  <p>&nbsp;</p>
-                                )}
-                              </div>
-                              <div className="card-body">
-                                <table width={"100%"}>
-                                  <tbody>
-                                    <tr>
-                                      <td width={"100"}>Harga</td>
-                                      <td width={"10"}>:</td>
-                                      <td>
-                                        {`Rp. ${item.sell_price?.toLocaleString(
-                                          "id-ID"
-                                        )}`}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Garansi</td>
-                                      <td>:</td>
-                                      <td>
-                                        {item.warranty > 0
-                                          ? `${WarrantyDisplay(item.warranty)}`
-                                          : "Tidak Ada"}
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Device</td>
-                                      <td>:</td>
-                                      <td
-                                        style={{
-                                          maxWidth: "100px",
-                                          overflow: "hidden",
-                                          textOverflow: "ellipsis",
-                                          whiteSpace: "nowrap",
-                                          position: "relative",
-                                        }}
-                                        title={item.product_device
-                                          ?.map((e) =>
-                                            e.device.name?.toUpperCase()
-                                          )
-                                          .join(", ")}
-                                      >
-                                        {item.product_device
-                                          ?.map((e) =>
-                                            e.device.name?.toUpperCase()
-                                          )
-                                          .join(", ")}
-                                        <span
-                                          style={{
-                                            position: "absolute",
-                                            top: "100%", // Position the tooltip below the cell
-                                            left: 0,
-                                            backgroundColor: "white",
-                                            padding: "5px",
-                                            borderRadius: "5px",
-                                            boxShadow:
-                                              "0px 0px 5px rgba(0,0,0,0.5)",
-                                            display: "none", // Initially hide the tooltip
-                                          }}
-                                        >
+                        ) : (
+                          items?.map((item: ProductList, index: number) => (
+                            <div className="col-sm-4 mb-2" key={index}>
+                              <div className="card border h-100">
+                                <div
+                                  className="card-header"
+                                  style={{ maxHeight: "55px" }}
+                                >
+                                  <h6 className="card-title fs-8">
+                                    {item.name?.toUpperCase()}
+                                  </h6>
+                                  {item.sub_name ? (
+                                    <p
+                                      className="text-muted small"
+                                      style={{ marginTop: "-10px" }}
+                                    >
+                                      {item.sub_name?.toUpperCase()}
+                                    </p>
+                                  ) : (
+                                    <p>&nbsp;</p>
+                                  )}
+                                </div>
+                                <div className="card-body">
+                                  <table width={"100%"}>
+                                    <tbody>
+                                      <tr>
+                                        <td valign="top" width={"100"}>
+                                          Harga
+                                        </td>
+                                        <td valign="top" width={"10"}>
+                                          :
+                                        </td>
+                                        <td valign="top">
+                                          {`Rp. ${item.sell_price?.toLocaleString(
+                                            "id-ID"
+                                          )}`}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td valign="top">Garansi</td>
+                                        <td valign="top">:</td>
+                                        <td valign="top">
+                                          {item.warranty > 0
+                                            ? `${WarrantyDisplay(
+                                                item.warranty
+                                              )}`
+                                            : "Tidak Ada"}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td valign="top">Device</td>
+                                        <td valign="top">:</td>
+                                        <td valign="top">
                                           {item.product_device
                                             ?.map((e) =>
                                               e.device.name?.toUpperCase()
                                             )
                                             .join(", ")}
-                                        </span>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td>Jum Stock</td>
-                                      <td>:</td>
-                                      <td>
-                                        {item.product_log.length > 0
-                                          ? item.stock
-                                          : "-"}
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                              <div className="card-footer">
-                                {isSelected[item.id] ? (
-                                  <button
-                                    className="btn btn-danger btn-sm"
-                                    type="button"
-                                    onClick={() => handleRemoveProduct(item)}
-                                  >
-                                    Cancel
-                                  </button>
-                                ) : (
-                                  <button
-                                    className="btn btn-success btn-sm"
-                                    type="button"
-                                    onClick={() => handleAddProduct(item)}
-                                  >
-                                    Select
-                                  </button>
-                                )}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td valign="top">Jum Stock</td>
+                                        <td valign="top">:</td>
+                                        <td valign="top">
+                                          {item.product_log.length > 0
+                                            ? item.stock
+                                            : "-"}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                                <div className="card-footer">
+                                  {isSelected[item.id] ? (
+                                    <button
+                                      className="btn btn-danger btn-sm"
+                                      type="button"
+                                      onClick={() => handleRemoveProduct(item)}
+                                    >
+                                      Cancel
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn btn-success btn-sm"
+                                      type="button"
+                                      onClick={() => handleAddProduct(item)}
+                                    >
+                                      Select
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             </div>
+                          ))
+                        )
+                      ) : (
+                        <div className="col-sm-12">
+                          <div className="text-center text-danger">
+                            Pilih Device Terlebih Dahulu
                           </div>
-                        ))
+                        </div>
                       )}
                     </div>
                   );

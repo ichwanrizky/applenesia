@@ -42,6 +42,19 @@ const getCustomer = async (accessToken: string) => {
   }
 };
 
+const getDevice = async (accessToken: string) => {
+  try {
+    const result = await libServices.getDevice(accessToken);
+    if (!result.status) {
+      return [];
+    }
+
+    return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export default async function CreateService() {
   const session = (await getServerSession(authOptions)) as Session | null;
 
@@ -51,6 +64,7 @@ export default async function CreateService() {
 
   const deviceType = await getDeviceType(session.user.accessToken);
   const customer = await getCustomer(session.user.accessToken);
+  const device = await getDevice(session.user.accessToken);
 
   return (
     <div className="page-content">
@@ -75,6 +89,7 @@ export default async function CreateService() {
           session={session.user}
           deviceTypeData={deviceType}
           customerData={customer}
+          deviceData={device}
         />
       </div>
     </div>

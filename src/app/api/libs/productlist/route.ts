@@ -29,7 +29,7 @@ export const GET = async (request: Request) => {
 
     const searchParams = new URL(request.url).searchParams;
     const branch = searchParams.get("branch");
-    const device_type = searchParams.get("device_type");
+    const device = searchParams.get("device");
     const search = searchParams.get("search");
 
     const role = session[1].role.name;
@@ -55,6 +55,8 @@ export const GET = async (request: Request) => {
         }
       );
     }
+
+    const deviceData = device ? JSON.parse(device) : [];
 
     const data = await prisma.product.findMany({
       select: {
@@ -84,44 +86,60 @@ export const GET = async (request: Request) => {
         is_deleted: false,
         is_pos: true,
         branch_id: Number(branch),
-        ...(search && {
-          OR: [
-            {
-              name: {
-                contains: search ? search : undefined,
-              },
-            },
-            {
-              product_category: {
-                some: {
-                  category: {
-                    name: {
-                      contains: search ? search : undefined,
+        ...(search
+          ? {
+              ...(deviceData.length > 0 && {
+                product_device: {
+                  some: {
+                    device: {
+                      id: {
+                        in: deviceData.map(
+                          (item: { value: number }) => item.value
+                        ),
+                      },
                     },
                   },
                 },
-              },
-            },
-            {
-              product_device: {
-                some: {
-                  device: {
-                    name: {
-                      contains: search ? search : undefined,
+              }),
+              OR: [
+                {
+                  name: {
+                    contains: search ? search : undefined,
+                  },
+                },
+                {
+                  product_category: {
+                    some: {
+                      category: {
+                        name: {
+                          contains: search ? search : undefined,
+                        },
+                      },
                     },
                   },
                 },
-              },
-            },
-          ],
-        }),
-        ...(device_type === "all"
-          ? {}
+                {
+                  product_device: {
+                    some: {
+                      device: {
+                        name: {
+                          contains: search ? search : undefined,
+                        },
+                      },
+                    },
+                  },
+                },
+              ],
+            }
           : {
               product_device: {
                 some: {
                   device: {
-                    device_type_id: Number(device_type),
+                    id: {
+                      in: deviceData.map(
+                        (item: { value: number }) => item.value
+                      ),
+                    },
                   },
                 },
               },
