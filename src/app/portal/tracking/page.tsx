@@ -2,7 +2,7 @@
 import PortalFooter from "@/components/portal/Footer";
 import PortalHeader from "@/components/portal/Header";
 import PortalLayout from "@/components/portal/Layout";
-import portalServices from "@/services/portalServices";
+import { getTrackingService } from "@/services/portalServices";
 import { useEffect, useState } from "react";
 
 type TrackingService = {
@@ -52,15 +52,11 @@ export default function PortalTracking({
     setIsLoading(true);
     setTrackingData(null);
     try {
-      const response = await portalServices.getTrackingService(
-        serviceNumber,
-        serviceCode
-      );
-
-      if (!response.status) {
-        alert(response.message);
+      const res = await getTrackingService(serviceNumber, serviceCode);
+      if (!res) {
+        alert("Service not found");
       } else {
-        setTrackingData(response.data);
+        setTrackingData(res as any);
       }
     } catch (error) {
       alert("Something went wrong, please refresh and try again.");

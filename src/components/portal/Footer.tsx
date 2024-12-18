@@ -1,3 +1,5 @@
+import React from "react";
+
 const PortalFooter = () => {
   const stores = [
     {
@@ -112,14 +114,14 @@ const PortalFooter = () => {
                   <div className="footer-single-widget footer-menu">
                     <h5 className="footer-title text-uppercase">Contact Us</h5>
                     {stores.map((store) => (
-                      <>
+                      <React.Fragment key={store.id}>
                         <address>{store.address} </address>
                         <p>
                           <strong>Phone:</strong> {store.phone}
                           <strong>Email:</strong> {store.email}
                         </p>
                         <hr />
-                      </>
+                      </React.Fragment>
                     ))}
                   </div>
                 </div>
