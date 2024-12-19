@@ -49,6 +49,8 @@ type InvoiceDetail = {
     discount_percent: number;
     discount_price: number;
     product_id: number;
+    product: any;
+    device: any;
   }[];
   invoice_service: {
     service: {
@@ -71,6 +73,7 @@ type InvoiceDetail = {
     name: string;
     address: string;
     telp: string;
+    email: string;
   };
 };
 

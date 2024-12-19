@@ -187,6 +187,7 @@ const ServiceCreateStep1 = (props: ServiceCreateStep1Props) => {
               onChange={(e) =>
                 setFormData({ ...formData, customer_telp: e.target.value })
               }
+              required
             />
           </div>
           <div className="col-sm-3">

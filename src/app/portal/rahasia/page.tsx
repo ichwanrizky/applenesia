@@ -23,7 +23,7 @@ const getDeviceByType = async () => {
   }
 };
 
-export default async function Portal() {
+export default async function Rahasia() {
   const deviceData = await getDeviceByType();
 
   return (
@@ -444,7 +444,7 @@ export default async function Portal() {
         </div>
 
         {/* 5 */}
-        {/* <KalulatorService deviceData={deviceData} /> */}
+        <KalulatorService deviceData={deviceData} />
 
         <PortalFooter />
       </main>

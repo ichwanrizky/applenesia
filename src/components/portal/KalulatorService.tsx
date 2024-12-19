@@ -73,146 +73,124 @@ export default function KalulatorService({
           <div className="service-wrapper">
             <div className="container">
               <div className="row">
-                <div className="col-12">
-                  <div className="service-slider default-slider">
-                    <div className="swiper-container">
-                      <div className="swiper-wrapper">
-                        <div
-                          className="service-single-item-style-1 swiper-slide"
-                          style={{ padding: 30 }}
-                        >
-                          <div className="icon text-center">
-                            <h5 className="title" style={{ fontWeight: 800 }}>
-                              {" "}
-                              iPhone{" "}
-                            </h5>
-                            <img
-                              src="/portal/assets/images_apn/iphone.png"
-                              alt=""
-                              style={{ height: 180 }}
-                            />
-                          </div>
-                          <div className="content ms-2 mt-4 text-center">
-                            {isLoading ? (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                disabled
-                              >
-                                <span
-                                  className="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                ></span>{" "}
-                                Loading ...
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                onClick={() => {
-                                  handleOpenModal(1);
-                                }}
-                              >
-                                Cek Harga Service
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        <div
-                          className="service-single-item-style-1 swiper-slide"
-                          style={{ padding: 30 }}
-                        >
-                          <div className="icon">
-                            <h5
-                              className="title text-center"
-                              style={{ fontWeight: 800 }}
-                            >
-                              {" "}
-                              MacBook{" "}
-                            </h5>
-                            <img
-                              src="/portal/assets/images_apn/macbook.png"
-                              alt=""
-                              style={{ height: 180 }}
-                            />
-                          </div>
-                          <div className="content ms-2 mt-4 text-center">
-                            {isLoading ? (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                disabled
-                              >
-                                <span
-                                  className="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                ></span>{" "}
-                                Loading ...
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                onClick={() => {
-                                  handleOpenModal(3);
-                                }}
-                              >
-                                Cek Harga Service
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        <div
-                          className="service-single-item-style-1 swiper-slide"
-                          style={{ padding: 30 }}
-                        >
-                          <div className="icon text-center">
-                            <h5 className="title" style={{ fontWeight: 800 }}>
-                              iPad{" "}
-                            </h5>
-                            <img
-                              src="/portal/assets/images_apn/ipad.png"
-                              alt=""
-                              style={{ height: 180 }}
-                            />
-                          </div>
-                          <div className="content ms-2 mt-4 text-center">
-                            {isLoading ? (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                disabled
-                              >
-                                <span
-                                  className="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                ></span>{" "}
-                                Loading ...
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                className="btn btn-outline-primary"
-                                onClick={() => {
-                                  handleOpenModal(2);
-                                }}
-                              >
-                                Cek Harga Service
-                              </button>
-                            )}
-                          </div>
-                        </div>
+                {/* iPhone Card */}
+                <div className="col-md-4" style={{ marginBottom: 20 }}>
+                  <div className="card text-center">
+                    <div className="card-body">
+                      <h5 className="card-title" style={{ fontWeight: 800 }}>
+                        iPhone
+                      </h5>
+                      <img
+                        src="/portal/assets/images_apn/iphone.png"
+                        alt="iPhone"
+                        className="card-img-top"
+                        style={{ height: 180, objectFit: "contain" }}
+                      />
+                      <div className="mt-4">
+                        {isLoading ? (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            disabled
+                          >
+                            <span
+                              className="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>{" "}
+                            Loading ...
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            onClick={() => handleOpenModal(1)}
+                          >
+                            Cek Harga Service
+                          </button>
+                        )}
                       </div>
                     </div>
-                    <div className="default-slider-buttons">
-                      <div className="slider-button button-prev">
-                        <i className="icofont-long-arrow-left" />
+                  </div>
+                </div>
+
+                {/* MacBook Card */}
+                <div className="col-md-4" style={{ marginBottom: 20 }}>
+                  <div className="card text-center">
+                    <div className="card-body">
+                      <h5 className="card-title" style={{ fontWeight: 800 }}>
+                        MacBook
+                      </h5>
+                      <img
+                        src="/portal/assets/images_apn/macbook.png"
+                        alt="MacBook"
+                        className="card-img-top"
+                        style={{ height: 180, objectFit: "contain" }}
+                      />
+                      <div className="mt-4">
+                        {isLoading ? (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            disabled
+                          >
+                            <span
+                              className="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>{" "}
+                            Loading ...
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            onClick={() => handleOpenModal(3)}
+                          >
+                            Cek Harga Service
+                          </button>
+                        )}
                       </div>
-                      <div className="slider-button button-next">
-                        <i className="icofont-long-arrow-right" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* iPad Card */}
+                <div className="col-md-4" style={{ marginBottom: 20 }}>
+                  <div className="card text-center">
+                    <div className="card-body">
+                      <h5 className="card-title" style={{ fontWeight: 800 }}>
+                        iPad
+                      </h5>
+                      <img
+                        src="/portal/assets/images_apn/ipad.png"
+                        alt="iPad"
+                        className="card-img-top"
+                        style={{ height: 180, objectFit: "contain" }}
+                      />
+                      <div className="mt-4">
+                        {isLoading ? (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            disabled
+                          >
+                            <span
+                              className="spinner-border spinner-border-sm"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>{" "}
+                            Loading ...
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary"
+                            onClick={() => handleOpenModal(2)}
+                          >
+                            Cek Harga Service
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
