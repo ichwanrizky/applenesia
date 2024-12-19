@@ -78,3 +78,24 @@ export const getProduct = async (device_type_id: number) => {
     return [];
   }
 };
+
+export const getDevice = async () => {
+  try {
+    const res = await prisma.device.findMany({
+      orderBy: [
+        {
+          device_type_id: "asc",
+        },
+        {
+          id: "asc",
+        },
+      ],
+    });
+
+    if (res.length == 0) throw new Error("Device not found");
+
+    return res;
+  } catch (error) {
+    return [];
+  }
+};

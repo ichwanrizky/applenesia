@@ -1,15 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalPortal from "./ModalPortal";
-import { getProduct } from "@/services/portalServices";
+import { getDevice, getProduct } from "@/services/portalServices";
 
-export default function KalulatorService({
-  deviceData,
-}: {
-  deviceData: { id: number; name: string; device_type_id: number }[];
-}) {
+export default function KalulatorService() {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deviceData, setDeviceData] = useState(
+    [] as {
+      id: number;
+      name: string;
+      device_type_id: number;
+    }[]
+  );
   const [deviceType, setDeviceType] = useState(null as number | null);
   const [productData, setProductData] = useState(
     [] as {
@@ -22,6 +25,17 @@ export default function KalulatorService({
     }[]
   );
 
+  useEffect(() => {
+    handleGetDevice();
+  }, []);
+  const handleGetDevice = async () => {
+    try {
+      const res = await getDevice();
+      setDeviceData(res);
+    } catch (error) {
+      setDeviceData([]);
+    }
+  };
   const handleOpenModal = async (deviceType: number) => {
     setIsLoading(true);
     try {

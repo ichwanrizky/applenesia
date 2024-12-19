@@ -2,30 +2,9 @@ import PortalFooter from "@/components/portal/Footer";
 import PortalHeader from "@/components/portal/Header";
 import KalulatorService from "@/components/portal/KalulatorService";
 import PortalLayout from "@/components/portal/Layout";
-import prisma from "@/libs/ConnPrisma";
-
-const getDeviceByType = async () => {
-  try {
-    const res = await prisma.device.findMany({
-      orderBy: [
-        {
-          device_type_id: "asc",
-        },
-        {
-          id: "asc",
-        },
-      ],
-    });
-
-    return res;
-  } catch (error) {
-    return [];
-  }
-};
+import { getDevice } from "@/services/portalServices";
 
 export default async function Rahasia() {
-  const deviceData = await getDeviceByType();
-
   return (
     <PortalLayout>
       <main className="main-wrapper">
@@ -444,7 +423,7 @@ export default async function Rahasia() {
         </div>
 
         {/* 5 */}
-        <KalulatorService deviceData={deviceData} />
+        <KalulatorService />
 
         <PortalFooter />
       </main>
